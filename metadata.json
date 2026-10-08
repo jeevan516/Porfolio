@@ -1,0 +1,8 @@
+{
+  "name": "Jeevan Dutta",
+  "description": "Portfolio showcase, VLSI research under Prof. Dr. Christian Siemers, industrial observability telemetry, and career tracker for Jeevan Dutta (MSc Informatics TU Clausthal, WaDaCon GmbH).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
