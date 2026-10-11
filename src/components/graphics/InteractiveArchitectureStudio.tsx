@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, 
   Activity, 
@@ -30,6 +31,7 @@ import {
   Shield
 } from 'lucide-react';
 import { TRANSLATIONS } from '../../data/translations';
+import { playTactileClick } from '../../services/soundFx';
 
 interface InteractiveArchitectureStudioProps {
   language?: 'en' | 'de';
@@ -377,17 +379,22 @@ vrrp_instance VI_TELEMETRY {
 
           {/* Quick Simulation controls */}
           <div className="flex items-center gap-3 p-2 bg-slate-900/90 border border-slate-800 rounded-2xl">
-            <button
-              onClick={() => setIsSimulating(!isSimulating)}
+            <motion.button
+              onClick={() => {
+                playTactileClick();
+                setIsSimulating(!isSimulating);
+              }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 isSimulating 
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' 
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/20' 
                   : 'bg-slate-800 text-slate-400'
               }`}
             >
               {isSimulating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               <span>{isSimulating ? t.simActive : t.simPaused}</span>
-            </button>
+            </motion.button>
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-300 pr-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>{t.vipActive}</span>
@@ -400,9 +407,14 @@ vrrp_instance VI_TELEMETRY {
           {layers.map((layer, idx) => {
             const isSelected = selectedLayer === layer.id;
             return (
-              <div
+              <motion.div
                 key={layer.id}
-                onClick={() => setSelectedLayer(layer.id as any)}
+                onClick={() => {
+                  playTactileClick();
+                  setSelectedLayer(layer.id as any);
+                }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                whileTap={{ scale: 0.98 }}
                 className={`cursor-pointer p-4 rounded-2xl border transition-all duration-300 relative ${
                   isSelected
                     ? 'bg-gradient-to-b from-slate-900 to-slate-950 border-emerald-400/80 shadow-xl shadow-emerald-500/10 ring-1 ring-emerald-500/30 -translate-y-1'
@@ -431,7 +443,7 @@ vrrp_instance VI_TELEMETRY {
                   </span>
                   <ArrowRight className={`w-3 h-3 shrink-0 transition-transform ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-600'}`} />
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

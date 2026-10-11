@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SKILL_CATEGORIES, CERTIFICATIONS } from '../data/portfolioData';
 import { TargetRole } from '../types';
+import { playTactileClick } from '../services/soundFx';
 import { 
   Brain, 
   Activity, 
@@ -126,14 +128,19 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
         {/* Skill Category Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {SKILL_CATEGORIES.map((cat, idx) => (
-            <div
+            <motion.div
               key={idx}
               id={`skill-category-${cat.title.toLowerCase().replace(/\s+/g, '-')}`}
-              className="p-6 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-cyan-500/40 transition-all duration-300 shadow-lg"
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: idx * 0.08 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="p-6 rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/80 hover:border-cyan-500/40 transition-colors duration-300 shadow-lg relative group"
             >
               {/* Category Header */}
               <div className="flex items-center gap-3 pb-4 mb-4 border-b border-slate-800/80">
-                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/60 shadow-inner">
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/60 shadow-inner group-hover:scale-105 transition-transform duration-300">
                   {getCategoryIcon(cat.icon)}
                 </div>
                 <div>
@@ -163,20 +170,23 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
                     </div>
 
                     {/* Progress Track */}
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-700 ${
+                    <div className="w-full h-1.5 bg-slate-800/80 rounded-full overflow-hidden p-[0.5px]">
+                      <motion.div
+                        className={`h-full rounded-full ${
                           skill.highlight
-                            ? 'bg-gradient-to-r from-emerald-500 to-cyan-400'
+                            ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 shadow-sm shadow-emerald-500/50'
                             : 'bg-slate-500'
                         }`}
-                        style={{ width: `${skill.level}%` }}
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${skill.level}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.9, delay: 0.2 + sIdx * 0.05, ease: 'easeOut' }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -209,7 +219,10 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setCertFilter(tab.id as any)}
+                  onClick={() => {
+                    playTactileClick();
+                    setCertFilter(tab.id as any);
+                  }}
                   className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
                     certFilter === tab.id
                       ? tab.id === '2026'
@@ -224,67 +237,75 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCerts.map((cert) => (
-              <div
-                key={cert.id}
-                className={`p-4 rounded-xl bg-slate-900/70 border transition-all duration-200 flex flex-col justify-between shadow-sm hover:shadow-md ${
-                  cert.year === '2026' || cert.date.includes('2026')
-                    ? 'border-emerald-500/50 ring-1 ring-emerald-500/20'
-                    : 'border-slate-800/90 hover:border-emerald-500/40'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                    <div className="flex items-center gap-1.5">
-                      <div className="p-1 rounded-md bg-slate-800 border border-slate-700">
-                        {getCertIcon(cert.icon)}
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <AnimatePresence mode="popLayout">
+              {filteredCerts.map((cert) => (
+                <motion.div
+                  key={cert.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.25 }}
+                  whileHover={{ y: -3, transition: { duration: 0.15 } }}
+                  className={`p-4 rounded-xl bg-slate-900/70 border transition-colors flex flex-col justify-between shadow-sm hover:shadow-md ${
+                    cert.year === '2026' || cert.date.includes('2026')
+                      ? 'border-emerald-500/50 ring-1 ring-emerald-500/20'
+                      : 'border-slate-800/90 hover:border-emerald-500/40'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <div className="p-1 rounded-md bg-slate-800 border border-slate-700">
+                          {getCertIcon(cert.icon)}
+                        </div>
+                        <span className="font-mono text-emerald-400 font-semibold">{cert.issuer}</span>
                       </div>
-                      <span className="font-mono text-emerald-400 font-semibold">{cert.issuer}</span>
+                      <div className="flex items-center gap-1.5">
+                        {(cert.year === '2026' || cert.date.includes('2026')) && (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                            2026
+                          </span>
+                        )}
+                        <span className="text-[11px] font-mono text-slate-400">{cert.date}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      {(cert.year === '2026' || cert.date.includes('2026')) && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                          2026
+
+                    <h4 className="text-sm font-bold text-white leading-snug">
+                      {cert.title}
+                    </h4>
+
+                    {cert.accreditation && (
+                      <div className="text-[11px] font-mono text-cyan-300/90 mt-1.5 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
+                        <span className="truncate">{cert.accreditation}</span>
+                      </div>
+                    )}
+
+                    {cert.certificateId && (
+                      <div className="mt-1 text-[10px] font-mono text-slate-400 truncate">
+                        ID: <span className="text-slate-300">{cert.certificateId}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-3 pt-2 border-t border-slate-800/80">
+                    <div className="flex flex-wrap gap-1">
+                      {cert.skills.map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300"
+                        >
+                          {s}
                         </span>
-                      )}
-                      <span className="text-[11px] font-mono text-slate-400">{cert.date}</span>
+                      ))}
                     </div>
                   </div>
-
-                  <h4 className="text-sm font-bold text-white leading-snug">
-                    {cert.title}
-                  </h4>
-
-                  {cert.accreditation && (
-                    <div className="text-[11px] font-mono text-cyan-300/90 mt-1.5 flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3 text-cyan-400 shrink-0" />
-                      <span className="truncate">{cert.accreditation}</span>
-                    </div>
-                  )}
-
-                  {cert.certificateId && (
-                    <div className="mt-1 text-[10px] font-mono text-slate-400 truncate">
-                      ID: <span className="text-slate-300">{cert.certificateId}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-3 pt-2 border-t border-slate-800/80">
-                  <div className="flex flex-wrap gap-1">
-                    {cert.skills.map((s, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
 
       </div>

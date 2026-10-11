@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TargetRole } from '../types';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
 import { NeuralNetworkCanvas } from './graphics/NeuralNetworkCanvas';
 import { IndustrialIoTMonitor } from './graphics/IndustrialIoTMonitor';
 import { VLSIIntegratedCircuitGraphic } from './graphics/VLSIIntegratedCircuitGraphic';
+import { InteractiveMeshCanvas } from './graphics/InteractiveMeshCanvas';
+import { SpotlightCard } from './ui/SpotlightCard';
+import { playTactileClick, playHoverTick } from '../services/soundFx';
 import { 
   Brain, 
   Activity, 
@@ -22,7 +26,8 @@ import {
   Cpu,
   Play,
   Video,
-  Network
+  Network,
+  Download
 } from 'lucide-react';
 
 interface HeroProps {
@@ -30,6 +35,7 @@ interface HeroProps {
   setActiveRole: (role: TargetRole) => void;
   onOpenContact: () => void;
   onOpenBrief: () => void;
+  onOpenResume?: () => void;
   language?: 'en' | 'de';
 }
 
@@ -38,6 +44,7 @@ export const Hero: React.FC<HeroProps> = ({
   setActiveRole,
   onOpenContact,
   onOpenBrief,
+  onOpenResume,
   language = 'en',
 }) => {
   const [activeGraphic, setActiveGraphic] = useState<'neural' | 'iot' | 'vlsi'>('vlsi');
@@ -84,10 +91,13 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <section id="hero" className="relative pt-8 pb-16 overflow-hidden">
+      {/* Background ambient mesh network canvas */}
+      <InteractiveMeshCanvas />
+
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-emerald-600/10 via-cyan-500/15 to-blue-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Top Announcement Pill */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -111,49 +121,55 @@ export const Hero: React.FC<HeroProps> = ({
           
           <div className="lg:col-span-7 space-y-6">
             
-            {/* Executive Portrait & Identity Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-lg shadow-black/30">
-              <div className="relative shrink-0">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden ring-2 ring-emerald-500/60 shadow-xl shadow-emerald-500/20 bg-slate-800">
-                  <img
-                    src="./jeevan-dutta.jpg"
-                    alt="Jeevan Dutta - MSc Informatics TU Clausthal"
-                    className="w-full h-full object-cover object-top"
-                  />
+            {/* Executive Portrait & Identity Header with Spotlight & 3D Tilt */}
+            <SpotlightCard
+              enableTilt={true}
+              spotlightColor="rgba(16, 185, 129, 0.22)"
+              className="p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur-md"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden ring-2 ring-emerald-500/60 shadow-xl shadow-emerald-500/20 bg-slate-800">
+                    <img
+                      src="./jeevan-dutta.jpg"
+                      alt="Jeevan Dutta - MSc Informatics TU Clausthal"
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-slate-900"></span>
+                  </span>
                 </div>
-                <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-slate-900"></span>
-                </span>
-              </div>
 
-              <div className="space-y-1.5 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">
-                    {PERSONAL_INFO.name}
-                  </h2>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
-                    {t.degreeBadge}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 min-h-[22px]">
-                  <p className="text-xs sm:text-sm text-cyan-300 font-mono font-semibold">
-                    {typedRole}
-                  </p>
-                  <span className="w-1.5 h-3.5 bg-emerald-400 animate-pulse inline-block" />
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 font-mono">
-                  <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    {language === 'de' ? 'Sofortige Verfügbarkeit' : 'Immediate Availability'}
-                  </span>
-                  <span>·</span>
-                  <span>{language === 'de' ? 'Hamburg, Deutschland' : 'Hamburg, Germany'}</span>
-                  <span>·</span>
-                  <span className="text-purple-300">{t.supervisor}</span>
+                <div className="space-y-1.5 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">
+                      {PERSONAL_INFO.name}
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
+                      {t.degreeBadge}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 min-h-[22px]">
+                    <p className="text-xs sm:text-sm text-cyan-300 font-mono font-semibold">
+                      {typedRole}
+                    </p>
+                    <span className="w-1.5 h-3.5 bg-emerald-400 animate-pulse inline-block" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 font-mono">
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      {language === 'de' ? 'Sofortige Verfügbarkeit' : 'Immediate Availability'}
+                    </span>
+                    <span>·</span>
+                    <span>{language === 'de' ? 'Hamburg, Deutschland' : 'Hamburg, Germany'}</span>
+                    <span>·</span>
+                    <span className="text-purple-300">{t.supervisor}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </SpotlightCard>
 
             <div className="space-y-2">
               <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
@@ -185,19 +201,31 @@ export const Hero: React.FC<HeroProps> = ({
                   const Icon = item.icon;
                   const isActive = activeRole === item.id;
                   return (
-                    <button
+                    <motion.button
                       key={item.id}
                       id={`filter-role-${item.id}`}
-                      onClick={() => setActiveRole(item.id as TargetRole)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                      onClick={() => {
+                        playTactileClick();
+                        setActiveRole(item.id as TargetRole);
+                      }}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors z-10 ${
                         isActive
-                          ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow-md shadow-emerald-500/20 scale-[1.02]'
+                          ? 'text-slate-950 font-bold'
                           : 'bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
                       }`}
                     >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeHeroRolePill"
+                          className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl -z-10 shadow-md shadow-emerald-500/20"
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
                       <Icon className="w-3.5 h-3.5" />
                       <span>{item.label}</span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -205,10 +233,12 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              <a
+              <motion.a
                 href="#video-portfolio"
                 id="hero-watch-video-btn"
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-95 transition-all group"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all group"
               >
                 <div className="w-5 h-5 rounded-full bg-slate-950/20 flex items-center justify-center">
                   <Play className="w-3 h-3 fill-slate-950 ml-0.5 text-slate-950 group-hover:scale-110 transition-transform" />
@@ -217,45 +247,67 @@ export const Hero: React.FC<HeroProps> = ({
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-950/20 text-slate-950 font-bold border border-slate-950/30">
                   {language.toUpperCase()}
                 </span>
-              </a>
+              </motion.a>
 
-              <a
+              <motion.a
                 href="#observability"
                 id="hero-load-balancers-btn"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-emerald-500/30 hover:border-emerald-400 text-sm font-semibold transition-all group"
               >
                 <Network className="w-4 h-4 text-emerald-400 group-hover:rotate-12 transition-transform" />
                 <span>{language === 'de' ? 'Load Balancer & Studio' : 'Load Balancers & Studio'}</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              </a>
+              </motion.a>
 
-              <button
+              <motion.button
                 id="hero-contact-btn"
                 onClick={onOpenContact}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/90 text-sm font-semibold transition-all hover:border-emerald-500/40"
               >
                 <Mail className="w-4 h-4 text-emerald-400" />
                 <span>{t.hireJeevan}</span>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
                 id="hero-brief-btn"
                 onClick={onOpenBrief}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/90 text-sm font-semibold transition-all"
               >
                 <FileText className="w-4 h-4 text-cyan-400" />
                 <span>{t.briefBtn}</span>
-              </button>
+              </motion.button>
 
-              <button
+              {onOpenResume && (
+                <motion.button
+                  id="hero-resume-btn"
+                  onClick={onOpenResume}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-emerald-300 hover:text-white border border-emerald-500/40 text-sm font-semibold transition-all hover:border-emerald-400 shadow-lg shadow-emerald-500/10"
+                  title={language === 'de' ? 'Lebenslauf als PDF exportieren' : 'Export and download CV as PDF'}
+                >
+                  <Download className="w-4 h-4 text-emerald-400" />
+                  <span>{language === 'de' ? 'CV (PDF)' : 'Download CV (PDF)'}</span>
+                </motion.button>
+              )}
+
+              <motion.button
                 id="hero-copy-email-btn"
                 onClick={handleCopyEmail}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 className="flex items-center gap-1.5 px-3.5 py-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-mono transition-all"
                 title="Copy Email Address"
               >
                 {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                 <span>{copiedEmail ? t.copied : PERSONAL_INFO.email}</span>
-              </button>
+              </motion.button>
             </div>
 
             {/* Quick KPI stats strip */}
@@ -290,47 +342,55 @@ export const Hero: React.FC<HeroProps> = ({
                 Engineering Graphic:
               </span>
               <div className="flex items-center gap-1 text-xs">
-                <button
-                  id="tab-graphic-vlsi"
-                  onClick={() => setActiveGraphic('vlsi')}
-                  className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
-                    activeGraphic === 'vlsi'
-                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  VLSI Circuits (Siemers)
-                </button>
-                <button
-                  id="tab-graphic-neural"
-                  onClick={() => setActiveGraphic('neural')}
-                  className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
-                    activeGraphic === 'neural'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Deep Learning
-                </button>
-                <button
-                  id="tab-graphic-iot"
-                  onClick={() => setActiveGraphic('iot')}
-                  className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
-                    activeGraphic === 'iot'
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Industrial IoT
-                </button>
+                {[
+                  { id: 'vlsi', label: 'VLSI Circuits (Siemers)', color: 'text-purple-300', activeBg: 'bg-purple-500/20 border-purple-500/40' },
+                  { id: 'neural', label: 'Deep Learning', color: 'text-emerald-300', activeBg: 'bg-emerald-500/20 border-emerald-500/40' },
+                  { id: 'iot', label: 'Industrial IoT', color: 'text-cyan-300', activeBg: 'bg-cyan-500/20 border-cyan-500/40' },
+                ].map((tab) => {
+                  const isActive = activeGraphic === tab.id;
+                  return (
+                    <motion.button
+                      key={tab.id}
+                      id={`tab-graphic-${tab.id}`}
+                      onClick={() => {
+                        playTactileClick();
+                        setActiveGraphic(tab.id as any);
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative px-2.5 py-1 rounded-lg font-medium text-[11px] transition-colors ${
+                        isActive ? `${tab.color} font-bold` : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeGraphicTabPill"
+                          className={`absolute inset-0 rounded-lg border ${tab.activeBg} -z-10`}
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                      <span>{tab.label}</span>
+                    </motion.button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Display Active Graphic */}
-            <div className="transition-all duration-300">
-              {activeGraphic === 'vlsi' && <VLSIIntegratedCircuitGraphic />}
-              {activeGraphic === 'neural' && <NeuralNetworkCanvas />}
-              {activeGraphic === 'iot' && <IndustrialIoTMonitor />}
+            {/* Display Active Graphic with AnimatePresence */}
+            <div className="relative min-h-[360px] overflow-hidden rounded-2xl">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeGraphic}
+                  initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                >
+                  {activeGraphic === 'vlsi' && <VLSIIntegratedCircuitGraphic />}
+                  {activeGraphic === 'neural' && <NeuralNetworkCanvas />}
+                  {activeGraphic === 'iot' && <IndustrialIoTMonitor />}
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {/* Key Engineering Rigor Card */}

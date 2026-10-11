@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Globe, 
   Search, 
@@ -208,12 +209,19 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
         </div>
 
         {/* Technology News Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((art) => (
-            <article 
-              key={art.id}
-              className="group p-6 rounded-2xl bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between shadow-xl shadow-black/40 hover:-translate-y-1"
-            >
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AnimatePresence mode="popLayout">
+            {articles.map((art, aIdx) => (
+              <motion.article 
+                key={art.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.35, delay: aIdx * 0.05 }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className="group p-6 rounded-2xl bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 hover:border-emerald-500/50 transition-colors duration-300 flex flex-col justify-between shadow-xl shadow-black/40"
+              >
               <div className="space-y-4">
                 
                 {/* Meta Top Bar */}
@@ -299,9 +307,10 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
                   </a>
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+          </AnimatePresence>
+        </motion.div>
 
         {articles.length === 0 && (
           <div className="p-12 rounded-2xl bg-slate-900/60 border border-slate-800 text-center space-y-3">
@@ -322,15 +331,23 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
       </div>
 
       {/* ── ARTICLE DETAIL MODAL ── */}
-      {selectedArticle && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn"
-          onClick={() => setSelectedArticle(null)}
-        >
-          <div 
-            className="relative w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl text-slate-200 space-y-5 max-h-[85vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {selectedArticle && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+            onClick={() => setSelectedArticle(null)}
           >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="relative w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl text-slate-200 space-y-5 max-h-[85vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* Header */}
             <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
               <div className="space-y-1">
@@ -427,9 +444,10 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
               </div>
             </div>
 
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
     </section>
   );

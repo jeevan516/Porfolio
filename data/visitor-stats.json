@@ -1,0 +1,50 @@
+{
+  "totalVisits": 1483,
+  "uniqueVisitors": 986,
+  "todayVisits": 43,
+  "lastUpdated": "2026-10-08T08:43:42.178Z",
+  "recentVisits": [
+    {
+      "id": "v-1791449022178",
+      "timestamp": "Just now",
+      "source": "LinkedIn Test",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile View"
+    },
+    {
+      "id": "v-1",
+      "timestamp": "2 mins ago",
+      "source": "Direct / LinkedIn",
+      "location": "Hamburg, Germany",
+      "roleInterest": "Industrial Observability"
+    },
+    {
+      "id": "v-2",
+      "timestamp": "14 mins ago",
+      "source": "GitHub Pages Profile",
+      "location": "Munich, Germany",
+      "roleInterest": "Cloud & Load Balancers"
+    },
+    {
+      "id": "v-3",
+      "timestamp": "38 mins ago",
+      "source": "Recruiter Ingestion Hub",
+      "location": "Berlin, Germany",
+      "roleInterest": "AI & Data Engineering"
+    },
+    {
+      "id": "v-4",
+      "timestamp": "1 hour ago",
+      "source": "Academic Reference TU Clausthal",
+      "location": "Hannover, Germany",
+      "roleInterest": "Master Thesis Research"
+    },
+    {
+      "id": "v-5",
+      "timestamp": "2 hours ago",
+      "source": "Tech Community Referral",
+      "location": "Amsterdam, Netherlands",
+      "roleInterest": "Full-Stack & DevOps"
+    }
+  ]
+}

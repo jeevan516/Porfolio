@@ -29,17 +29,21 @@ import {
 } from 'lucide-react';
 import { PERSONAL_INFO, PROJECTS_DATA, SKILL_CATEGORIES, EXPERIENCES, EDUCATION_DATA, CERTIFICATIONS } from '../data/portfolioData';
 import { NeuralNetworkCanvas } from './graphics/NeuralNetworkCanvas';
+import { CareerTrajectoryChartSection } from './CareerTrajectoryChartSection';
 import { TechNewsSection } from './TechNewsSection';
+import { VisitorTrackerBlock } from './VisitorTrackerBlock';
 
 interface ClassicPortfolioViewProps {
   onOpenContact: () => void;
   onOpenBrief: () => void;
+  onOpenResume?: () => void;
   language?: 'en' | 'de';
 }
 
 export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({
   onOpenContact,
   onOpenBrief,
+  onOpenResume,
   language = 'en',
 }) => {
   const isDe = language === 'de';
@@ -207,6 +211,17 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({
                   <Linkedin className="w-4 h-4" />
                   <span>LinkedIn Profile</span>
                 </a>
+
+                {onOpenResume && (
+                  <button
+                    onClick={onOpenResume}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 hover:text-white border border-emerald-500/50 hover:border-emerald-400 text-xs sm:text-sm font-semibold transition-all shadow-md shadow-emerald-500/10"
+                    title={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
+                  >
+                    <Download className="w-4 h-4 text-emerald-400" />
+                    <span>{isDe ? 'CV (PDF) Export' : 'Download CV (PDF)'}</span>
+                  </button>
+                )}
 
                 <button
                   onClick={onOpenContact}
@@ -492,6 +507,9 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({
         </div>
       </section>
 
+      {/* ── CAREER TRAJECTORY & IMPACT GROWTH CHART (RECHARTS) ── */}
+      <CareerTrajectoryChartSection language={language} />
+
       {/* ── EDUCATION & CERTIFICATIONS ── */}
       <section className="py-16 bg-slate-950/60 border-t border-slate-800/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -542,6 +560,9 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({
 
       {/* ── DEDICATED TECHNOLOGY NEWS BLOCK (POWERED BY GOOGLE SEARCH GROUNDING) ── */}
       <TechNewsSection language={language} />
+
+      {/* ── REAL-TIME PROFILE OPEN & VISITOR TELEMETRY BLOCK ── */}
+      <VisitorTrackerBlock language={language} />
 
       {/* ── GET IN TOUCH FOOTER CARDS ── */}
       <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">

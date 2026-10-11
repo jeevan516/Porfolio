@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { EXPERIENCES } from '../data/portfolioData';
 import { 
   Briefcase, 
@@ -250,7 +251,14 @@ export const ExperienceTimeline: React.FC = () => {
             const isCogent = item.id === 'cogent-networks';
 
             return (
-              <div key={item.id} className="relative pl-6 sm:pl-10 group">
+              <motion.div 
+                key={item.id} 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.45, delay: idx * 0.08 }}
+                className="relative pl-6 sm:pl-10 group"
+              >
                 
                 {/* Timeline node icon */}
                 <div className={`absolute -left-[17px] top-3 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all group-hover:scale-110 ${
@@ -266,8 +274,8 @@ export const ExperienceTimeline: React.FC = () => {
                 {/* Content Card */}
                 <div className={`p-6 sm:p-7 rounded-2xl transition-all shadow-xl space-y-5 ${
                   isWaDaCon 
-                    ? 'bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-emerald-950/20' 
-                    : 'bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 hover:border-slate-700'
+                    ? 'bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-emerald-950/20 hover:border-emerald-400/60' 
+                    : 'bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 hover:border-cyan-500/40'
                 }`}>
                   
                   {/* Top Metadata Header */}
@@ -368,7 +376,7 @@ export const ExperienceTimeline: React.FC = () => {
                   </div>
 
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

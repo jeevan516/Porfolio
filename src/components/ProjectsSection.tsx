@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TargetRole, Project } from '../types';
 import { PROJECTS_DATA } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
+import { SpotlightCard } from './ui/SpotlightCard';
+import { playTactileClick } from '../services/soundFx';
 import { 
   Github, 
   ExternalLink, 
@@ -62,7 +65,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           </div>
 
           {/* Category Filter Chips */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-xl">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-xl relative">
             {[
               { id: 'all', label: isDe ? 'Alle Projekte' : 'All Projects' },
               { id: 'it-devops', label: isDe ? 'Load Balancer & DevOps' : 'Load Balancers & DevOps' },
@@ -72,30 +75,43 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             ].map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                onClick={() => {
+                  playTactileClick();
+                  setSelectedCategory(cat.id);
+                }}
+                className={`relative px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-slate-800 text-white border border-slate-700 shadow-sm font-semibold'
+                    ? 'text-white font-semibold'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {cat.label}
+                {selectedCategory === cat.id && (
+                  <motion.div
+                    layoutId="activeProjectCategory"
+                    className="absolute inset-0 bg-slate-800 border border-slate-700/80 rounded-lg shadow-sm"
+                    transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{cat.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => {
-            const isExpanded = expandedProject === project.id;
+        {/* Projects Grid with UI/UX Pro Max Spotlight Cards */}
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project, pIdx) => {
+              const isExpanded = expandedProject === project.id;
 
-            return (
-              <div
-                key={project.id}
-                id={`project-card-${project.id}`}
-                className="group relative flex flex-col justify-between rounded-2xl bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800/90 hover:border-emerald-500/40 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-950/20"
-              >
+              return (
+                <SpotlightCard
+                  key={project.id}
+                  id={`project-card-${project.id}`}
+                  enableTilt={true}
+                  spotlightColor="rgba(16, 185, 129, 0.18)"
+                  className="p-6 transition-all duration-300 shadow-xl shadow-black/40 hover:-translate-y-1"
+                >
                 {/* Status and Category Badge */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between gap-2">
@@ -197,10 +213,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     </span>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             );
           })}
-        </div>
+          </AnimatePresence>
+        </motion.div>
 
         {filteredProjects.length === 0 && (
           <div className="text-center py-12 bg-slate-900/40 rounded-2xl border border-slate-800">

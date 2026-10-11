@@ -15,12 +15,16 @@ import { MasterThesisSection } from './components/MasterThesisSection';
 import { ProjectsSection } from './components/ProjectsSection';
 import { SkillsSection } from './components/SkillsSection';
 import { ExperienceTimeline } from './components/ExperienceTimeline';
+import { CareerTrajectoryChartSection } from './components/CareerTrajectoryChartSection';
 import { AcademicReferenceSection } from './components/AcademicReferenceSection';
 import { InteractiveArchitectureStudio } from './components/graphics/InteractiveArchitectureStudio';
 import { TechNewsSection } from './components/TechNewsSection';
+import { VisitorTrackerBlock } from './components/VisitorTrackerBlock';
 import { PortfolioTracker } from './components/PortfolioTracker';
 import { ContactModal } from './components/ContactModal';
 import { ExecutiveBriefModal } from './components/ExecutiveBriefModal';
+import { ResumeExportModal } from './components/ResumeExportModal';
+import { FloatingNavDock } from './components/FloatingNavDock';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { ClassicPortfolioView } from './components/ClassicPortfolioView';
 import { JeevanChatbot } from './components/JeevanChatbot';
@@ -31,6 +35,7 @@ export default function App() {
   const [activeRole, setActiveRole] = useState<TargetRole>('all');
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isBriefOpen, setIsBriefOpen] = useState(false);
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isGitHubSyncOpen, setIsGitHubSyncOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'de'>(() => {
     try {
@@ -125,6 +130,7 @@ export default function App() {
         setActiveView={setActiveView}
         onOpenContact={() => setIsContactOpen(true)}
         onOpenBrief={() => setIsBriefOpen(true)}
+        onOpenResume={() => setIsResumeOpen(true)}
         onOpenGitHubSync={() => setIsGitHubSyncOpen(true)}
         theme={theme}
         onToggleTheme={toggleTheme}
@@ -142,6 +148,7 @@ export default function App() {
               setActiveRole={setActiveRole}
               onOpenContact={() => setIsContactOpen(true)}
               onOpenBrief={() => setIsBriefOpen(true)}
+              onOpenResume={() => setIsResumeOpen(true)}
               language={language}
             />
 
@@ -173,6 +180,9 @@ export default function App() {
             {/* Experience & Academic Trajectory (WaDaCon & TU Clausthal) */}
             <ExperienceTimeline />
 
+            {/* Career Progression Trajectory & Impact Growth Line Chart (Recharts) */}
+            <CareerTrajectoryChartSection language={language} />
+
             {/* Academic Reference & Research Supervised by Prof. Dr. Christian Siemers */}
             <AcademicReferenceSection />
 
@@ -181,6 +191,9 @@ export default function App() {
 
             {/* Dedicated Technology News & Google Search Grounding Block */}
             <TechNewsSection language={language} />
+
+            {/* Profile Open & Visitor Telemetry Tracker Block */}
+            <VisitorTrackerBlock language={language} />
 
             {/* Embedded Portfolio Tracker & Recruiter Hub */}
             <PortfolioTracker
@@ -193,6 +206,7 @@ export default function App() {
           <ClassicPortfolioView
             onOpenContact={() => setIsContactOpen(true)}
             onOpenBrief={() => setIsBriefOpen(true)}
+            onOpenResume={() => setIsResumeOpen(true)}
             language={language}
           />
         ) : (
@@ -230,9 +244,22 @@ export default function App() {
         onClose={() => setIsBriefOpen(false)}
       />
 
+      <ResumeExportModal
+        isOpen={isResumeOpen}
+        onClose={() => setIsResumeOpen(false)}
+        language={language}
+      />
+
       <GitHubSyncModal
         isOpen={isGitHubSyncOpen}
         onClose={() => setIsGitHubSyncOpen(false)}
+        language={language}
+      />
+
+      {/* Floating Interactive Navigation Dock & Progress Bar */}
+      <FloatingNavDock
+        onOpenResume={() => setIsResumeOpen(true)}
+        onOpenContact={() => setIsContactOpen(true)}
         language={language}
       />
 

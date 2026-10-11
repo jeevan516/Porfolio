@@ -523,105 +523,42 @@ Generated from Jeevan Dutta's verified portfolio.`;
           ref={videoContainerRef}
           className="relative rounded-3xl bg-slate-950 border border-slate-800/90 shadow-2xl shadow-black/80 overflow-hidden group"
         >
-          {/* Top Status Bar of Player */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/90 border-b border-slate-800 text-xs text-slate-400 backdrop-blur-md">
+          {/* Top Status Bar of Player - Clean Header keeping only EN | DE */}
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/95 border-b border-slate-800 text-xs text-slate-400 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
               </div>
-              <span className="font-mono text-slate-300 font-semibold tracking-wide flex items-center gap-1.5">
+              <span className="font-mono text-slate-200 font-semibold tracking-wide flex items-center gap-2">
                 <Video className="w-3.5 h-3.5 text-emerald-400" />
-                Jeevan Dutta · {language === 'de' ? 'Video-Pitch Präsentation' : 'Executive Pitch Stream'}
-              </span>
-              <span className="hidden md:inline px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold">
-                HD 1080p
+                <span>Jeevan Dutta · {language === 'de' ? 'Video-Pitch Präsentation' : 'Executive Pitch Stream'}</span>
               </span>
             </div>
 
-            {/* Top Right Controls within Player */}
-            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-              {/* Cloned Voice Confirmation Badge */}
-              <div 
-                className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/90 border border-emerald-500/40 text-[11px] font-mono text-emerald-400"
-                title={language === 'de' ? 'Stimme kalibriert: Männliche Stimme mit natürlichem Redefluss (Tonhöhe 0.95)' : 'Voice Cloned: Conversational Indian/Intl. English Cadence (Pitch 0.95 · Rate 0.96)'}
+            {/* Right: Only Clean EN | DE Language Toggle */}
+            <div className="flex items-center bg-slate-800/90 rounded-xl p-1 border border-slate-700/60 shadow-inner">
+              <button
+                onClick={() => handleLanguageToggle('en')}
+                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                  language === 'en'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
               >
-                <Mic className="w-3 h-3 text-emerald-400" />
-                <span>{language === 'de' ? 'Geklonte Stimme (0.95)' : 'Cloned Voice (0.95)'}</span>
-              </div>
-
-              {/* Visual Presentation Mode Switcher (Interview Avatar, Slides, Walking Graphic, Custom Embed) */}
-              <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700/60">
-                <button
-                  id="mode-interview-btn"
-                  onClick={() => setVisualMode('interview')}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
-                    visualMode === 'interview' 
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow-md shadow-emerald-500/30 font-extrabold' 
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title={language === 'de' ? 'Realistischer Interview-Avatar („Erzählen Sie von sich“)' : 'Realistic Interview Avatar ("Tell Me About Yourself")'}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{language === 'de' ? 'Interview-Avatar' : 'Interview Avatar'}</span>
-                </button>
-                <button
-                  id="mode-slides-btn"
-                  onClick={() => setVisualMode('slides')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
-                    visualMode === 'slides' 
-                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20' 
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title={language === 'de' ? 'Präsentationsfolien' : 'Keynote Slides'}
-                >
-                  <span>🎬</span>
-                  <span className="hidden sm:inline">{language === 'de' ? 'Folien' : 'Slides'}</span>
-                </button>
-                <button
-                  id="mode-walking-btn"
-                  onClick={() => setVisualMode('walking')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-bold transition-all ${
-                    visualMode === 'walking' 
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow-md shadow-emerald-500/30' 
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title={language === 'de' ? 'Grafik mit gehender Person & Trajektorie anzeigen' : 'Show animated walking person & trajectory graphics'}
-                >
-                  <Footprints className="w-3 h-3 text-cyan-400" />
-                  <span className="hidden sm:inline">{language === 'de' ? 'Gehende Person' : 'Walking Graphic'}</span>
-                </button>
-                <button
-                  id="mode-embed-btn"
-                  onClick={() => setVisualMode('embed')}
-                  className={`flex items-center gap-1 px-2 py-1 rounded text-[11px] font-bold transition-all ${
-                    visualMode === 'embed' 
-                      ? 'bg-cyan-500 text-slate-950 shadow-md' 
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                  title={language === 'de' ? 'Eigenen Video-Link einbinden' : 'Embed custom video URL'}
-                >
-                  <Tv className="w-3 h-3" />
-                  <span className="hidden sm:inline">{language === 'de' ? 'Video-URL' : 'Embed'}</span>
-                </button>
-              </div>
-
-              {/* Language Pill inside player */}
-              <div className="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700/60">
-                <button
-                  onClick={() => handleLanguageToggle('en')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold ${language === 'en' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
-                >
-                  EN
-                </button>
-                <button
-                  onClick={() => handleLanguageToggle('de')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold ${language === 'de' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
-                >
-                  DE
-                </button>
-              </div>
+                EN
+              </button>
+              <button
+                onClick={() => handleLanguageToggle('de')}
+                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+                  language === 'de'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                DE
+              </button>
             </div>
           </div>
 
