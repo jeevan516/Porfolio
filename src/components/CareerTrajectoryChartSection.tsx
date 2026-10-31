@@ -129,16 +129,16 @@ const TRAJECTORY_DATA: MilestonePoint[] = [
   {
     year: '2026+',
     displayYear: '2026 (Now)',
-    role: 'AI & ML Bootcamp · Ready for Work',
-    roleDe: 'KI- & ML-Bootcamp · Sofort Einsatzbereit',
+    role: 'neuefische Bootcamp (AI/ML/Data/SE) · Ready for Work',
+    roleDe: 'neuefische Bootcamp (KI/ML/Data/SE) · Sofort Einsatzbereit',
     company: 'Next Engineering Chapter',
     location: 'Across Germany',
     impactScore: 100,
     cycleReduction: 65,
     throughputK: 55,
     highlight: true,
-    keyAchievement: 'Attending AI & ML Bootcamp while available immediately for cloud infrastructure, industrial telemetry, and AI systems.',
-    keyAchievementDe: 'Im KI- & ML-Bootcamp und ab sofort einsatzbereit für Aufgaben in Cloud, Telemetrie, KI und verteilten Systemen.'
+    keyAchievement: 'Attending neuefische GmbH Bootcamp covering AI, ML, Data Science, Data Engineering & SE while available immediately across Germany.',
+    keyAchievementDe: 'Im Bootcamp bei neuefische GmbH (KI, ML, Data Science, Data Engineering & Software Engineering) und ab sofort einsatzbereit.'
   }
 ];
 
@@ -421,15 +421,15 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
                 {isDe ? 'Aktueller Status' : 'Immediate Readiness'}
               </span>
               <div className="text-base font-bold text-white font-display">
-                {isDe ? 'KI- & ML-Bootcamp · Sofort einsatzbereit' : 'AI & ML Bootcamp · Ready for Work'}
+                {isDe ? 'neuefische Bootcamp · Sofort einsatzbereit' : 'neuefische Bootcamp · Ready for Work'}
               </div>
               <div className="text-xs text-emerald-400 font-mono">
-                {isDe ? 'Ab sofort verfügbar · Deutschlandweit' : 'Available Immediately · Across Germany'}
+                {isDe ? 'AI · ML · Data Science · Data Eng · Software Engineering' : 'AI · ML · Data Science · Data Eng · Software Engineering'}
               </div>
               <p className="text-[11px] text-slate-300 leading-normal pt-1">
                 {isDe 
-                  ? 'Vertieft derzeit State-of-the-Art Machine Learning & KI im intensiven Bootcamp. Sofort einsatzbereit für DevOps, Observability, verteilte Systeme und Softwarearchitektur.' 
-                  : 'Currently attending an intensive AI & Machine Learning Bootcamp while available immediately for cloud infrastructure, observability pipelines, and AI systems architecture.'}
+                  ? 'Vertieft derzeit State-of-the-Art KI, Machine Learning, Data Science, Data Engineering und Softwarearchitektur bei neuefische GmbH. Sofort einsatzbereit für Vollzeit- und Projektrollen in Deutschland.' 
+                  : 'Currently upskilling at neuefische GmbH across AI, Machine Learning, Data Science, Data Engineering, and production Software Engineering. Available immediately for roles across Germany.'}
               </p>
             </div>
           </div>

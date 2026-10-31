@@ -319,7 +319,7 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
               Ready for Work
             </div>
             <p className="text-[11px] text-slate-300 font-mono">
-              {isDe ? 'Im KI- & ML-Bootcamp · Sofort verfügbar' : 'In AI & ML Bootcamp · Available immediately'}
+              {isDe ? 'neuefische Bootcamp (KI, Data & SE) · Sofort verfügbar' : 'neuefische Bootcamp (AI, Data & SE) · Available immediately'}
             </p>
           </motion.div>
 

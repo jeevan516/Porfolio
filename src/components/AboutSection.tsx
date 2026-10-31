@@ -89,6 +89,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
                   {t.availDesc}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[10px] text-cyan-300">
+                  <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-600/50 text-emerald-300 font-semibold">
+                    🎓 neuefische GmbH: AI, ML, Data Science, Data Eng & SE
+                  </span>
                   <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-emerald-300 font-semibold">
                     ⚡ Ready for Work: Full-Time / Contract
                   </span>

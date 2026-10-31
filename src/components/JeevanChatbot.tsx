@@ -127,13 +127,19 @@ I can assist you with verified details about:
 How can I help with your recruitment or technical inquiry?`;
     }
 
-    // AI & ML Bootcamp query
-    if (q.includes('bootcamp') || q.includes('upskill') || q.includes('training') || q.includes('learning')) {
-      return `Jeevan is currently attending an intensive AI and Machine Learning Bootcamp to deepen advanced neural network architectures, generative AI workflows, and production MLOps.
+    // Bootcamp & Upskilling query (neuefische GmbH)
+    if (q.includes('bootcamp') || q.includes('neuefische') || q.includes('upskill') || q.includes('training') || q.includes('data science') || q.includes('data engineering') || q.includes('software engineering')) {
+      return `Jeevan is currently attending an intensive professional engineering bootcamp with **neuefische GmbH** (School and Pool for Digital Talent).
 
-Key Details:
-• Focus: Deep learning, sequence forecasting, transformer architectures, PyTorch, and cloud AI pipelines.
-• Status: Available immediately and ready for full-time or contract work across Germany (On-site, Hybrid, or Remote).
+Curriculum & Core Modules:
+• 🧠 Artificial Intelligence & Machine Learning: Deep learning, transformer architectures, sequence forecasting, and neural network training with PyTorch & TensorFlow.
+• 📊 Data Science: Advanced statistical modeling, exploratory data analysis, feature engineering, and predictive algorithms.
+• ⚙️ Data Engineering: Scalable ETL/ELT pipelines, time-series data streams, SQL modeling, InfluxDB, vector search, and data warehouse integration.
+• 💻 Software Engineering: Clean architecture, object-oriented design, modular REST microservices, automated testing, Docker CI/CD, and production deployment.
+
+Current Status & Readiness:
+• Location: Hamburg, Germany (Available for on-site, hybrid, or remote).
+• Availability: Available immediately and ready for work across Germany (Full-time / Contract).
 • Work Authorization: Unrestricted German work authorization.
 
 Would you like to schedule an introductory interview or review his resume?`;

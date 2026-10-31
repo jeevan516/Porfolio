@@ -8,8 +8,8 @@ export const PERSONAL_INFO = {
   currentCompany: 'WaDaCon GmbH (Former)',
   currentRole: 'IT Specialist & AI Engineer',
   location: 'Hamburg, Germany (Open to Relocation / Remote)',
-  status: 'Attending AI & ML Bootcamp · Available Immediately & Ready for Work',
-  availability: 'Available Immediately & Ready for Work · Currently Attending AI & Machine Learning Bootcamp · Germany-Wide / Remote',
+  status: 'Bootcamp at neuefische GmbH (AI, ML, Data Science, Data Eng & SE) · Ready for Work',
+  availability: 'Available Immediately & Ready for Work · Attending Bootcamp at neuefische GmbH (AI, Machine Learning, Data Science, Data Engineering & Software Engineering) · Germany-Wide / Remote',
   email: 'jeevannaidu516@gmail.com',
   phone: '+49 176 36369761',
   linkedin: 'https://www.linkedin.com/in/jeevan-dutta',
@@ -19,7 +19,7 @@ export const PERSONAL_INFO = {
   stats: [
     { label: 'Academic Credential', value: 'MSc Informatics', detail: 'TU Clausthal (Grade 2023)' },
     { label: 'Master Thesis', value: 'ZanderLink 4-Node', detail: 'Supervised by Prof. Dr. Siemers' },
-    { label: 'Career Status', value: 'Ready for Work', detail: 'AI & ML Bootcamp · Available Immediately' },
+    { label: 'Active Bootcamp', value: 'neuefische GmbH', detail: 'AI, ML, Data Science, Data Eng & SE' },
     { label: 'Incident TTR Reduction', value: '60% Quicker', detail: 'Grafana + InfluxDB Alerting' },
   ],
 };
@@ -540,6 +540,32 @@ export const CERTIFICATIONS: Certification[] = [
 ];
 
 export const EDUCATION_DATA: EducationItem[] = [
+  {
+    id: 'neuefische-bootcamp',
+    degree: 'Professional Bootcamp: AI, Machine Learning, Data Science & Software Engineering',
+    fieldOfStudy: 'Artificial Intelligence, Machine Learning, Data Science, Data Engineering & Modern Software Engineering',
+    institution: 'neuefische GmbH — School and Pool for Digital Talent',
+    location: 'Germany (Hybrid / Remote)',
+    period: 'Current / In Progress (2026)',
+    skillsAcquired: [
+      'Artificial Intelligence & Machine Learning',
+      'Data Science & Predictive Modeling',
+      'Data Engineering Pipelines (ETL/ELT)',
+      'Software Engineering & Clean Architecture',
+      'Python, PyTorch & Scikit-Learn',
+      'SQL, Vector Databases & RAG',
+      'Docker, Git, CI/CD & Production MLOps',
+      'REST APIs & Microservices'
+    ],
+    description: 'Intensive professional engineering bootcamp by neuefische GmbH covering advanced machine learning, predictive data science, scalable data engineering pipelines, and production-grade software engineering architectures.',
+    highlights: [
+      'Hands-on machine learning, transformer architectures, and deep neural network training using Python and PyTorch.',
+      'Scalable data engineering practices: structuring robust data pipelines, data transformation, SQL modeling, and storage engines.',
+      'Applied software engineering: clean code principles, test-driven development, modular backend APIs, and CI/CD container automation.',
+      'Active learning in parallel with immediate availability for full-time roles across Germany.'
+    ],
+    verifiedOnLinkedIn: true,
+  },
   {
     id: 'tu-clausthal',
     degree: "Master's degree, Informatics (M.Sc. Informatik)",

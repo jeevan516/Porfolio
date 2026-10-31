@@ -1,9 +1,51 @@
 {
-  "totalVisits": 1483,
+  "totalVisits": 1489,
   "uniqueVisitors": 986,
-  "todayVisits": 43,
-  "lastUpdated": "2026-10-08T08:43:42.178Z",
+  "todayVisits": 49,
+  "lastUpdated": "2026-10-31T12:09:51.995Z",
   "recentVisits": [
+    {
+      "id": "v-1793448591995",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
+    {
+      "id": "v-1793448591993",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
+    {
+      "id": "v-1793448586891",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
+    {
+      "id": "v-1793448586887",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
+    {
+      "id": "v-1793448583934",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
+    {
+      "id": "v-1793448583932",
+      "timestamp": "Just now",
+      "source": "https://aistudio.google.com/",
+      "location": "Germany / International",
+      "roleInterest": "Full Profile Telemetry"
+    },
     {
       "id": "v-1791449022178",
       "timestamp": "Just now",

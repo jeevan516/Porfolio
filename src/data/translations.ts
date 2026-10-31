@@ -22,7 +22,7 @@ export const TRANSLATIONS = {
     },
     hero: {
       statusLabel: 'Status:',
-      statusValue: 'Attending AI & ML Bootcamp · Available Immediately & Ready for Work',
+      statusValue: 'Bootcamp at neuefische GmbH (AI, ML, Data Science, Data Eng & SE) · Ready for Work',
       locationLabel: 'Location:',
       locationValue: 'Hamburg, Germany (Open to Relocation / Remote)',
       name: 'Jeevan Dutta',
@@ -33,7 +33,7 @@ export const TRANSLATIONS = {
       headlineData: 'Data Intelligence',
       headlineAnd: '&',
       headlineInfra: 'IT Engineering',
-      bio: "Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. With an MSc in Informatics from TU Clausthal (Master's thesis under Prof. Dr. Christian Siemers) and over a decade of hands-on experience, I specialize in transforming complex technical processes into streamlined, impactful outcomes. Currently attending an intensive AI and Machine Learning Bootcamp — available immediately & ready for work across Germany.",
+      bio: "Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. With an MSc in Informatics from TU Clausthal (Master's thesis under Prof. Dr. Christian Siemers) and over a decade of hands-on experience, I specialize in transforming complex technical processes into streamlined, impactful outcomes. Currently attending a rigorous professional Bootcamp at neuefische GmbH covering AI, Machine Learning, Data Science, Data Engineering & Software Engineering — available immediately & ready for work across Germany.",
       filterHeading: 'Filter Skills & Evidence by Hiring Discipline:',
       filterSub: 'Tailors projects & skill views below',
       allRoles: 'All Disciplines',
@@ -53,9 +53,9 @@ export const TRANSLATIONS = {
         thesis: 'Master Thesis',
         thesisVal: 'ZanderLink 4-Node',
         thesisDetail: 'Supervised by Prof. Dr. Siemers',
-        status: 'Career Status',
-        statusVal: 'Ready for Work',
-        statusDetail: 'AI & ML Bootcamp · Available Immediately',
+        status: 'Active Bootcamp',
+        statusVal: 'neuefische GmbH',
+        statusDetail: 'AI, ML, Data Science & SE · Available Now',
         ttr: 'Incident TTR Reduction',
         ttrVal: '60% Quicker',
         ttrDetail: 'Grafana + InfluxDB Alerting',
@@ -72,8 +72,8 @@ export const TRANSLATIONS = {
       pillar2Title: 'Resilient IT Infrastructure',
       pillar2Desc: 'Docker containerization, zero-trust Teleport SSH edge access, Prometheus scraping, and automated incident webhooks.',
       availTitle: 'Status: Available Immediately & Ready for Work',
-      availBadge: 'Attending AI & ML Bootcamp · Available Immediately',
-      availDesc: 'Currently attending an intensive AI & Machine Learning Bootcamp to deepen advanced neural architectures and MLOps. Fully authorized for employment across Germany, based in Hamburg, and ready for immediate onboarding in full-time or high-impact contract roles (On-site, Hybrid, or Remote).'
+      availBadge: 'Bootcamp @ neuefische GmbH · Available Immediately',
+      availDesc: 'Currently attending an intensive professional engineering bootcamp at neuefische GmbH covering Artificial Intelligence, Machine Learning, Data Science, Data Engineering pipelines, and modern Software Engineering. Fully authorized for employment across Germany, based in Hamburg, and ready for immediate onboarding in full-time or high-impact contract roles (On-site, Hybrid, or Remote).'
     },
     architecture: {
       tag: 'End-to-End System Architecture & High Availability',
@@ -156,7 +156,7 @@ export const TRANSLATIONS = {
     },
     hero: {
       statusLabel: 'Status:',
-      statusValue: 'Im KI- & ML-Bootcamp · Sofort verfügbar & einsatzbereit',
+      statusValue: 'Bootcamp bei neuefische GmbH (KI, ML, Data Science, Data Eng & SE) · Sofort einsatzbereit',
       locationLabel: 'Standort:',
       locationValue: 'Hamburg, Deutschland (Bereit für Vor-Ort / Hybrid / Remote)',
       name: 'Jeevan Dutta',
@@ -167,7 +167,7 @@ export const TRANSLATIONS = {
       headlineData: 'Datenintelligenz',
       headlineAnd: '&',
       headlineInfra: 'IT-Engineering',
-      bio: 'Ergebnisorientierter IT-Spezialist mit doppelter Kernkompetenz in Datenanalyse und IT-Engineering. Mit einem Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit bei Prof. Dr. Christian Siemers) und über zehn Jahren Praxiserfahrung überführe ich komplexe technische Abläufe in hochverfügbare, messbare Gesamtsysteme. Absolviert derzeit ein intensives KI- & Machine-Learning-Bootcamp – ab sofort einsatzbereit für neue Aufgaben in Deutschland.',
+      bio: 'Ergebnisorientierter IT-Spezialist mit doppelter Kernkompetenz in Datenanalyse und IT-Engineering. Mit einem Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit bei Prof. Dr. Christian Siemers) und über zehn Jahren Praxiserfahrung überführe ich komplexe technische Abläufe in hochverfügbare, messbare Gesamtsysteme. Absolviert derzeit ein praxisnahes Bootcamp bei der neuefische GmbH mit Fokus auf KI, Machine Learning, Data Science, Data Engineering & Software Engineering – ab sofort einsatzbereit für neue Aufgaben in Deutschland.',
       filterHeading: 'Kompetenzen & Nachweise nach Profil filtern:',
       filterSub: 'Passt die Projekt- & Skill-Ansichten unten an',
       allRoles: 'Alle Fachbereiche',
@@ -187,9 +187,9 @@ export const TRANSLATIONS = {
         thesis: 'Masterarbeit',
         thesisVal: 'ZanderLink 4-Knoten',
         thesisDetail: 'Betreut durch Prof. Dr. Siemers',
-        status: 'Karrierestatus',
-        statusVal: 'Sofort einsatzbereit',
-        statusDetail: 'KI- & ML-Bootcamp · Ab sofort',
+        status: 'Aktives Bootcamp',
+        statusVal: 'neuefische GmbH',
+        statusDetail: 'KI, ML, Data Science & SE · Sofort',
         ttr: 'Störungsbehebung (MTTR)',
         ttrVal: '60% Schneller',
         ttrDetail: 'Grafana + InfluxDB Alerting',
@@ -206,8 +206,8 @@ export const TRANSLATIONS = {
       pillar2Title: 'Resiliente IT-Infrastruktur',
       pillar2Desc: 'Docker-Containerisierung, Zero-Trust-SSH mit Teleport, Prometheus-Scraping und automatisierte Incident-Webhooks.',
       availTitle: 'Status: Sofort verfügbar & einsatzbereit',
-      availBadge: 'Im KI- & ML-Bootcamp · Sofort einsatzbereit',
-      availDesc: 'Absolviert derzeit ein intensives Bootcamp für Künstliche Intelligenz & Machine Learning zur Vertiefung moderner ML-Produktionsmodelle. Uneingeschränkte Arbeitserlaubnis in Deutschland, wohnhaft in Hamburg und ab sofort einsatzbereit für neue Vollzeit- oder Projektaufgaben (Vor-Ort, Hybrid oder Remote).'
+      availBadge: 'Bootcamp @ neuefische GmbH · Sofort einsatzbereit',
+      availDesc: 'Absolviert derzeit ein intensives Software- und Data-Bootcamp bei der neuefische GmbH (Künstliche Intelligenz, Machine Learning, Data Science, Data Engineering Pipelines und moderne Softwareentwicklung). Uneingeschränkte Arbeitserlaubnis in Deutschland, wohnhaft in Hamburg und ab sofort einsatzbereit für neue Vollzeit- oder Projektaufgaben (Vor-Ort, Hybrid oder Remote).'
     },
     architecture: {
       tag: 'End-to-End Systemarchitektur & Hochverfügbarkeit',

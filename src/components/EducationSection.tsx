@@ -76,12 +76,15 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
         <div className="space-y-8">
           {EDUCATION_DATA.map((edu) => {
             const isMaster = edu.id === 'tu-clausthal';
+            const isBootcamp = edu.id === 'neuefische-bootcamp';
 
             return (
               <div
                 key={edu.id}
                 className={`p-6 sm:p-8 rounded-3xl border transition-all ${
-                  isMaster
+                  isBootcamp
+                    ? 'bg-gradient-to-br from-slate-900/90 via-emerald-950/20 to-cyan-950/30 border-emerald-500/50 shadow-xl'
+                    : isMaster
                     ? 'bg-gradient-to-br from-slate-900/90 via-purple-950/20 to-slate-950/90 border-purple-500/40 shadow-xl'
                     : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
                 }`}
@@ -90,26 +93,40 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-6">
                   <div className="flex items-start gap-4">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                      isMaster 
+                      isBootcamp
+                        ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300'
+                        : isMaster 
                         ? 'bg-purple-950/80 border-purple-500/50 text-purple-300' 
                         : 'bg-slate-800 border-slate-700 text-cyan-400'
                     }`}>
-                      {isMaster ? <Cpu className="w-6 h-6" /> : <School className="w-6 h-6" />}
+                      {isBootcamp ? <Sparkles className="w-6 h-6" /> : isMaster ? <Cpu className="w-6 h-6" /> : <School className="w-6 h-6" />}
                     </div>
 
                     <div>
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider border ${
-                          isMaster
+                          isBootcamp
+                            ? 'bg-emerald-950 text-emerald-300 border-emerald-600/60'
+                            : isMaster
                             ? 'bg-purple-950 text-purple-300 border-purple-700/60'
                             : 'bg-cyan-950 text-cyan-300 border-cyan-800/60'
                         }`}>
-                          {isMaster ? 'Master of Science (M.Sc.)' : 'Bachelor of Science (B.Sc.)'}
+                          {isBootcamp 
+                            ? (isDe ? 'Professionelles Bootcamp (Aktuell)' : 'Professional Engineering Bootcamp (Active)')
+                            : isMaster 
+                            ? 'Master of Science (M.Sc.)' 
+                            : 'Bachelor of Science (B.Sc.)'}
                         </span>
                         {edu.verifiedOnLinkedIn && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-full">
                             <CheckCircle2 className="w-3 h-3" />
                             LinkedIn Verified
+                          </span>
+                        )}
+                        {isBootcamp && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-700/60 px-2.5 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                            {isDe ? 'Sofort einsatzbereit' : 'Available Immediately'}
                           </span>
                         )}
                       </div>

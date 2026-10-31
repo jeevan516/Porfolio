@@ -98,7 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact, onOpenBrief }) =>
               </div>
             </div>
             <p className="text-slate-400 text-xs leading-relaxed">
-              IT Specialist & AI Engineer based in Hamburg, Germany. Attending AI & ML Bootcamp · Available immediately & ready for work.
+              IT Specialist & AI Engineer based in Hamburg, Germany. Bootcamp at neuefische GmbH (AI, Data Science & SE) · Available immediately & ready for work.
             </p>
             <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-400">
               <Clock className="w-3.5 h-3.5" />

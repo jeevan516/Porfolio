@@ -77,10 +77,10 @@ export const ExperienceTimeline: React.FC = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                Active Upskilling · Ready for Work
+                Bootcamp @ neuefische GmbH · Ready for Work
               </div>
               <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                Attending AI & Machine Learning Bootcamp · Available Immediately Across Germany
+                AI, ML, Data Science, Data Engineering & SE · Available Immediately Across Germany
               </p>
             </div>
           </div>
