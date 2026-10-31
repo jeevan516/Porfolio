@@ -30,6 +30,12 @@ import {
   Download
 } from 'lucide-react';
 
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
+const BTN_PRIMARY = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition-colors ${FOCUS_RING}`;
+const BTN_SECONDARY = `inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 bg-slate-900/60 text-slate-200 hover:text-white text-sm font-semibold transition-colors ${FOCUS_RING}`;
+const BTN_TEXT = `inline-flex items-center gap-1.5 rounded-md text-slate-400 hover:text-emerald-400 transition-colors ${FOCUS_RING}`;
+
 interface HeroProps {
   activeRole: TargetRole;
   setActiveRole: (role: TargetRole) => void;
@@ -83,10 +89,26 @@ export const Hero: React.FC<HeroProps> = ({
     return () => clearTimeout(timer);
   }, [typedRole, isDeletingRole, roleIdx]);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(PERSONAL_INFO.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2000);
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(PERSONAL_INFO.email);
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } catch {
+      // Clipboard unavailable (insecure context / permissions) — fall back to the mail client
+      window.location.href = `mailto:${PERSONAL_INFO.email}`;
+    }
+  };
+
+  /** Smooth-scroll to a section, accounting for the sticky header height. */
+  const scrollToSection = (e: React.MouseEvent, id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    playTactileClick();
+    const header = document.querySelector('header');
+    const offset = (header instanceof HTMLElement ? header.offsetHeight : 80) + 8;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
   };
 
   return (
@@ -101,18 +123,17 @@ export const Hero: React.FC<HeroProps> = ({
         
         {/* Top Announcement Pill */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/95 border border-emerald-500/40 text-xs text-slate-300 shadow-lg shadow-emerald-500/10 backdrop-blur-md">
-            <span className="relative flex h-2.5 w-2.5">
+          <div className="inline-flex items-start sm:items-center gap-2.5 px-4 py-1.5 rounded-2xl sm:rounded-full bg-slate-900/90 border border-emerald-500/40 text-xs text-slate-300 backdrop-blur-md max-w-full">
+            <span className="relative flex h-2 w-2 shrink-0 mt-1 sm:mt-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="font-semibold text-white font-mono uppercase tracking-wider text-[11px]">{t.statusLabel}</span>
-            <span className="text-emerald-400 font-semibold">{t.statusValue}</span>
+            <span className="text-emerald-300 font-medium">{t.statusValue}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-1.5 text-xs text-slate-400">
             <span>{t.locationLabel}</span>
-            <span className="text-slate-200 font-semibold">{language === 'de' ? 'Hamburg, Deutschland (Vor-Ort / Hybrid / Remote)' : PERSONAL_INFO.location}</span>
+            <span className="text-slate-200 font-medium">{language === 'de' ? 'Hamburg, Deutschland (Vor-Ort / Hybrid / Remote)' : PERSONAL_INFO.location}</span>
           </div>
         </div>
 
@@ -147,7 +168,7 @@ export const Hero: React.FC<HeroProps> = ({
                     <h2 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">
                       {PERSONAL_INFO.name}
                     </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium">
                       {t.degreeBadge}
                     </span>
                   </div>
@@ -188,7 +209,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                   {t.filterHeading}
                 </span>
-                <span className="text-[11px] font-mono text-slate-500">{t.filterSub}</span>
+                <span className="hidden sm:inline text-[11px] text-slate-500">{t.filterSub}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -208,18 +229,18 @@ export const Hero: React.FC<HeroProps> = ({
                         playTactileClick();
                         setActiveRole(item.id as TargetRole);
                       }}
-                      whileHover={{ scale: 1.04 }}
+                      aria-pressed={isActive}
                       whileTap={{ scale: 0.96 }}
-                      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors z-10 ${
+                      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors z-10 ${FOCUS_RING} ${
                         isActive
-                          ? 'text-slate-950 font-bold'
-                          : 'bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
+                          ? 'text-slate-950'
+                          : 'bg-slate-800/70 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
                       }`}
                     >
                       {isActive && (
                         <motion.div
                           layoutId="activeHeroRolePill"
-                          className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl -z-10 shadow-md shadow-emerald-500/20"
+                          className="absolute inset-0 bg-emerald-500 rounded-lg -z-10"
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         />
                       )}
@@ -232,82 +253,64 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <motion.a
-                href="#video-portfolio"
-                id="hero-watch-video-btn"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all group"
-              >
-                <div className="w-5 h-5 rounded-full bg-slate-950/20 flex items-center justify-center">
-                  <Play className="w-3 h-3 fill-slate-950 ml-0.5 text-slate-950 group-hover:scale-110 transition-transform" />
-                </div>
-                <span>{t.watchVideo}</span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-950/20 text-slate-950 font-bold border border-slate-950/30">
-                  {language.toUpperCase()}
-                </span>
-              </motion.a>
-
-              <motion.a
-                href="#observability"
-                id="hero-load-balancers-btn"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-emerald-500/30 hover:border-emerald-400 text-sm font-semibold transition-all group"
-              >
-                <Network className="w-4 h-4 text-emerald-400 group-hover:rotate-12 transition-transform" />
-                <span>{language === 'de' ? 'Load Balancer & Studio' : 'Load Balancers & Studio'}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              </motion.a>
-
-              <motion.button
-                id="hero-contact-btn"
-                onClick={onOpenContact}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/90 text-sm font-semibold transition-all hover:border-emerald-500/40"
-              >
-                <Mail className="w-4 h-4 text-emerald-400" />
-                <span>{t.hireJeevan}</span>
-              </motion.button>
-
-              <motion.button
-                id="hero-brief-btn"
-                onClick={onOpenBrief}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/90 text-sm font-semibold transition-all"
-              >
-                <FileText className="w-4 h-4 text-cyan-400" />
-                <span>{t.briefBtn}</span>
-              </motion.button>
-
-              {onOpenResume && (
-                <motion.button
-                  id="hero-resume-btn"
-                  onClick={onOpenResume}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-emerald-300 hover:text-white border border-emerald-500/40 text-sm font-semibold transition-all hover:border-emerald-400 shadow-lg shadow-emerald-500/10"
-                  title={language === 'de' ? 'Lebenslauf als PDF exportieren' : 'Export and download CV as PDF'}
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href="#video-portfolio"
+                  id="hero-watch-video-btn"
+                  onClick={(e) => scrollToSection(e, 'video-portfolio')}
+                  className={`${BTN_PRIMARY} group`}
                 >
-                  <Download className="w-4 h-4 text-emerald-400" />
-                  <span>{language === 'de' ? 'CV (PDF)' : 'Download CV (PDF)'}</span>
-                </motion.button>
-              )}
+                  <Play className="w-4 h-4 fill-slate-950 group-hover:scale-110 transition-transform" />
+                  <span>{t.watchVideo}</span>
+                </a>
 
-              <motion.button
-                id="hero-copy-email-btn"
-                onClick={handleCopyEmail}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-1.5 px-3.5 py-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-mono transition-all"
-                title="Copy Email Address"
-              >
-                {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
-                <span>{copiedEmail ? t.copied : PERSONAL_INFO.email}</span>
-              </motion.button>
+                <button id="hero-contact-btn" onClick={onOpenContact} className={BTN_SECONDARY}>
+                  <Mail className="w-4 h-4 text-emerald-400" />
+                  <span>{t.hireJeevan}</span>
+                </button>
+
+                {onOpenResume && (
+                  <button
+                    id="hero-resume-btn"
+                    onClick={onOpenResume}
+                    className={BTN_SECONDARY}
+                    title={language === 'de' ? 'Lebenslauf als PDF exportieren' : 'Export and download CV as PDF'}
+                  >
+                    <Download className="w-4 h-4 text-emerald-400" />
+                    <span>{language === 'de' ? 'CV (PDF)' : 'Download CV'}</span>
+                  </button>
+                )}
+
+                <button id="hero-brief-btn" onClick={onOpenBrief} className={BTN_SECONDARY}>
+                  <FileText className="w-4 h-4 text-cyan-400" />
+                  <span>{t.briefBtn}</span>
+                </button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+                <a
+                  href="#observability"
+                  id="hero-load-balancers-btn"
+                  onClick={(e) => scrollToSection(e, 'observability')}
+                  className={`${BTN_TEXT} group`}
+                >
+                  <Network className="w-4 h-4 text-emerald-400 group-hover:rotate-12 transition-transform" />
+                  <span>{language === 'de' ? 'Load Balancer & Studio' : 'Load Balancers & Studio'}</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  id="hero-copy-email-btn"
+                  onClick={handleCopyEmail}
+                  className={`${BTN_TEXT} font-mono text-xs break-all`}
+                  aria-label={language === 'de' ? 'E-Mail-Adresse kopieren' : 'Copy email address'}
+                  title={language === 'de' ? 'E-Mail-Adresse kopieren' : 'Copy email address'}
+                >
+                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0" />}
+                  <span aria-live="polite">{copiedEmail ? t.copied : PERSONAL_INFO.email}</span>
+                </button>
+              </div>
             </div>
 
             {/* Quick KPI stats strip */}
@@ -325,7 +328,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <div className="text-[11px] font-semibold text-emerald-400">
                     {stat.label}
                   </div>
-                  <div className="text-[10px] text-slate-400 truncate">
+                  <div className="text-[11px] text-slate-400 truncate" title={stat.detail}>
                     {stat.detail}
                   </div>
                 </div>
@@ -339,11 +342,11 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="flex items-center justify-between p-1.5 rounded-xl bg-slate-900/90 border border-slate-800 flex-wrap gap-2">
               <span className="text-xs font-semibold text-slate-300 px-2 flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                Engineering Graphic:
+                {language === 'de' ? 'Visualisierung' : 'Visualization'}
               </span>
               <div className="flex items-center gap-1 text-xs">
                 {[
-                  { id: 'vlsi', label: 'VLSI Circuits (Siemers)', color: 'text-purple-300', activeBg: 'bg-purple-500/20 border-purple-500/40' },
+                  { id: 'vlsi', label: 'VLSI Circuits', color: 'text-purple-300', activeBg: 'bg-purple-500/20 border-purple-500/40' },
                   { id: 'neural', label: 'Deep Learning', color: 'text-emerald-300', activeBg: 'bg-emerald-500/20 border-emerald-500/40' },
                   { id: 'iot', label: 'Industrial IoT', color: 'text-cyan-300', activeBg: 'bg-cyan-500/20 border-cyan-500/40' },
                 ].map((tab) => {
@@ -356,9 +359,8 @@ export const Hero: React.FC<HeroProps> = ({
                         playTactileClick();
                         setActiveGraphic(tab.id as any);
                       }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative px-2.5 py-1 rounded-lg font-medium text-[11px] transition-colors ${
+                      aria-pressed={isActive}
+                      className={`relative px-2.5 py-1 rounded-lg font-medium text-xs transition-colors ${FOCUS_RING} ${
                         isActive ? `${tab.color} font-bold` : 'text-slate-400 hover:text-slate-200'
                       }`}
                     >

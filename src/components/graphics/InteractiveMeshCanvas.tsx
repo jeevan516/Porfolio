@@ -87,6 +87,8 @@ export const InteractiveMeshCanvas: React.FC = () => {
 
         if (a.x < 0 || a.x > width) a.vx *= -1;
         if (a.y < 0 || a.y > height) a.vy *= -1;
+        a.x = Math.max(0, Math.min(width, a.x));
+        a.y = Math.max(0, Math.min(height, a.y));
 
         // Subtle attraction to mouse
         const dxMouse = mouseX - a.x;
@@ -125,9 +127,10 @@ export const InteractiveMeshCanvas: React.FC = () => {
         }
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      if (!reduceMotion) animationFrameId = requestAnimationFrame(render);
     };
 
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     render();
 
     return () => {
@@ -141,6 +144,7 @@ export const InteractiveMeshCanvas: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className="absolute inset-0 w-full h-full pointer-events-none opacity-45 z-0"
     />
   );

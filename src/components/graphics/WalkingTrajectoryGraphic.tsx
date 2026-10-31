@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Pause, Compass, Navigation, Footprints, Sparkles, Activity } from 'lucide-react';
+import { Play, Pause, Footprints, GraduationCap, Factory, Brain, MapPin } from 'lucide-react';
 
 interface WalkingTrajectoryGraphicProps {
   language?: 'en' | 'de';
@@ -12,7 +12,9 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [isRunning, setIsRunning] = useState<boolean>(true);
+  const [isRunning, setIsRunning] = useState<boolean>(
+    () => typeof window === 'undefined' || !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  );
   const [walkSpeed, setWalkSpeed] = useState<'normal' | 'fast'>('normal');
   const [stepCount, setStepCount] = useState<number>(1420);
   const [activeMilestone, setActiveMilestone] = useState<number>(1);
@@ -24,7 +26,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       titleDe: 'TU Clausthal (MSc Informatik)',
       detailEn: 'Deterministic 4-Node VHDL Network · <12 µs Reaction Time',
       detailDe: 'Deterministisches 4-Knoten VHDL-Netzwerk · <12 µs Reaktionszeit',
-      icon: '🎓'
+      icon: GraduationCap
     },
     {
       id: 1,
@@ -32,7 +34,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       titleDe: 'WaDaCon GmbH Hamburg',
       detailEn: 'Industrial MRF IoT · -60% Incident Response MTTR',
       detailDe: 'Industrielles MRF IoT · -60% MTTR Reaktionszeit',
-      icon: '🏭'
+      icon: Factory
     },
     {
       id: 2,
@@ -40,7 +42,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       titleDe: 'KI & Trajektorienvorhersage',
       detailEn: 'Deep Learning LSTMs & Spatial-Temporal Sequence Modeling',
       detailDe: 'Deep Learning LSTMs & räumlich-zeitliche Sequenzmodelle',
-      icon: '🧠'
+      icon: Brain
     },
     {
       id: 3,
@@ -48,9 +50,19 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       titleDe: 'Karriereweg: Ab sofort verfügbar',
       detailEn: 'Ready for Immediate High-Impact Roles Across Germany',
       detailDe: 'Sofort einsatzbereit für anspruchsvolle Rollen bundesweit',
-      icon: '🇩🇪'
+      icon: MapPin
     }
   ];
+
+  // Refs so the animation loop reads live UI state without being torn down and restarted.
+  const runningRef = useRef(isRunning);
+  const speedRef = useRef(walkSpeed);
+  const stepsRef = useRef(stepCount);
+  const milestoneRef = useRef(activeMilestone);
+  runningRef.current = isRunning;
+  speedRef.current = walkSpeed;
+  stepsRef.current = stepCount;
+  milestoneRef.current = activeMilestone;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -61,14 +73,19 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
     if (!ctx) return;
 
     let animId: number;
-    let width = (canvas.width = Math.max(300, container.clientWidth || 600));
-    let height = (canvas.height = compact ? 220 : 320);
+    let width = 0;
+    const height = compact ? 220 : 320;
 
     const handleResize = () => {
       if (!container || !canvas) return;
-      width = canvas.width = Math.max(300, container.clientWidth || 600);
-      height = canvas.height = compact ? 220 : 320;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(240, container.clientWidth || 600);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
+    handleResize();
 
     const resizeObserver = new ResizeObserver(() => handleResize());
     resizeObserver.observe(container);
@@ -78,7 +95,9 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
     const particles: { x: number; y: number; vx: number; vy: number; alpha: number; size: number }[] = [];
 
     const render = () => {
-      frame++;
+      const isRunning = runningRef.current;
+      const walkSpeed = speedRef.current;
+      if (isRunning) frame++;
       ctx.clearRect(0, 0, width, height);
 
       // Cyber Grid perspective background
@@ -144,7 +163,8 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
           alpha: 0.9,
           isLeft
         });
-        setStepCount((prev) => prev + 1);
+        stepsRef.current += 1;
+        setStepCount(stepsRef.current);
 
         // Spawn futuristic sparks on step
         for (let p = 0; p < 4; p++) {
@@ -261,7 +281,8 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.strokeStyle = '#34d399';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(-10 * scale, -torsoHeight + 6 * scale, 8 * scale, 22 * scale, 3);
+      if (typeof ctx.roundRect === 'function') ctx.roundRect(-10 * scale, -torsoHeight + 6 * scale, 8 * scale, 22 * scale, 3);
+      else ctx.rect(-10 * scale, -torsoHeight + 6 * scale, 8 * scale, 22 * scale);
       ctx.fill();
       ctx.stroke();
 
@@ -395,23 +416,27 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.lineTo(targetX, targetY + 12);
       ctx.stroke();
 
+      // Label the destination with the selected milestone
+      const m = milestones[milestoneRef.current];
+      if (m) {
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(language === 'de' ? m.titleDe : m.titleEn, Math.min(width - 8, targetX + 40), targetY - 18);
+        ctx.textAlign = 'left';
+      }
+
       ctx.restore();
 
       // Top Header HUD Info
       ctx.fillStyle = '#10b981';
-      ctx.font = 'bold 11px monospace';
-      ctx.fillText(
-        language === 'de' ? '▶ LIVE-TRAJEKTORIE: BEWEGUNG & FORTSCHRITT' : '▶ LIVE TRAJECTORY: LOCOMOTION & PROGRESS',
-        14,
-        22
-      );
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.fillText(language === 'de' ? 'Trajektorie' : 'Trajectory', 14, 22);
 
       ctx.fillStyle = '#94a3b8';
-      ctx.font = '10px monospace';
+      ctx.font = '10px "JetBrains Mono", monospace';
       ctx.fillText(
-        language === 'de' 
-          ? `Geschwindigkeit: ${walkSpeed === 'fast' ? '1.9 m/s (Dynamisch)' : '1.3 m/s (Standard)'} · Schritte: ${stepCount}`
-          : `Velocity: ${walkSpeed === 'fast' ? '1.9 m/s (Dynamic)' : '1.3 m/s (Standard)'} · Steps: ${stepCount}`,
+        `${walkSpeed === 'fast' ? '1.9' : '1.3'} m/s · ${language === 'de' ? 'Schritte' : 'steps'} ${stepsRef.current}`,
         14,
         38
       );
@@ -425,27 +450,37 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       cancelAnimationFrame(animId);
       resizeObserver.disconnect();
     };
-  }, [isRunning, walkSpeed, compact, language]);
+  }, [compact, language]);
 
   return (
-    <div ref={containerRef} className="relative rounded-2xl bg-slate-950/90 border border-slate-800 overflow-hidden shadow-xl">
+    <div ref={containerRef} className="relative rounded-2xl bg-slate-950/80 border border-slate-800 overflow-hidden">
       {/* Canvas */}
-      <canvas ref={canvasRef} className="w-full block" />
+      <canvas
+        ref={canvasRef}
+        className="w-full block"
+        role="img"
+        aria-label={language === 'de' ? 'Animierte Trajektorienvorhersage' : 'Animated trajectory prediction'}
+      />
 
       {/* Floating HUD Controls */}
       <div className="absolute top-3 right-3 flex items-center gap-2">
         <button
+          type="button"
           onClick={() => setWalkSpeed(walkSpeed === 'normal' ? 'fast' : 'normal')}
-          className="px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono font-bold text-cyan-300 hover:text-white transition-colors"
-          title="Adjust walking speed"
+          aria-pressed={walkSpeed === 'fast'}
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono font-bold text-emerald-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+          title={language === 'de' ? 'Tempo umschalten' : 'Toggle pace'}
         >
-          {walkSpeed === 'normal' ? (language === 'de' ? '🚶 Tempo: Normal' : '🚶 Pace: 1x') : (language === 'de' ? '🏃 Tempo: Schnell' : '🏃 Pace: Fast')}
+          <Footprints className="w-3 h-3" aria-hidden="true" />
+          {walkSpeed === 'normal' ? '1x' : '2x'}
         </button>
 
         <button
+          type="button"
           onClick={() => setIsRunning(!isRunning)}
-          className="p-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-emerald-400 hover:text-white transition-colors"
-          title={isRunning ? 'Pause animation' : 'Resume animation'}
+          aria-label={isRunning ? 'Pause animation' : 'Resume animation'}
+          title={isRunning ? 'Pause' : 'Play'}
+          className="p-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-emerald-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
         >
           {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
         </button>
@@ -456,21 +491,24 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
         <div className="p-3 bg-slate-900/90 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-2">
           {milestones.map((m) => {
             const isCurrent = m.id === activeMilestone;
+            const Icon = m.icon;
             return (
               <button
                 key={m.id}
+                type="button"
+                aria-pressed={isCurrent}
                 onClick={() => setActiveMilestone(m.id)}
-                className={`p-2 rounded-xl text-left border transition-all ${
+                className={`p-2 rounded-xl text-left border transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                   isCurrent
-                    ? 'bg-emerald-950/40 border-emerald-500/60 ring-1 ring-emerald-500/30'
+                    ? 'bg-emerald-500/10 border-emerald-500/50'
                     : 'bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/60'
                 }`}
               >
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-white">
-                  <span>{m.icon}</span>
+                  <Icon className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />
                   <span className="truncate">{language === 'de' ? m.titleDe : m.titleEn}</span>
                 </div>
-                <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                <div className={`text-[10px] text-slate-400 mt-0.5 ${isCurrent ? 'line-clamp-2' : 'truncate'}`}>
                   {language === 'de' ? m.detailDe : m.detailEn}
                 </div>
               </button>

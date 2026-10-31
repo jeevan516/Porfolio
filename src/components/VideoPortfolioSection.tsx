@@ -175,6 +175,9 @@ export const CHAPTERS_DATA: Chapter[] = [
 
 const TOTAL_DURATION = 130; // 2 minutes 10 seconds total pitch
 
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
+
 export const VideoPortfolioSection: React.FC<VideoPortfolioSectionProps> = ({
   onOpenContact,
   onOpenBrief,
@@ -375,22 +378,40 @@ export const VideoPortfolioSection: React.FC<VideoPortfolioSectionProps> = ({
     }
   };
 
+  const canFullscreen =
+    typeof document !== 'undefined' && !!document.documentElement && typeof document.documentElement.requestFullscreen === 'function';
+
   const handleFullscreen = () => {
-    if (!videoContainerRef.current) return;
+    const el = videoContainerRef.current;
+    if (!el || !canFullscreen) return;
     if (!document.fullscreenElement) {
-      videoContainerRef.current.requestFullscreen().catch((err) => {
-        console.warn('Fullscreen request failed:', err);
-      });
+      el.requestFullscreen().catch((err) => console.warn('Fullscreen request failed:', err));
     } else {
       document.exitFullscreen().catch(console.warn);
     }
   };
 
-  const handleCopyShareLink = () => {
+  const handleReplay = () => {
+    setCurrentTime(0);
+    if (isPlaying && visualMode !== 'embed') {
+      const first = CHAPTERS_DATA[0];
+      playNarration(language === 'de' ? first.scriptDe : first.scriptEn, language, playbackSpeed);
+    }
+  };
+
+  const handleCopyShareLink = async () => {
     const url = `${window.location.origin}${window.location.pathname}#video-portfolio`;
-    navigator.clipboard.writeText(url);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
+        await navigator.share({ title: `${PERSONAL_INFO.name} · Video Pitch`, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      /* user cancelled share or clipboard unavailable */
+    }
   };
 
   const handleDownloadTranscript = () => {
@@ -418,8 +439,10 @@ Generated from Jeevan Dutta's verified portfolio.`;
     const a = document.createElement('a');
     a.href = url;
     a.download = `Jeevan_Dutta_Video_Portfolio_Script_${language.toUpperCase()}.txt`;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const formatTime = (seconds: number) => {
@@ -439,17 +462,9 @@ Generated from Jeevan Dutta's verified portfolio.`;
         {/* Section Header with High-Impact Badges and Bilingual Language Switcher */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2 border-b border-slate-800/80">
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
-                <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
-                Featured Video Pitch · {language === 'de' ? 'Video-Portfolio' : 'Video Portfolio'}
-              </span>
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/30">
-                2 min Executive Summary
-              </span>
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                High Audience Impact
-              </span>
+            <div className="inline-flex items-center gap-2 text-sm text-emerald-400 font-semibold">
+              <Radio className="w-4 h-4" />
+              {language === 'de' ? 'Video-Pitch · ca. 2 Min.' : 'Video Pitch · ~2 min'}
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
@@ -475,33 +490,30 @@ Generated from Jeevan Dutta's verified portfolio.`;
 
           {/* Primary Language Toggle Button (Prominently Styled) */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
-            <div className="p-1 rounded-2xl bg-slate-900 border-2 border-emerald-500/40 shadow-xl shadow-emerald-500/10 flex items-center">
-              <span className="text-xs font-mono text-slate-400 px-3 flex items-center gap-1.5 hidden sm:flex">
-                <Languages className="w-3.5 h-3.5 text-emerald-400" />
-                Language:
-              </span>
+            <div
+              role="group"
+              aria-label={language === 'de' ? 'Sprache' : 'Language'}
+              className="p-1 rounded-xl bg-slate-900 border border-slate-700 flex items-center"
+            >
+              <Languages className="w-4 h-4 text-emerald-400 mx-2 hidden sm:block" aria-hidden="true" />
               <button
                 id="toggle-lang-en"
                 onClick={() => handleLanguageToggle('en')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  language === 'en'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                    : 'text-slate-400 hover:text-white'
+                aria-pressed={language === 'en'}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${FOCUS_RING} ${
+                  language === 'en' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <span>🇬🇧</span>
                 <span>English</span>
               </button>
               <button
                 id="toggle-lang-de"
                 onClick={() => handleLanguageToggle('de')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  language === 'de'
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                    : 'text-slate-400 hover:text-white'
+                aria-pressed={language === 'de'}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${FOCUS_RING} ${
+                  language === 'de' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                <span>🇩🇪</span>
                 <span>Deutsch</span>
               </button>
             </div>
@@ -509,8 +521,9 @@ Generated from Jeevan Dutta's verified portfolio.`;
             {/* Quick Share Link */}
             <button
               onClick={handleCopyShareLink}
-              className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              className={`h-9 px-3 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-colors ${FOCUS_RING}`}
               title="Copy video link"
+              aria-label={copiedLink ? 'Link copied' : 'Share video link'}
             >
               {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-slate-400" />}
               <span className="hidden sm:inline">{copiedLink ? 'Copied' : 'Share'}</span>
@@ -524,46 +537,48 @@ Generated from Jeevan Dutta's verified portfolio.`;
           className="relative rounded-3xl bg-slate-950 border border-slate-800/90 shadow-2xl shadow-black/80 overflow-hidden group"
         >
           {/* Top Status Bar of Player - Clean Header keeping only EN | DE */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/95 border-b border-slate-800 text-xs text-slate-400 backdrop-blur-md">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-slate-900/95 border-b border-slate-800 text-xs text-slate-400 backdrop-blur-md">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="hidden sm:flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
               </div>
-              <span className="font-mono text-slate-200 font-semibold tracking-wide flex items-center gap-2">
-                <Video className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Jeevan Dutta · {language === 'de' ? 'Video-Pitch Präsentation' : 'Executive Pitch Stream'}</span>
+              <span className="text-slate-200 font-semibold flex items-center gap-2 min-w-0">
+                <Video className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span className="truncate">Jeevan Dutta · {language === 'de' ? 'Video-Pitch' : 'Video Pitch'}</span>
               </span>
             </div>
 
-            {/* Right: Only Clean EN | DE Language Toggle */}
-            <div className="flex items-center bg-slate-800/90 rounded-xl p-1 border border-slate-700/60 shadow-inner">
-              <button
-                onClick={() => handleLanguageToggle('en')}
-                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                  language === 'en'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => handleLanguageToggle('de')}
-                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                  language === 'de'
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                DE
-              </button>
+            {/* Right: presentation mode (interview avatar vs. keynote slides) */}
+            <div
+              role="group"
+              aria-label={language === 'de' ? 'Darstellung' : 'Presentation mode'}
+              className="flex items-center bg-slate-800/90 rounded-lg p-0.5 border border-slate-700/60 shrink-0"
+            >
+              {([
+                { id: 'interview', label: 'Interview' },
+                { id: 'slides', label: language === 'de' ? 'Folien' : 'Slides' },
+              ] as const).map((m) => {
+                const isActive = visualMode === m.id || (m.id === 'slides' && visualMode === 'walking');
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setVisualMode(m.id)}
+                    aria-pressed={isActive}
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${FOCUS_RING} ${
+                      isActive ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Player Screen Area */}
-          <div className="video-cinema-stage relative aspect-video sm:min-h-[460px] md:min-h-[520px] w-full bg-gradient-to-b from-[#060913] to-[#0c1222] flex flex-col justify-between overflow-hidden">
+          <div className="video-cinema-stage relative min-h-[620px] sm:min-h-[460px] md:min-h-[520px] sm:aspect-video w-full bg-gradient-to-b from-[#060913] to-[#0c1222] flex flex-col justify-between overflow-hidden">
             
             {visualMode === 'interview' ? (
               /* Realistic Avatar Studio Stage - Tell Me About Yourself Interview */
@@ -573,14 +588,8 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 onTogglePlay={handleTogglePlay}
                 activeChapter={activeChapter}
                 onSelectChapter={(idx) => {
-                  handleSeek(CHAPTERS_DATA[idx].startTime);
-                  if (isPlaying) {
-                    playNarration(
-                      language === 'de' ? CHAPTERS_DATA[idx].scriptDe : CHAPTERS_DATA[idx].scriptEn,
-                      language,
-                      playbackSpeed
-                    );
-                  }
+                  const chapter = CHAPTERS_DATA[idx];
+                  if (chapter) handleSelectChapter(chapter);
                 }}
                 currentTime={currentTime}
                 totalDuration={TOTAL_DURATION}
@@ -623,7 +632,7 @@ Generated from Jeevan Dutta's verified portfolio.`;
                   )}
                   <button
                     onClick={() => setVisualMode('slides')}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition-colors"
+                    className={`px-4 py-2 rounded-xl border border-slate-700 hover:border-slate-500 text-xs font-semibold text-white transition-colors ${FOCUS_RING}`}
                   >
                     Back to Keynote Slides
                   </button>
@@ -645,9 +654,9 @@ Generated from Jeevan Dutta's verified portfolio.`;
                   </div>
                   <button
                     onClick={() => setVisualMode('slides')}
-                    className="text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 transition-colors"
+                    className={`shrink-0 text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded-lg border border-slate-700 hover:border-slate-500 transition-colors ${FOCUS_RING}`}
                   >
-                    {language === 'de' ? 'Zurück zu Folien ➔' : 'Back to Slides ➔'}
+                    {language === 'de' ? 'Zurück zu Folien' : 'Back to slides'}
                   </button>
                 </div>
 
@@ -991,17 +1000,17 @@ Generated from Jeevan Dutta's verified portfolio.`;
                         <div className="flex flex-wrap justify-center gap-3 pt-2">
                           <button
                             onClick={onOpenContact}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/25 hover:scale-105 transition-transform"
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-colors ${FOCUS_RING}`}
                           >
                             <Mail className="w-4 h-4" />
-                            <span>{language === 'de' ? 'Jeevan kontaktieren (E-Mail Benachrichtigung)' : 'Contact Jeevan (Direct Email Alert)'}</span>
+                            <span>{language === 'de' ? 'Jeevan kontaktieren' : 'Contact Jeevan'}</span>
                           </button>
                           <button
                             onClick={onOpenBrief}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors"
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white text-sm font-semibold transition-colors ${FOCUS_RING}`}
                           >
                             <FileText className="w-4 h-4 text-cyan-400" />
-                            <span>{language === 'de' ? 'Executive Brief herunterladen' : 'Executive Brief & CV'}</span>
+                            <span>{language === 'de' ? 'Kurzprofil & CV' : 'Recruiter Brief & CV'}</span>
                           </button>
                         </div>
                       </div>
@@ -1028,14 +1037,13 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 <div className="absolute bottom-16 left-6 z-20 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/80 border border-emerald-500/30 backdrop-blur-md shadow-lg">
                   <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-300">
                     <Footprints className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>{language === 'de' ? 'Gehende Person:' : 'Walking Graphic:'}</span>
-                    <span className="text-emerald-400 font-bold">LIVE</span>
+                    <span>{language === 'de' ? 'Trajektorien-Grafik' : 'Trajectory graphic'}</span>
                   </div>
                   <button
                     onClick={() => setVisualMode('walking')}
-                    className="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[10px] font-mono border border-emerald-500/40 transition-colors"
+                    className={`px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] border border-emerald-500/40 transition-colors ${FOCUS_RING}`}
                   >
-                    {language === 'de' ? 'Vollbild anzeigen ↗' : 'View Full Graphic ↗'}
+                    {language === 'de' ? 'Grafik öffnen' : 'Open graphic'}
                   </button>
                 </div>
               </>
@@ -1044,7 +1052,7 @@ Generated from Jeevan Dutta's verified portfolio.`;
             {/* Live Audio Waveform Indicator (Shown while playing) */}
             {isPlaying && !isMuted && visualMode !== 'embed' && (
               <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 border border-emerald-500/40 text-emerald-400 text-xs font-mono backdrop-blur-md shadow-lg">
-                <span className="text-[10px] font-bold">🎙️ MALE VOICEOVER: {language === 'de' ? 'DEUTSCH' : 'ENGLISH'}</span>
+                <span className="text-[11px] font-semibold">{language === 'de' ? 'Sprecher · DE' : 'Narration · EN'}</span>
                 <div className="flex items-center gap-0.5 h-3">
                   <span className="w-0.5 h-2 bg-emerald-400 rounded-full animate-pulse" />
                   <span className="w-0.5 h-3 bg-emerald-400 rounded-full animate-bounce" />
@@ -1055,13 +1063,14 @@ Generated from Jeevan Dutta's verified portfolio.`;
             )}
 
             {/* Central Play/Pause Watermark Overlay when paused */}
-            {!isPlaying && visualMode !== 'embed' && (
+            {!isPlaying && visualMode !== 'embed' && visualMode !== 'interview' && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/40 backdrop-blur-[2px]">
                 <button
                   id="video-play-center-btn"
                   onClick={handleTogglePlay}
-                  className="group relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all"
-                  title="Play Video Portfolio"
+                  className={`group relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-2xl shadow-emerald-500/30 active:scale-95 transition-all ${FOCUS_RING}`}
+                  title="Play video pitch"
+                  aria-label="Play video pitch"
                 >
                   <span className="absolute -inset-2 rounded-full border-2 border-emerald-400/50 animate-ping opacity-60" />
                   <Play className="w-8 h-8 sm:w-10 sm:h-10 fill-slate-950 ml-1 text-slate-950" />
@@ -1087,6 +1096,7 @@ Generated from Jeevan Dutta's verified portfolio.`;
                   step="0.5"
                   value={currentTime}
                   onChange={handleSeek}
+                  aria-label={language === 'de' ? 'Wiedergabeposition' : 'Seek'}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400 hover:h-2 transition-all"
                 />
               </div>
@@ -1104,23 +1114,27 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 <button
                   id="video-play-bar-btn"
                   onClick={handleTogglePlay}
-                  className="p-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all shadow-md shadow-emerald-500/20"
+                  className={`p-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors ${FOCUS_RING}`}
                   title={isPlaying ? 'Pause' : 'Play'}
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause className="w-4 h-4 fill-slate-950" /> : <Play className="w-4 h-4 fill-slate-950 ml-0.5" />}
                 </button>
 
                 <button
-                  onClick={() => setCurrentTime(0)}
-                  className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors"
+                  onClick={handleReplay}
+                  className={`p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors ${FOCUS_RING}`}
                   title="Replay from start"
+                  aria-label="Replay from start"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={() => setIsMuted(!isMuted)}
-                  className={`p-2 rounded-xl transition-colors ${
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  aria-pressed={isMuted}
+                  className={`p-2 rounded-xl transition-colors ${FOCUS_RING} ${
                     isMuted ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300'
                   }`}
                   title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
@@ -1138,14 +1152,16 @@ Generated from Jeevan Dutta's verified portfolio.`;
               </div>
 
               {/* Right Controls: Speed, CC, Language & Fullscreen */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {/* Playback Speed selector */}
                 <div className="flex items-center bg-slate-800 rounded-xl p-0.5 border border-slate-700">
                   {[1, 1.25, 1.5].map((spd) => (
                     <button
                       key={spd}
                       onClick={() => setPlaybackSpeed(spd)}
-                      className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold ${
+                      aria-pressed={playbackSpeed === spd}
+                      aria-label={`Playback speed ${spd}x`}
+                      className={`px-2 py-0.5 rounded-lg text-[11px] font-mono font-semibold ${FOCUS_RING} ${
                         playbackSpeed === spd ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
                       }`}
                     >
@@ -1157,7 +1173,9 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 {/* Subtitle Toggle */}
                 <button
                   onClick={() => setShowSubtitles(!showSubtitles)}
-                  className={`p-2 rounded-xl transition-colors ${
+                  aria-label="Toggle subtitles"
+                  aria-pressed={showSubtitles}
+                  className={`p-2 rounded-xl transition-colors ${FOCUS_RING} ${
                     showSubtitles ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'
                   }`}
                   title="Toggle Subtitles / CC"
@@ -1169,21 +1187,25 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 <button
                   id="video-player-lang-toggle"
                   onClick={() => handleLanguageToggle(language === 'en' ? 'de' : 'en')}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-white transition-colors"
-                  title="Switch Language"
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white transition-colors ${FOCUS_RING}`}
+                  title={language === 'en' ? 'Auf Deutsch umschalten' : 'Switch to English'}
+                  aria-label={language === 'en' ? 'Auf Deutsch umschalten' : 'Switch to English'}
                 >
-                  <span>{language === 'en' ? '🇬🇧 EN' : '🇩🇪 DE'}</span>
-                  <span className="text-[10px] font-mono text-emerald-400">⇄</span>
+                  <Languages className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-mono">{language === 'en' ? 'EN' : 'DE'}</span>
                 </button>
 
-                {/* Fullscreen */}
-                <button
-                  onClick={handleFullscreen}
-                  className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors"
-                  title="Full Screen"
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </button>
+                {/* Fullscreen (not supported on iOS Safari for non-video elements) */}
+                {canFullscreen && (
+                  <button
+                    onClick={handleFullscreen}
+                    className={`p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors ${FOCUS_RING}`}
+                    title="Full screen"
+                    aria-label="Toggle full screen"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
             </div>
@@ -1196,10 +1218,10 @@ Generated from Jeevan Dutta's verified portfolio.`;
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-semibold text-slate-200 flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-emerald-400" />
-              {language === 'de' ? 'Kapitel & Sprungmarken:' : 'Jump to Chapter / Timeline Index:'}
+              {language === 'de' ? 'Kapitel' : 'Chapters'}
             </span>
-            <span className="font-mono text-slate-500">
-              {language === 'de' ? 'Klicken zum direkten Anspringen' : 'Click any chapter to jump'}
+            <span className="hidden sm:inline text-slate-500">
+              {language === 'de' ? 'Klicken zum Anspringen' : 'Click a chapter to jump'}
             </span>
           </div>
 
@@ -1210,7 +1232,8 @@ Generated from Jeevan Dutta's verified portfolio.`;
                 <button
                   key={ch.id}
                   onClick={() => handleSelectChapter(ch)}
-                  className={`p-3 rounded-2xl text-left border transition-all ${
+                  aria-current={isActive ? 'true' : undefined}
+                  className={`p-3 rounded-2xl text-left border transition-all ${FOCUS_RING} ${
                     isActive
                       ? 'bg-slate-900 border-emerald-500/70 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40'
                       : 'bg-slate-900/60 hover:bg-slate-900 border-slate-800/80'
@@ -1220,7 +1243,7 @@ Generated from Jeevan Dutta's verified portfolio.`;
                     <span className={isActive ? 'text-emerald-400 font-bold' : 'text-slate-500'}>
                       {ch.number} · {formatTime(ch.startTime)}
                     </span>
-                    <span className={`px-1.5 py-0.2 rounded text-[9px] ${
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] ${
                       isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'
                     }`}>
                       {language === 'de' ? ch.tagDe : ch.tagEn}
@@ -1239,7 +1262,7 @@ Generated from Jeevan Dutta's verified portfolio.`;
         </div>
 
         {/* Bilingual Transcript & Script Download Hub */}
-        <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800/90 space-y-4">
+        <div className="p-4 sm:p-6 rounded-3xl bg-slate-900/80 border border-slate-800/90 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div className="space-y-1">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -1254,26 +1277,10 @@ Generated from Jeevan Dutta's verified portfolio.`;
             </div>
 
             <div className="flex items-center gap-2.5">
-              {/* Language Switch for Transcript */}
-              <div className="p-1 rounded-xl bg-slate-800 border border-slate-700 flex items-center">
-                <button
-                  onClick={() => handleLanguageToggle('en')}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold ${language === 'en' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => handleLanguageToggle('de')}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold ${language === 'de' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}
-                >
-                  Deutsch
-                </button>
-              </div>
-
               {/* Download Script Button */}
               <button
                 onClick={handleDownloadTranscript}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors"
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white text-xs font-semibold transition-colors ${FOCUS_RING}`}
               >
                 <Download className="w-3.5 h-3.5 text-emerald-400" />
                 <span>{language === 'de' ? 'Skript (.txt) herunterladen' : 'Download Script (.txt)'}</span>
@@ -1284,42 +1291,47 @@ Generated from Jeevan Dutta's verified portfolio.`;
           {/* Transcript Paragraphs with Timestamps */}
           <div className="space-y-3 max-h-72 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-700">
             {CHAPTERS_DATA.map((ch) => (
-              <div 
+              <button
+                type="button"
                 key={ch.id}
                 onClick={() => handleSelectChapter(ch)}
-                className={`p-3.5 rounded-xl border cursor-pointer transition-colors ${
+                className={`block w-full text-left p-3.5 rounded-xl border cursor-pointer transition-colors ${FOCUS_RING} ${
                   ch.id === activeChapter.id
                     ? 'bg-slate-950/90 border-emerald-500/50 ring-1 ring-emerald-500/30'
                     : 'bg-slate-950/40 hover:bg-slate-950 border-slate-800/60'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs font-mono mb-1">
-                  <span className="text-emerald-400 font-bold">
-                    [{formatTime(ch.startTime)}] {ch.number}. {language === 'de' ? ch.titleDe : ch.titleEn}
+                <span className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs mb-1">
+                  <span className="text-emerald-400 font-semibold">
+                    <span className="font-mono">{formatTime(ch.startTime)}</span> · {language === 'de' ? ch.titleDe : ch.titleEn}
                   </span>
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[11px] text-slate-500">
                     {language === 'de' ? ch.subtitleDe : ch.subtitleEn}
                   </span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-light">
+                </span>
+                <span className="block text-xs text-slate-300 leading-relaxed font-light">
                   {language === 'de' ? ch.scriptDe : ch.scriptEn}
-                </p>
-              </div>
+                </span>
+              </button>
             ))}
           </div>
 
           {/* Bottom Action Footer with Direct Contact to Email */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-800/80">
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>{language === 'de' ? 'Direkte Benachrichtigung an:' : 'Direct notification delivered to:'}</span>
-              <strong className="text-white font-mono">{PERSONAL_INFO.email}</strong>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 min-w-0">
+              <span>{language === 'de' ? 'E-Mail:' : 'Email:'}</span>
+              <a
+                href={`mailto:${PERSONAL_INFO.email}`}
+                className={`text-white font-mono hover:text-emerald-400 break-all rounded ${FOCUS_RING}`}
+              >
+                {PERSONAL_INFO.email}
+              </a>
             </div>
 
             <div className="flex items-center gap-3">
               <button
                 onClick={onOpenContact}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 text-xs font-bold shadow-md hover:scale-[1.02] transition-transform"
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition-colors ${FOCUS_RING}`}
               >
                 <Mail className="w-3.5 h-3.5" />
                 <span>{language === 'de' ? 'Gespräch vereinbaren' : 'Schedule a Conversation'}</span>

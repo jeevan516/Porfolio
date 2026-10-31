@@ -138,3 +138,27 @@ export const CURATED_TECH_NEWS: TechNewsArticle[] = [
     ]
   }
 ];
+
+export type TechNewsCategory = 'all' | TechNewsArticle['category'];
+
+/**
+ * Client-side equivalent of the `/api/tech-news` fallback filtering in server.ts:
+ * category match, then case-insensitive search over title, summary and tags.
+ */
+export function filterCuratedNews(category: string, query: string): TechNewsArticle[] {
+  const cat = category.replace(/[^\w-]/g, '');
+  const q = query.replace(/[<>{}\\]/g, '').trim().toLowerCase();
+  let result = CURATED_TECH_NEWS;
+  if (cat && cat !== 'all') {
+    result = result.filter((a) => a.category === cat);
+  }
+  if (q) {
+    result = result.filter(
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.summary.toLowerCase().includes(q) ||
+        a.tags.some((t) => t.toLowerCase().includes(q))
+    );
+  }
+  return result;
+}

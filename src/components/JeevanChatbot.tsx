@@ -1,27 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  MessageSquare, 
-  X, 
-  Send, 
-  Sparkles, 
-  Bot, 
-  User, 
-  CornerDownLeft, 
-  Mail, 
-  Cpu, 
-  Briefcase, 
-  GraduationCap, 
-  Award, 
-  Copy, 
-  Check, 
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  Minus,
-  Maximize2,
-  Minimize2
-} from 'lucide-react';
-import { PERSONAL_INFO, ACADEMIC_REFERENCES, CERTIFICATIONS, EXPERIENCES } from '../data/portfolioData';
+import { X, Send, Sparkles, Bot, User, Mail, Copy, Check, Minus, Maximize2, Minimize2 } from 'lucide-react';
+import { PERSONAL_INFO } from '../data/portfolioData';
+import { copyText } from '../services/clientUtils';
+import { ui } from '../services/uiClasses';
 
 interface ChatMessage {
   id: string;
@@ -34,9 +15,19 @@ interface ChatMessage {
 interface JeevanChatbotProps {
   onOpenContact: () => void;
   onOpenBrief: () => void;
+  /** Incremented by the parent to open the chat from elsewhere on the page */
+  openSignal?: number;
 }
 
-export const JeevanChatbot: React.FC<JeevanChatbotProps> = ({ onOpenContact, onOpenBrief }) => {
+const IRRELEVANT_REPLY = `I apologize, but I can only answer questions about Jeevan Dutta's professional profile.
+
+Try asking about:
+• His education and Master's thesis at TU Clausthal
+• His neuefische bootcamp and course projects
+• Work experience and technical skills
+• Availability and contact details`;
+
+export const JeevanChatbot: React.FC<JeevanChatbotProps> = ({ onOpenContact, onOpenBrief, openSignal = 0 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
@@ -45,6 +36,33 @@ export const JeevanChatbot: React.FC<JeevanChatbotProps> = ({ onOpenContact, onO
   const [hasUnread, setHasUnread] = useState(true);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const launcherRef = useRef<HTMLButtonElement | null>(null);
+  const typingTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(typingTimer.current), []);
+
+  useEffect(() => {
+    if (openSignal > 0) {
+      setIsOpen(true);
+      setIsMinimized(false);
+      setHasUnread(false);
+    }
+  }, [openSignal]);
+
+  // Focus the input whenever the chat window is shown
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      const t = window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 50);
+      return () => window.clearTimeout(t);
+    }
+  }, [isOpen, isMinimized]);
+
+  const closeChat = () => {
+    setIsOpen(false);
+    setIsMinimized(false);
+    window.setTimeout(() => launcherRef.current?.focus(), 0);
+  };
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -87,17 +105,48 @@ How can I assist your evaluation or hiring process today?`,
     }
   }, [isOpen, isMinimized, messages, isTyping]);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(PERSONAL_INFO.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2000);
+  const handleCopyEmail = async () => {
+    if (await copyText(PERSONAL_INFO.email)) {
+      setCopiedEmail(true);
+      window.setTimeout(() => setCopiedEmail(false), 2000);
+    }
+  };
+
+  // Follow-up buttons attached to certain answers (the text offers these actions)
+  const getQuickActions = (query: string, answer: string): ChatMessage['quickActions'] => {
+    const actions: NonNullable<ChatMessage['quickActions']> = [];
+    const q = query.toLowerCase();
+    if (/executive brief|resume|\bcv\b/i.test(answer) || /resume|\bcv\b|brief|pdf/.test(q)) {
+      actions.push({ label: 'Open executive brief', action: onOpenBrief });
+    }
+    if (/schedule|interview|contact|reach jeevan/i.test(answer)) {
+      actions.push({ label: 'Contact Jeevan', action: onOpenContact });
+    }
+    return actions.length ? actions : undefined;
   };
 
   const generateAnswer = (query: string): string => {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
+
+    // Match terms at word boundaries so e.g. "cv" doesn't fire on "cvs" and "iot" on "idiot".
+    // Short tokens must match as whole words; longer ones may be stems ("certif", "experien").
+    const has = (term: string) => {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const tail = term.length <= 4 ? '\\b' : '';
+      return new RegExp(`\\b${escaped}${tail}`, 'i').test(q);
+    };
+
+    // General-knowledge / off-topic questions that don't refer to Jeevan get the apology
+    const aboutJeevan = /\b(jeevan|dutta|he|his|him|you|your|candidate|this portfolio)\b/i.test(q);
+    const offTopic =
+      /\b(weather|recipe|cook|joke|poem|song|lyrics|movie|film|football|cricket|soccer|sport|score|stock price|bitcoin|crypto|news today|president|prime minister|capital of|translate|population|horoscope|game|celebrity)\b/i.test(q) ||
+      /^(how (do|can|to|does)|write (me )?(a|an|some)|explain|what is (a|an|the)|calculate|solve|tell me about (the|a)\b)/i.test(q);
+    if (offTopic && !aboutJeevan) {
+      return IRRELEVANT_REPLY;
+    }
 
     // Education & Academic Background Query
-    if (q.includes('education') || q.includes('degree') || q.includes('university') || q.includes('clausthal') || q.includes('jntu') || q.includes('bachelor')) {
+    if (has('education') || has('degree') || has('university') || has('clausthal') || has('jntu') || has('bachelor')) {
       return `Here is Jeevan Dutta's formal educational background from Germany and India (verified on LinkedIn):
  
 1. Master of Science (M.Sc.) in Informatics (2019 – 2023 · Degree Awarded)
@@ -106,7 +155,6 @@ How can I assist your evaluation or hiring process today?`,
    • Master's Thesis: "Definition, Development and Simulation of a 4-Node Communication Network for Reliable Reaction Times Inside Distributed Networks"
    • Advisors: Prof. Dr. Christian Siemers (1st Examiner) & Prof. Dr. Sven Hartmann (2nd Examiner) · Matriculation No. 517360
    • Key Deliverable: Engineered & simulated 4-node synchronous ZanderLink bus in VHDL (Xilinx Vivado) with guaranteed <12 µs deterministic reaction times and zero jitter.
-   • Public Research Code: Published publicly on GitHub at github.com/jeevan516/4-node-communication-network-master-thesis
 
 2. Bachelor of Science (B.Sc.) in Computer Science (2011 – 2015 · Degree Conferred)
    • Institution: Jawaharlal Nehru Technological University (JNTU), Hyderabad, India
@@ -128,32 +176,31 @@ How can I help with your recruitment or technical inquiry?`;
     }
 
     // Bootcamp & Upskilling query (neuefische GmbH)
-    if (q.includes('bootcamp') || q.includes('neuefische') || q.includes('upskill') || q.includes('training') || q.includes('data science') || q.includes('data engineering') || q.includes('software engineering')) {
-      return `Jeevan is currently attending an intensive professional engineering bootcamp with **neuefische GmbH** (School and Pool for Digital Talent).
+    if (has('bootcamp') || has('neuefische') || has('upskill') || has('data science') || has('data engineering') || has('software engineering')) {
+      return `Jeevan is currently attending an ongoing professional bootcamp at **neuefische GmbH** (AI, Machine Learning, Data Science, Data Engineering & Software Engineering).
 
-Curriculum & Core Modules:
-• 🧠 Artificial Intelligence & Machine Learning: Deep learning, transformer architectures, sequence forecasting, and neural network training with PyTorch & TensorFlow.
-• 📊 Data Science: Advanced statistical modeling, exploratory data analysis, feature engineering, and predictive algorithms.
-• ⚙️ Data Engineering: Scalable ETL/ELT pipelines, time-series data streams, SQL modeling, InfluxDB, vector search, and data warehouse integration.
-• 💻 Software Engineering: Clean architecture, object-oriented design, modular REST microservices, automated testing, Docker CI/CD, and production deployment.
+Course projects so far:
+• King County House Prices — refactored an exploratory notebook into a tested Python package and pipeline, with a containerized FastAPI service (github.com/jeevan516/mle-refactoring-project).
+• Model Review Board — Flask app where an ML team reviews model predictions; SQLite locally, PostgreSQL on Render, pytest suite (github.com/jeevan516/model-review-board).
+• FastAPI + PostgreSQL + Docker Compose — typed CRUD API with Pydantic and SQLAlchemy, packaged as a multi-container stack (github.com/jeevan516/docker).
+• NYC Taxi Data Pipeline — Python ETL loading Parquet into PostgreSQL in Docker, remodelled into a star schema.
+• dbt Analytics Pipeline — staging, intermediate and mart layers on PostgreSQL and DuckDB, run in Docker.
+• Notebook → Production Python — scikit-learn custom transformers and pipelines (Titanic dataset).
+• Packaging & Testing — source-layout packages, pytest unit and integration tests with SQLite.
+• Clean Code & OOP — refactoring, object-oriented design and Pydantic data validation (github.com/jeevan516/Opps).
+• Cloud Deployment — GCP virtual machine connected to Cloud SQL serving a web app.
 
-Current Status & Readiness:
-• Location: Hamburg, Germany (Available for on-site, hybrid, or remote).
-• Availability: Available immediately and ready for work across Germany (Full-time / Contract).
-• Work Authorization: Unrestricted German work authorization.
-
-Would you like to schedule an introductory interview or review his resume?`;
+He is available immediately for roles across Germany while the bootcamp continues. Would you like to review his resume or get in touch?`;
     }
 
     // Master Thesis / Academic Research Query
-    if (q.includes('thesis') || q.includes('master') || q.includes('zanderlink') || q.includes('4-node') || q.includes('siemers') || q.includes('hartmann') || q.includes('vivado') || q.includes('vhdl') || q.includes('fpga') || q.includes('plc') || q.includes('microelectronics') || q.includes('vlsi') || q.includes('fsm') || q.includes('crc')) {
+    if (has('thesis') || has('master') || has('zanderlink') || has('4-node') || has('siemers') || has('hartmann') || has('vivado') || has('vhdl') || has('fpga') || has('plc') || has('microelectronics') || has('vlsi') || has('fsm') || has('crc')) {
       return `Here are the details on Jeevan's attached Master's Thesis:
 
 🎓 Title: "Definition, Development and Simulation of a 4-Node Communication Network for Reliable Reaction Times Inside Distributed Networks"
 🏛️ Institution: Institute of Informatics, Technische Universität Clausthal (TU Clausthal)
 👨‍🏫 Examiners: Prof. Dr. Christian Siemers (First Examiner) & Prof. Dr. Sven Hartmann (Second Examiner)
 📅 Submitted: 27.07.2023 · Matriculation No. 517360
-🌐 Public GitHub Repo: github.com/jeevan516/4-node-communication-network-master-thesis
 
 Core Engineering Highlights:
 • ZanderLink Protocol: Enhanced the synchronous serial communication protocol between PLCs from P2P to a deterministic 4-node bus (1 Master "00", 3 Slaves: "01", "10", "11") over EIA-485 (RS-485).
@@ -161,11 +208,11 @@ Core Engineering Highlights:
 • Hardware VHDL in Vivado 2020.2: Implemented the entire ZanderLink4 entity in VHDL with separate Master and Slave Finite State Machines (FSMs) handling SCAN, TRANSMIT, RECEIVE, and CRC CHECK.
 • CRC Error Detection: Integrated CRC-5 (polynomial x⁴ + x) and CRC-8 validation, start bit framing ('00' normal byte, '01' last byte), noise injection simulations, and format error recovery.
 • Physical Synthesis: Mapped to 1,086 nets, 832 leaf cells, and 400 RTL cells utilizing Xilinx C5LUTs, CLBs, clock regions (X0Y3..X1Y3), and RPM grid coordinates.
-• Open-Source & Public: Full VHDL source code, testbenches, and synthesis reports are public on GitHub and showcased on this portfolio!`;
+• Deliverables: VHDL source, testbenches, and synthesis reports, with the full thesis showcased on this portfolio.`;
     }
 
     // Reaction time specific query
-    if (q.includes('reaction time') || q.includes('latency') || q.includes('12') || q.includes('speed') || q.includes('jitter') || q.includes('roundtrip')) {
+    if (has('reaction time') || has('latency') || has('jitter') || has('roundtrip')) {
       return `In his Master's Thesis, Jeevan proved and simulated a guaranteed deterministic reaction time of under 12 µs!
 
 Here is the exact mathematical model:
@@ -179,7 +226,7 @@ Here is the exact mathematical model:
     }
 
     // Location & Relocation & German Work Authorization query
-    if (q.includes('location') || q.includes('hamburg') || q.includes('germany') || q.includes('remote') || q.includes('relocat') || q.includes('visa') || q.includes('authorization') || q.includes('permit') || q.includes('language') || q.includes('german') || q.includes('deutsch')) {
+    if (has('location') || has('hamburg') || has('germany') || has('remote') || has('relocat') || has('visa') || has('authorization') || has('permit') || has('german') || has('deutsch')) {
       return `Here are Jeevan's location and eligibility details:
 
 • Current Location: Hamburg, Germany
@@ -190,7 +237,7 @@ Here is the exact mathematical model:
     }
 
     // Resume / CV / Executive Brief query
-    if (q.includes('resume') || q.includes('cv') || q.includes('brief') || q.includes('download') || q.includes('pdf')) {
+    if (has('resume') || has('cv') || has('brief') || has('pdf')) {
       return `You can view and export Jeevan's complete credentials right here on this portfolio:
 
 • Executive Brief & PDF CV: Click the "Executive Brief & Resume" button in the navigation or top banner to download a clean, ATS-compliant PDF resume.
@@ -201,7 +248,7 @@ Would you like me to open the Executive Brief modal for you?`;
     }
 
     // Target roles and active job search query
-    if (q.includes('role') || q.includes('open') || q.includes('job') || q.includes('opportunit') || q.includes('availab') || q.includes('hire') || q.includes('resign') || q.includes('seeking') || q.includes('position')) {
+    if (has('role') || has('job') || has('opportunit') || has('availab') || has('hire') || has('resign') || has('seeking') || has('position')) {
       return `Jeevan is actively open and exploring full-time engineering and specialist opportunities across Germany with immediate availability while attending an AI & ML Bootcamp.
 
 Target Positions:
@@ -222,7 +269,7 @@ Would you like to schedule an introductory discussion or inspect his Executive B
     }
 
     // Full work history query
-    if (q.includes('history') || q.includes('experien') || q.includes('all jobs') || q.includes('cogent') || q.includes('radical') || q.includes('avast') || q.includes('netidentity')) {
+    if (has('experien') || has('all jobs') || has('cogent') || has('radical') || has('avast') || has('netidentity')) {
       return `Here is a summary of Jeevan's 10+ year engineering track record across industry:
 
 1. WaDaCon GmbH (Hamburg · May 2025 – May 2026, Full-Time):
@@ -242,7 +289,7 @@ Would you like to schedule an introductory discussion or inspect his Executive B
     }
 
     // WaDaCon experience query
-    if (q.includes('wadacon') || q.includes('iot') || q.includes('observability') || q.includes('grafana') || q.includes('influx') || q.includes('mrf')) {
+    if (has('wadacon') || has('iot') || has('observability') || has('grafana') || has('influx') || has('mrf')) {
       return `During his tenure at WaDaCon GmbH (Hamburg, Germany), Jeevan served as IT Specialist & Observability Engineer powering Next-Gen Material Recovery Facilities (MRF):
 
 Key Production Accomplishments:
@@ -256,7 +303,7 @@ Having completed all handovers, Jeevan is attending an AI & ML Bootcamp and is r
     }
 
     // Certifications query
-    if (q.includes('certif') || q.includes('credential') || q.includes('claude') || q.includes('microsoft') || q.includes('accenture')) {
+    if (has('certif') || has('credential') || has('claude') || has('microsoft') || has('accenture')) {
       return `Jeevan holds verified technical and AI credentials listed on his LinkedIn profile (linkedin.com/in/jeevan-dutta):
 
 1. Claude Code in Action — Anthropic (AI Engineering, Agentic Workflows, Claude API)
@@ -270,7 +317,7 @@ Having completed all handovers, Jeevan is attending an AI & ML Bootcamp and is r
     }
 
     // Contact and hiring query
-    if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('linkedin') || q.includes('interview') || q.includes('reach') || q.includes('call') || q.includes('message')) {
+    if (has('contact') || has('email') || has('phone') || has('linkedin') || has('interview')) {
       return `You can reach Jeevan directly for job inquiries or interviews:
 
 • Email: jeevannaidu516@gmail.com
@@ -283,7 +330,7 @@ You can also use the 'Hire / Interview Jeevan' button on this page to log an opp
     }
 
     // Technical Skills query
-    if (q.includes('skill') || q.includes('stack') || q.includes('python') || q.includes('docker') || q.includes('tools') || q.includes('tech') || q.includes('pytorch') || q.includes('kubernetes') || q.includes('linux')) {
+    if (has('skill') || has('stack') || has('python') || has('docker') || has('pytorch') || has('kubernetes') || has('linux')) {
       return `Jeevan's comprehensive technical toolkit includes:
 
 • Distributed Systems & Hardware: VHDL, Xilinx Vivado (2020.2), FPGA Synthesis, RS-485 / EIA-485, PLC Communication, Finite State Machines (FSM), CRC Error Detection.
@@ -293,7 +340,7 @@ You can also use the 'Hire / Interview Jeevan' button on this page to log an opp
     }
 
     // Projects query
-    if (q.includes('project') || q.includes('portfolio') || q.includes('telemetry') || q.includes('pipeline') || q.includes('dashboard')) {
+    if (has('project') || has('telemetry') || has('pipeline')) {
       return `Jeevan's portfolio features several production-grade engineering projects:
 
 1. Industrial IoT Observability Pipeline (WaDaCon GmbH):
@@ -313,17 +360,8 @@ You can also use the 'Hire / Interview Jeevan' button on this page to log an opp
 You can inspect all projects and interactive architecture diagrams in the Projects section above!`;
     }
 
-    // Irrelevant Question Fallback: Explicit refusal
-    return `I apologize, but I cannot answer this question.
-
-As Jeevan Dutta's AI Career Assistant, I am specifically designed to answer questions regarding Jeevan's professional qualifications, such as:
-• Education & Master's Thesis research at TU Clausthal
-• Current AI & Machine Learning Bootcamp upskilling
-• Industry experience at WaDaCon GmbH, Cogent Networks, RadicalX, Netidentity, and Avast Technologies
-• Technical skills (Observability, InfluxDB, Prometheus, Grafana, Docker, Python, PyTorch)
-• Immediate work availability across Germany and direct contact details
-
-Please feel free to ask any question related to Jeevan's professional background, or select one of the suggested prompts below!`;
+    // Anything not about Jeevan's profile
+    return IRRELEVANT_REPLY;
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -341,102 +379,82 @@ Please feel free to ask any question related to Jeevan's professional background
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    window.clearTimeout(typingTimer.current);
+    typingTimer.current = window.setTimeout(() => {
       const answer = generateAnswer(query);
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'bot',
         text: answer,
         timestamp: 'Just now',
+        quickActions: getQuickActions(query, answer),
       };
       setMessages((prev) => [...prev, botMsg]);
       setIsTyping(false);
-    }, 600);
+    }, 500);
   };
 
   return (
     <>
-      {/* Floating Launcher Button */}
+      {/* Floating launcher */}
       {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-40">
+        <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40">
           <button
+            ref={launcherRef}
             id="chatbot-launcher-btn"
+            type="button"
             onClick={() => {
               setIsOpen(true);
               setIsMinimized(false);
             }}
-            className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 text-slate-950 font-bold text-sm shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 active:scale-95 transition-all"
+            aria-label="Open Jeevan's career assistant chat"
+            className={`group flex items-center gap-3 p-3 sm:px-4 sm:py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm shadow-xl shadow-emerald-500/25 active:scale-95 transition-all ${ui.focusRing}`}
           >
-            <div className="relative">
-              <Bot className="w-5 h-5 text-slate-950" />
-              {hasUnread && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-slate-950 animate-pulse" />
-              )}
-            </div>
-            <div className="text-left leading-tight hidden sm:block">
-              <span className="block text-xs font-extrabold uppercase tracking-wider">
-                This is Jeevan's Bot
-              </span>
-              <span className="text-[10px] font-mono text-slate-900 font-semibold">
-                Status: Available for New Role · IT & AI Assistant
-              </span>
-            </div>
+            <span className="relative">
+              <Bot className="w-5 h-5" />
+              {hasUnread && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white ring-2 ring-emerald-500" />}
+            </span>
+            <span className="text-left leading-tight hidden sm:block">
+              <span className="block text-xs font-bold">Ask Jeevan's bot</span>
+              <span className="block text-[10px] font-medium text-slate-900/80">Career & skills assistant</span>
+            </span>
           </button>
         </div>
       )}
 
-      {/* Minimized Dock Bar */}
+      {/* Minimized dock */}
       {isOpen && isMinimized && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/95 border border-emerald-500/50 shadow-2xl shadow-emerald-500/10 backdrop-blur-xl">
+        <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-50 max-w-[calc(100vw-2rem)]">
+          <div className="flex items-center gap-2 pl-3 pr-2 py-2 rounded-2xl bg-slate-900/95 border border-slate-700 shadow-2xl backdrop-blur-xl">
             <button
+              type="button"
               onClick={() => setIsMinimized(false)}
-              className="flex items-center gap-2.5 hover:opacity-90 transition-opacity text-left group"
-              title="Click to restore Jeevan's Bot"
+              className={`flex items-center gap-2.5 text-left rounded-lg min-w-0 ${ui.focusRing}`}
+              aria-label="Restore chat window"
             >
-              <div className="relative">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                  <Bot className="w-4 h-4" />
-                </div>
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-slate-950 animate-pulse" />
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold text-white font-display">This is Jeevan's Bot</span>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-950/90 text-emerald-300 border border-emerald-700/60">
-                    AI & ML Bootcamp · Ready for Work
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-mono">Click to restore chat window</p>
-              </div>
+              <span className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 shrink-0">
+                <Bot className="w-4 h-4" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-xs font-semibold text-white truncate">Jeevan's bot</span>
+                <span className="block text-[10px] text-slate-400 truncate">Click to restore</span>
+              </span>
             </button>
 
-            <div className="flex items-center gap-1 border-l border-slate-800 pl-2">
+            <div className="flex items-center gap-0.5 border-l border-slate-800 pl-1.5">
               <button
-                onClick={() => setIsMinimized(false)}
-                title="Restore Window"
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-              >
-                <ChevronUp className="w-4 h-4" />
-              </button>
-              <button
+                type="button"
                 onClick={() => {
                   setIsMinimized(false);
                   setIsMaximized(true);
                 }}
-                title="Maximize Full View"
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                aria-label="Maximize chat window"
+                title="Maximize"
+                className={`${ui.iconBtn} !h-8 !w-8`}
               >
                 <Maximize2 className="w-3.5 h-3.5" />
               </button>
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setIsMinimized(false);
-                }}
-                title="Close Chatbot"
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
-              >
+              <button type="button" onClick={closeChat} aria-label="Close chat" title="Close" className={`${ui.iconBtn} !h-8 !w-8`}>
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -444,97 +462,105 @@ Please feel free to ask any question related to Jeevan's professional background
         </div>
       )}
 
-      {/* Chat Window Dialog */}
+      {/* Chat window */}
       {isOpen && !isMinimized && (
-        <div 
-          className={`fixed z-50 rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl flex flex-col overflow-hidden duration-200 ${
-            isMaximized 
-              ? 'inset-2 sm:inset-6 max-w-6xl mx-auto shadow-emerald-500/10' 
-              : 'bottom-4 right-4 w-[95vw] sm:w-[440px] h-[600px] max-h-[90vh]'
+        <div
+          role="dialog"
+          aria-label="Jeevan's career assistant"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.stopPropagation();
+              closeChat();
+            }
+          }}
+          className={`fixed z-50 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl flex flex-col overflow-hidden ${
+            isMaximized
+              ? 'inset-2 sm:inset-6 max-w-5xl mx-auto'
+              : 'inset-x-2 bottom-2 top-16 sm:top-auto sm:inset-x-auto sm:bottom-4 sm:right-4 sm:w-[420px] sm:h-[600px] sm:max-h-[85vh]'
           }`}
         >
-          
           {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex items-center justify-between gap-3">
+          <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 flex items-center justify-center text-slate-950 font-bold shadow-md shadow-emerald-500/20 shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 shrink-0">
                 <Bot className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="text-xs sm:text-sm font-bold text-white font-display truncate">
-                    This is Jeevan's Bot
-                  </h3>
-                  <span className="inline-flex items-center gap-1 text-[9px] font-mono text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800/60 shrink-0">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Available for New Role
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-300 font-mono truncate">
-                  IT Specialist & AI Engineer · Immediate Availability (Germany)
+                <h3 className="text-sm font-semibold text-white font-display truncate">Jeevan's bot</h3>
+                <p className="text-[11px] text-slate-400 truncate flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  Available for a new role · Germany
                 </p>
               </div>
             </div>
 
-            {/* Window Control Buttons */}
-            <div className="flex items-center gap-1 shrink-0">
-              {/* Minimize Button */}
+            <div className="flex items-center gap-0.5 shrink-0">
               <button
                 id="chatbot-minimize-btn"
+                type="button"
                 onClick={() => setIsMinimized(true)}
-                title="Minimize window"
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                aria-label="Minimize chat"
+                title="Minimize"
+                className={`${ui.iconBtn} !h-8 !w-8`}
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
-
-              {/* Maximize / Restore Button */}
               <button
                 id="chatbot-maximize-btn"
+                type="button"
                 onClick={() => setIsMaximized(!isMaximized)}
-                title={isMaximized ? "Restore default size" : "Maximize window"}
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                aria-label={isMaximized ? 'Restore chat size' : 'Maximize chat'}
+                title={isMaximized ? 'Restore size' : 'Maximize'}
+                className={`${ui.iconBtn} !h-8 !w-8 hidden sm:inline-flex`}
               >
                 {isMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
               </button>
-
-              {/* Close Button */}
               <button
                 id="chatbot-close-btn"
-                onClick={() => setIsOpen(false)}
-                title="Close chat"
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                type="button"
+                onClick={closeChat}
+                aria-label="Close chat"
+                title="Close"
+                className={`${ui.iconBtn} !h-8 !w-8`}
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs">
+          {/* Messages */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 text-[13px]" aria-live="polite">
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={msg.id} className={`flex gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.sender === 'bot' && (
-                  <div className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
                     <Bot className="w-3.5 h-3.5" />
                   </div>
                 )}
 
-                <div
-                  className={`max-w-[84%] p-3 rounded-2xl leading-relaxed whitespace-pre-line ${
-                    msg.sender === 'user'
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-medium rounded-tr-sm shadow-md'
-                      : 'bg-slate-800/90 text-slate-200 border border-slate-700/60 rounded-tl-sm shadow-sm'
-                  }`}
-                >
-                  {msg.text}
+                <div className={`max-w-[85%] space-y-2`}>
+                  <div
+                    className={`p-3 rounded-2xl leading-relaxed whitespace-pre-line ${
+                      msg.sender === 'user'
+                        ? 'bg-emerald-500 text-slate-950 font-medium rounded-tr-sm'
+                        : 'bg-slate-800/80 text-slate-200 border border-slate-700/60 rounded-tl-sm'
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                  {msg.quickActions && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {msg.quickActions.map((qa) => (
+                        <button key={qa.label} type="button" onClick={qa.action} className={`${ui.btnSecondary} !px-3 !py-1.5 !text-[11px]`}>
+                          {qa.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {msg.sender === 'user' && (
-                  <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-300 shrink-0 mt-0.5">
                     <User className="w-3.5 h-3.5" />
                   </div>
                 )}
@@ -542,14 +568,14 @@ Please feel free to ask any question related to Jeevan's professional background
             ))}
 
             {isTyping && (
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
-                <div className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 shrink-0">
+              <div className="flex items-center gap-2" aria-label="Assistant is typing">
+                <div className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0">
                   <Bot className="w-3.5 h-3.5" />
                 </div>
-                <div className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.4s]" />
+                <div className="flex items-center gap-1 px-3 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.4s]" />
                 </div>
               </div>
             )}
@@ -557,22 +583,24 @@ Please feel free to ask any question related to Jeevan's professional background
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Preset Prompts Carousel */}
-          <div className="px-3 py-2 bg-slate-950/60 border-t border-slate-800/80 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            {presetQuestions.map((q, idx) => (
+          {/* Suggested prompts */}
+          <div className="px-3 py-2 border-t border-slate-800 flex items-center gap-1.5 overflow-x-auto no-scrollbar" aria-label="Suggested questions">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            {presetQuestions.map((q) => (
               <button
-                key={idx}
+                key={q}
+                type="button"
                 onClick={() => handleSendMessage(q)}
-                className="px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-[10px] text-slate-300 hover:text-white border border-slate-700/60 whitespace-nowrap transition-colors"
+                disabled={isTyping}
+                className={`px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] text-slate-300 hover:text-white border border-slate-700/60 whitespace-nowrap transition-colors disabled:opacity-50 ${ui.focusRing}`}
               >
                 {q}
               </button>
             ))}
           </div>
 
-          {/* Input Box */}
-          <div className="p-3 bg-slate-950 border-t border-slate-800">
+          {/* Input */}
+          <div className="p-3 border-t border-slate-800">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -580,43 +608,35 @@ Please feel free to ask any question related to Jeevan's professional background
               }}
               className="flex items-center gap-2"
             >
+              <label htmlFor="chatbot-input" className="sr-only">
+                Ask a question
+              </label>
               <input
+                ref={inputRef}
                 id="chatbot-input"
                 type="text"
+                autoComplete="off"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about Jeevan's skills, VLSI, WaDaCon..."
-                className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors"
+                placeholder="Ask about skills, thesis, WaDaCon…"
+                className={`${ui.input} flex-1 !text-[13px]`}
               />
-              <button
-                type="submit"
-                disabled={!inputValue.trim()}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all shadow-md"
-              >
+              <button type="submit" disabled={!inputValue.trim() || isTyping} aria-label="Send message" className={`${ui.btnPrimary} !p-2.5`}>
                 <Send className="w-4 h-4" />
               </button>
             </form>
 
-            {/* Quick Action Footer */}
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-900 text-[10px] text-slate-400">
-              <button
-                onClick={onOpenContact}
-                className="text-emerald-400 hover:underline flex items-center gap-1 font-medium"
-              >
+            <div className="flex items-center justify-between gap-2 mt-2 text-[11px]">
+              <button type="button" onClick={onOpenContact} className={`${ui.btnGhost} !px-2 !py-1 text-emerald-400`}>
                 <Mail className="w-3 h-3" />
-                Schedule Interview / Contact Jeevan
+                Contact Jeevan
               </button>
-
-              <button
-                onClick={handleCopyEmail}
-                className="text-slate-400 hover:text-white flex items-center gap-1"
-              >
+              <button type="button" onClick={handleCopyEmail} className={`${ui.btnGhost} !px-2 !py-1`}>
                 {copiedEmail ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                {copiedEmail ? 'Email Copied!' : 'Copy Email'}
+                {copiedEmail ? 'Email copied' : 'Copy email'}
               </button>
             </div>
           </div>
-
         </div>
       )}
     </>

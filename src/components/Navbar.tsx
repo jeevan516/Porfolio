@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Briefcase, BarChart3, Mail, FileText, Github, Linkedin, Sparkles, Sun, Moon, Languages, Code2, Download, Volume2, VolumeX } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  BarChart3,
+  Mail,
+  FileText,
+  Github,
+  Linkedin,
+  Sparkles,
+  Sun,
+  Moon,
+  Languages,
+  Code2,
+  Download,
+  Volume2,
+  VolumeX,
+  Menu,
+  X,
+} from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
 import { isSoundFxEnabled, setSoundFxEnabled, playTactileClick } from '../services/soundFx';
 
+type View = 'showcase' | 'classic' | 'tracker';
+
 interface NavbarProps {
-  activeView: 'showcase' | 'classic' | 'tracker';
-  setActiveView: (view: 'showcase' | 'classic' | 'tracker') => void;
+  activeView: View;
+  setActiveView: (view: View) => void;
   onOpenContact: () => void;
   onOpenBrief: () => void;
   onOpenResume?: () => void;
@@ -17,6 +35,11 @@ interface NavbarProps {
   language?: 'en' | 'de';
   onToggleLanguage?: () => void;
 }
+
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
+
+const ICON_BTN = `inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`;
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeView,
@@ -32,7 +55,81 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [imageError, setImageError] = useState(false);
   const [soundOn, setSoundOn] = useState(() => isSoundFxEnabled());
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const t = TRANSLATIONS[language].nav;
+  const isDe = language === 'de';
+
+  // The GitHub sync flow needs the local Express server (/api/*), which does not exist on GitHub Pages.
+  // (Cast because the project has no vite/client type reference; Vite still statically replaces import.meta.env.DEV.)
+  const isDev = (import.meta as unknown as { env: { DEV: boolean } }).env.DEV === true;
+  const showGitHubSync = isDev && !!onOpenGitHubSync;
+
+  const sectionLinks: { id: string; label: string }[] = [
+    { id: 'video-portfolio', label: t.videoPitch },
+    { id: 'about', label: t.about },
+    { id: 'education', label: t.education },
+    { id: 'master-thesis', label: t.masterThesis },
+    { id: 'projects', label: t.projects },
+    { id: 'skills', label: t.skills },
+    { id: 'experience', label: t.experience },
+    { id: 'career-trajectory', label: isDe ? 'Werdegang' : 'Trajectory' },
+    { id: 'academic-reference', label: t.academicRef },
+    { id: 'observability', label: 'Observability' },
+    { id: 'tech-news', label: isDe ? 'Tech-News' : 'Tech News' },
+    { id: 'visitor-tracker', label: isDe ? 'Besucher' : 'Visitors' },
+    { id: 'contact', label: t.contact },
+  ];
+
+  // Close the mobile menu on Escape
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  const scrollToId = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    const offset = (headerRef.current?.offsetHeight ?? 80) + 8;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    return true;
+  };
+
+  /** Navigate to a section, switching to the showcase view first if the target only lives there. */
+  const navigateTo = (id: string) => {
+    playTactileClick();
+    setMenuOpen(false);
+    if (id !== 'contact' && activeView !== 'showcase') {
+      setActiveView('showcase');
+      // Wait for the showcase view to render before scrolling
+      let attempts = 0;
+      const tryScroll = () => {
+        if (scrollToId(id) || attempts++ > 20) return;
+        window.setTimeout(tryScroll, 50);
+      };
+      window.requestAnimationFrame(() => window.setTimeout(tryScroll, 30));
+      return;
+    }
+    scrollToId(id);
+  };
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    navigateTo(id);
+  };
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    playTactileClick();
+    setMenuOpen(false);
+    if (activeView !== 'showcase') setActiveView('showcase');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleToggleSound = () => {
     const next = !soundOn;
@@ -41,164 +138,107 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (next) playTactileClick();
   };
 
-  const handleSelectView = (view: 'showcase' | 'classic' | 'tracker') => {
+  const handleSelectView = (view: View) => {
     playTactileClick();
+    setMenuOpen(false);
     setActiveView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const runAndClose = (fn?: () => void) => () => {
+    setMenuOpen(false);
+    fn?.();
+  };
+
+  const views: { id: View; label: string; short: string; icon: typeof Sparkles }[] = [
+    { id: 'showcase', label: t.showcaseView, short: isDe ? 'Übersicht' : 'Showcase', icon: Sparkles },
+    { id: 'classic', label: isDe ? 'Klassisches Portfolio' : 'Classic Portfolio', short: isDe ? 'Klassisch' : 'Classic', icon: Code2 },
+    { id: 'tracker', label: t.trackerView, short: 'Pipeline', icon: BarChart3 },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#070a12]/80 backdrop-blur-xl transition-all">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#070a12]/85 backdrop-blur-xl"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
-          
-          {/* Logo & Identity with Profile Picture */}
-          <div className="flex items-center gap-3">
-            <a href="#" className="flex items-center gap-3 group">
-              <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform shrink-0 bg-slate-800">
-                {!imageError ? (
-                  <img
-                    src="./jeevan-dutta.jpg"
-                    alt="Jeevan Dutta"
-                    className="w-full h-full object-cover object-top"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-extrabold text-sm">
-                    JD
-                  </div>
-                )}
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-slate-900" />
-              </div>
-              <div>
-                <span className="font-display font-bold text-base sm:text-lg tracking-tight text-white group-hover:text-emerald-400 transition-colors">
-                  {PERSONAL_INFO.name}
-                </span>
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>neuefische Bootcamp · Ready for Work</span>
+        <div className="flex items-center justify-between h-16 gap-3">
+          {/* Logo & identity */}
+          <a
+            href="#hero"
+            onClick={handleLogoClick}
+            aria-label={isDe ? 'Zum Seitenanfang' : 'Back to top'}
+            className={`flex items-center gap-3 group min-w-0 rounded-xl ${FOCUS_RING}`}
+          >
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shrink-0 bg-slate-800">
+              {!imageError ? (
+                <img
+                  src="./jeevan-dutta.jpg"
+                  alt=""
+                  className="w-full h-full object-cover object-top"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-extrabold text-sm">
+                  JD
                 </div>
-              </div>
-            </a>
-          </div>
-
-          {/* Mode Switcher: Showcase vs Classic vs Portfolio Tracker */}
-          <div className="hidden md:flex items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl shadow-inner">
-            <button
-              id="view-showcase-tab"
-              onClick={() => handleSelectView('showcase')}
-              className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors z-10 ${
-                activeView === 'showcase'
-                  ? 'text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {activeView === 'showcase' && (
-                <motion.div
-                  layoutId="activeNavbarModePill"
-                  className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg -z-10 shadow-md shadow-emerald-500/20"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
               )}
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{t.showcaseView}</span>
-            </button>
-
-            <button
-              id="view-classic-tab"
-              onClick={() => handleSelectView('classic')}
-              className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors z-10 ${
-                activeView === 'classic'
-                  ? 'text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-              title="View Jeevan's Original Developer Portfolio with Matrix Rain & Neural Architecture"
-            >
-              {activeView === 'classic' && (
-                <motion.div
-                  layoutId="activeNavbarModePill"
-                  className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg -z-10 shadow-md shadow-emerald-500/20"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
-              <Code2 className="w-3.5 h-3.5" />
-              <span>{language === 'de' ? 'Klassisches Portfolio' : 'Classic Portfolio'}</span>
-            </button>
-
-            <button
-              id="view-tracker-tab"
-              onClick={() => handleSelectView('tracker')}
-              className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors z-10 ${
-                activeView === 'tracker'
-                  ? 'text-slate-950 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {activeView === 'tracker' && (
-                <motion.div
-                  layoutId="activeNavbarModePill"
-                  className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg -z-10 shadow-md shadow-cyan-500/20"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                />
-              )}
-              <BarChart3 className="w-3.5 h-3.5" />
-              <span>{t.trackerView}</span>
-              <span className="px-1.5 py-0.2 bg-cyan-950/80 text-cyan-300 text-[10px] rounded-full border border-cyan-700/50">
-                Live
+            </div>
+            <div className="min-w-0">
+              <span className="block font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors truncate">
+                {PERSONAL_INFO.name}
               </span>
-            </button>
+              <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                {isDe ? 'Sofort verfügbar' : 'Available for work'}
+              </span>
+            </div>
+          </a>
+
+          {/* View switcher (desktop) */}
+          <div
+            role="tablist"
+            aria-label={isDe ? 'Ansicht wählen' : 'Select view'}
+            className="hidden md:flex items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl"
+          >
+            {views.map((v) => {
+              const Icon = v.icon;
+              const isActive = activeView === v.id;
+              return (
+                <button
+                  key={v.id}
+                  id={`view-${v.id}-tab`}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => handleSelectView(v.id)}
+                  title={v.label}
+                  className={`relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${FOCUS_RING} ${
+                    isActive ? 'text-slate-950' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavbarModePill"
+                      className="absolute inset-0 bg-emerald-500 rounded-lg -z-10"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <Icon className="w-3.5 h-3.5" />
+                  <span className="hidden lg:inline">{v.short}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Navigation Links for standard view */}
-          {activeView === 'showcase' && (
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs font-medium text-slate-300">
-              <a href="#video-portfolio" className="hover:text-emerald-300 text-emerald-400 font-bold transition-colors flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                {t.videoPitch}
-                <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">
-                  {language.toUpperCase()}
-                </span>
-              </a>
-              <a href="#about" className="hover:text-emerald-400 transition-colors">{t.about}</a>
-              <a href="#education" className="hover:text-purple-300 text-purple-400/95 font-semibold transition-colors flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                {t.education}
-              </a>
-              <a href="#master-thesis" className="hover:text-purple-300 transition-colors">{t.masterThesis}</a>
-              <a href="#projects" className="hover:text-emerald-400 transition-colors">{t.projects}</a>
-              <a href="#skills" className="hover:text-emerald-400 transition-colors">{t.skills}</a>
-              <a href="#experience" className="hover:text-emerald-400 text-slate-200 transition-colors font-medium">{t.experience}</a>
-              <a href="#career-trajectory" className="hover:text-emerald-300 text-emerald-400 font-medium transition-colors flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>{language === 'de' ? 'Wachstums-Chart' : 'Trajectory'}</span>
-              </a>
-              <a href="#observability" className="hover:text-emerald-400 text-emerald-400/90 transition-colors flex items-center gap-1 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                {t.observability}
-              </a>
-              <a href="#academic-reference" className="hover:text-purple-400 text-purple-300/90 transition-colors flex items-center gap-1">
-                {t.academicRef}
-              </a>
-              <a href="#tech-news" className="hover:text-cyan-300 text-cyan-400 font-bold transition-colors flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                <span>{language === 'de' ? 'Tech-News' : 'Tech News'}</span>
-              </a>
-              <a href="#visitor-tracker" className="hover:text-emerald-300 text-emerald-400 font-bold transition-colors flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>{language === 'de' ? 'Besucher' : 'Visitors'}</span>
-              </a>
-              <a href="#contact" className="hover:text-emerald-400 transition-colors">{t.contact}</a>
-            </nav>
-          )}
-
-          {/* Right CTAs for Recruiters / Clients */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick Links */}
+          {/* Right actions */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <a
               href={PERSONAL_INFO.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
-              title="GitHub Profile"
+              className={`hidden xl:inline-flex ${ICON_BTN}`}
+              aria-label="GitHub profile"
+              title="GitHub"
             >
               <Github className="w-4 h-4" />
             </a>
@@ -206,151 +246,227 @@ export const Navbar: React.FC<NavbarProps> = ({
               href={PERSONAL_INFO.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-slate-400 hover:text-[#0a66c2] rounded-lg hover:bg-slate-800 transition-colors"
-              title="LinkedIn Profile"
+              className={`hidden xl:inline-flex ${ICON_BTN}`}
+              aria-label="LinkedIn profile"
+              title="LinkedIn"
             >
               <Linkedin className="w-4 h-4" />
             </a>
 
-            {/* Global Translate Page Button */}
             {onToggleLanguage && (
               <button
                 id="navbar-language-toggle-btn"
                 onClick={onToggleLanguage}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border-2 border-emerald-500/50 hover:border-emerald-400 text-xs font-bold text-white transition-all shadow-md shadow-emerald-500/10 hover:scale-105 active:scale-95"
-                title={language === 'de' ? 'Switch entire page back to English' : 'Gesamte Seite auf Deutsch übersetzen'}
+                className={`hidden sm:inline-flex items-center gap-1.5 h-9 px-2.5 rounded-lg border border-slate-700 hover:border-emerald-500/60 text-xs font-semibold text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                aria-label={isDe ? 'Switch to English' : 'Auf Deutsch umschalten'}
+                title={isDe ? 'Switch to English' : 'Auf Deutsch umschalten'}
               >
                 <Languages className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="flex items-center gap-1">
-                  <span>{language === 'de' ? '🇩🇪 DE' : '🇬🇧 EN'}</span>
-                  <span className="text-[10px] text-emerald-400 font-mono">⇄</span>
-                  <span className="text-[11px] text-slate-300 font-semibold hidden md:inline">
-                    {language === 'de' ? 'English' : 'Deutsch'}
-                  </span>
-                </span>
+                <span className="font-mono">{isDe ? 'DE' : 'EN'}</span>
               </button>
             )}
 
-            {/* Theme Toggle Button */}
             <button
               id="theme-toggle-btn"
               onClick={onToggleTheme}
-              className="p-2 rounded-xl text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1.5"
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              aria-label="Toggle Dark/Light Mode"
+              className={ICON_BTN}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-cyan-400" />
-              )}
-              <span className="hidden xl:inline text-[11px] font-mono font-medium">
-                {theme === 'dark' ? 'Light' : 'Dark'}
-              </span>
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-cyan-400" />}
             </button>
 
-            {/* Sound FX Audio Haptic Feedback Toggle */}
             <button
               id="sound-fx-toggle-btn"
               onClick={handleToggleSound}
-              className={`p-2 rounded-xl border transition-all flex items-center gap-1.5 ${
-                soundOn
-                  ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/40 shadow-sm shadow-emerald-500/20'
-                  : 'text-slate-400 bg-slate-800/80 hover:bg-slate-700 border-slate-700'
-              }`}
-              title={soundOn ? 'Tactile Sound Effects: ON (Click to Mute)' : 'Tactile Sound Effects: OFF (Click to Enable)'}
-              aria-label="Toggle Sound Effects"
+              className={`hidden sm:inline-flex ${ICON_BTN} ${soundOn ? 'text-emerald-400' : ''}`}
+              title={soundOn ? 'Sound effects on' : 'Sound effects off'}
+              aria-label={soundOn ? 'Mute sound effects' : 'Enable sound effects'}
+              aria-pressed={soundOn}
             >
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              <span className="hidden xl:inline text-[10px] font-mono font-medium">
-                {soundOn ? 'SFX ON' : 'MUTE'}
-              </span>
             </button>
 
-            {/* GitHub Sync Button */}
-            {onOpenGitHubSync && (
+            {showGitHubSync && (
               <button
                 id="navbar-github-sync-btn"
                 onClick={onOpenGitHubSync}
-                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-emerald-500/50 transition-all"
-                title="Sync & Push to your GitHub repo"
+                className={`hidden xl:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-300 hover:text-white hover:border-emerald-500/60 transition-colors ${FOCUS_RING}`}
+                title="Dev only: sync & push to GitHub"
               >
                 <Github className="w-3.5 h-3.5 text-emerald-400" />
-                <span>GitHub Sync</span>
+                <span>Sync</span>
               </button>
             )}
 
-            {/* Export & Download CV (PDF) */}
             {onOpenResume && (
               <button
                 id="navbar-resume-btn"
                 onClick={onOpenResume}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 hover:text-white border border-emerald-500/40 hover:border-emerald-400 font-mono text-xs font-bold transition-all shadow-md shadow-emerald-500/10"
-                title={language === 'de' ? 'Lebenslauf als PDF herunterladen' : 'Export & Download Professional CV as PDF'}
+                className={`hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-emerald-500/40 text-emerald-300 hover:text-white hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors ${FOCUS_RING}`}
+                title={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
               >
-                <Download className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{language === 'de' ? 'CV (PDF)' : 'Resume (PDF)'}</span>
+                <Download className="w-3.5 h-3.5" />
+                <span>{isDe ? 'CV' : 'Resume'}</span>
               </button>
             )}
 
-            {/* Recruiter Brief Button */}
             <button
               id="navbar-brief-btn"
               onClick={onOpenBrief}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all"
+              className={`hidden lg:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 transition-colors ${FOCUS_RING}`}
             >
               <FileText className="w-3.5 h-3.5 text-cyan-400" />
               <span>{t.recruiterBrief}</span>
             </button>
 
-            {/* Direct Connect / Hire Button */}
             <button
               id="navbar-contact-btn"
               onClick={onOpenContact}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+              aria-label={t.getInTouch}
+              className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors ${FOCUS_RING}`}
             >
               <Mail className="w-3.5 h-3.5" />
-              <span>{t.getInTouch}</span>
+              <span className="hidden sm:inline">{t.getInTouch}</span>
+            </button>
+
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className={`lg:hidden ${ICON_BTN}`}
+              aria-label={menuOpen ? (isDe ? 'Menü schließen' : 'Close menu') : isDe ? 'Menü öffnen' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav-panel"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile View Toggle */}
-        <div className="flex md:hidden items-center justify-center p-1 my-2 bg-slate-900 border border-slate-800 rounded-xl gap-2">
-          <button
-            onClick={() => setActiveView('showcase')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium rounded-lg ${
-              activeView === 'showcase' ? 'bg-emerald-500 text-slate-950 font-semibold' : 'text-slate-400'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" /> {t.showcaseView}
-          </button>
-          <button
-            onClick={() => setActiveView('classic')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium rounded-lg ${
-              activeView === 'classic' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-semibold' : 'text-slate-400'
-            }`}
-          >
-            <Code2 className="w-3.5 h-3.5" /> Classic
-          </button>
-          <button
-            onClick={() => setActiveView('tracker')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium rounded-lg ${
-              activeView === 'tracker' ? 'bg-cyan-500 text-slate-950 font-semibold' : 'text-slate-400'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" /> {t.trackerView}
-          </button>
-          {onToggleLanguage && (
-            <button
-              onClick={onToggleLanguage}
-              className="px-2.5 py-1.5 bg-slate-800 border border-emerald-500/40 rounded-lg text-xs font-bold text-white flex items-center gap-1"
+        {/* Section links (desktop) */}
+        <nav
+          aria-label={isDe ? 'Abschnitte' : 'Sections'}
+          className="hidden lg:flex items-center gap-1 -mx-2 pb-2 overflow-x-auto text-xs font-medium text-slate-400 [scrollbar-width:none]"
+        >
+          {sectionLinks.map((link) => (
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={(e) => handleLinkClick(e, link.id)}
+              className={`shrink-0 px-2 py-1 rounded-md hover:text-emerald-400 hover:bg-slate-800/60 transition-colors ${FOCUS_RING}`}
             >
-              {language === 'de' ? '🇩🇪 DE' : '🇬🇧 EN'}
-            </button>
-          )}
-        </div>
+              {link.label}
+            </a>
+          ))}
+        </nav>
       </div>
+
+      {/* Mobile / tablet menu panel */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-nav-panel"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden overflow-hidden border-t border-slate-800 bg-[#070a12]"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              {/* View switcher */}
+              <div className="grid grid-cols-3 gap-1 p-1 bg-slate-900 border border-slate-800 rounded-xl">
+                {views.map((v) => {
+                  const Icon = v.icon;
+                  const isActive = activeView === v.id;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => handleSelectView(v.id)}
+                      aria-pressed={isActive}
+                      className={`flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-colors ${FOCUS_RING} ${
+                        isActive ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {v.short}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Section links */}
+              <nav aria-label={isDe ? 'Abschnitte' : 'Sections'} className="grid grid-cols-2 gap-1">
+                {sectionLinks.map((link) => (
+                  <a
+                    key={link.id}
+                    href={`#${link.id}`}
+                    onClick={(e) => handleLinkClick(e, link.id)}
+                    className={`px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors ${FOCUS_RING}`}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-800">
+                {onOpenResume && (
+                  <button
+                    onClick={runAndClose(onOpenResume)}
+                    className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-emerald-500/40 text-emerald-300 hover:text-white transition-colors ${FOCUS_RING}`}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    {isDe ? 'CV (PDF)' : 'Resume (PDF)'}
+                  </button>
+                )}
+                <button
+                  onClick={runAndClose(onOpenBrief)}
+                  className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                >
+                  <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                  {t.recruiterBrief}
+                </button>
+                {onToggleLanguage && (
+                  <button
+                    onClick={runAndClose(onToggleLanguage)}
+                    className={`sm:hidden inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                  >
+                    <Languages className="w-3.5 h-3.5 text-emerald-400" />
+                    {isDe ? 'English' : 'Deutsch'}
+                  </button>
+                )}
+                <button
+                  onClick={handleToggleSound}
+                  aria-pressed={soundOn}
+                  className={`sm:hidden inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                >
+                  {soundOn ? <Volume2 className="w-3.5 h-3.5 text-emerald-400" /> : <VolumeX className="w-3.5 h-3.5" />}
+                  Sound {soundOn ? 'on' : 'off'}
+                </button>
+                <a
+                  href={PERSONAL_INFO.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className={ICON_BTN}
+                  aria-label="GitHub profile"
+                >
+                  <Github className="w-4 h-4" />
+                </a>
+                <a
+                  href={PERSONAL_INFO.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className={ICON_BTN}
+                  aria-label="LinkedIn profile"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

@@ -12,6 +12,19 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      chunkSizeWarningLimit: 700,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            motion: ['motion', 'framer-motion'],
+            charts: ['recharts'],
+            pdf: ['jspdf', 'html2canvas'],
+            icons: ['lucide-react'],
+          },
+        },
+      },
+    },
     preview: {
       headers: {
         'X-Content-Type-Options': 'nosniff',

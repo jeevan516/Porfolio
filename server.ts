@@ -271,6 +271,11 @@ Do not wrap in markdown quotes if possible, or wrap only in standard JSON.`;
    * Pushes the staged commit to GitHub repository to trigger GitHub Pages workflow
    */
   app.post('/api/github/push', async (req: Request, res: Response) => {
+    // Runs git on the host machine, so only allow it during local development
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(404).json({ success: false, error: 'Not available in production.' });
+    }
+
     const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
     if (!token) {
       return res.status(400).json({ 

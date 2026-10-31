@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Cpu, Zap, Activity, Play, Pause, RefreshCw, Layers } from 'lucide-react';
+import { Cpu, Play, Pause } from 'lucide-react';
 
 export const VLSIIntegratedCircuitGraphic: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [isRunning, setIsRunning] = useState(true);
+  const [isRunning, setIsRunning] = useState(
+    () => typeof window === 'undefined' || !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  );
   const [frequencyMhz, setFrequencyMhz] = useState(400); // Clock frequency
   const [circuitMode, setCircuitMode] = useState<'layout' | 'waveform' | 'logic'>('layout');
-  const [transistorDensity, setTransistorDensity] = useState('0.18µm CMOS');
-  const [activeGate, setActiveGate] = useState<string | null>(null);
+  const transistorDensity = '0.18µm CMOS';
+  const tickRef = useRef(0); // persists across mode / frequency changes
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,12 +18,13 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
     if (!ctx) return;
 
     let animId: number;
-    let tick = 0;
+    let tick = tickRef.current;
     let rAFId: number | null = null;
+    let dpr = 1;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       const targetW = Math.round(rect.width * dpr);
       const targetH = Math.round(rect.height * dpr);
       if (canvas.width !== targetW || canvas.height !== targetH) {
@@ -48,8 +51,9 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
     ];
 
     const render = () => {
-      const width = canvas.width;
-      const height = canvas.height;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
       if (width === 0 || height === 0) {
         animId = requestAnimationFrame(render);
         return;
@@ -59,6 +63,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
       if (isRunning) {
         tick += (frequencyMhz / 100) * 0.4;
+        tickRef.current = tick;
       }
 
       if (circuitMode === 'layout') {
@@ -234,7 +239,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
         ctx.fillStyle = '#38bdf8';
         ctx.font = 'bold 12px monospace';
-        ctx.fillText('VLSI FULL-ADDER & LOGIC REGISTER CELL (0.18µm CMOS)', 16, 24);
+        ctx.fillText(width < 420 ? 'FULL-ADDER CELL (0.18µm CMOS)' : 'VLSI FULL-ADDER & LOGIC REGISTER CELL (0.18µm CMOS)', 16, 24);
 
         // Draw simplified digital logic flow
         const gates = [
@@ -249,7 +254,8 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
           ctx.strokeStyle = '#06b6d4';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
-          ctx.roundRect(g.x - 55, g.y - 22, 110, 44, 8);
+          if (typeof ctx.roundRect === 'function') ctx.roundRect(g.x - 55, g.y - 22, 110, 44, 8);
+          else ctx.rect(g.x - 55, g.y - 22, 110, 44);
           ctx.fill();
           ctx.stroke();
 
@@ -282,7 +288,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
         ctx.fillStyle = '#94a3b8';
         ctx.font = '10px monospace';
-        ctx.fillText('Inputs: A=1, B=0, CIN=1  →  Sum=0, COUT=1 (Clock Synchronized)', 16, height - 16);
+        ctx.fillText(width < 420 ? 'A=1, B=0, CIN=1 → S=0, COUT=1' : 'Inputs: A=1, B=0, CIN=1  →  Sum=0, COUT=1 (Clock Synchronized)', 16, height - 16);
       }
 
       animId = requestAnimationFrame(render);
@@ -298,7 +304,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
   }, [isRunning, frequencyMhz, circuitMode]);
 
   return (
-    <div className="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl overflow-hidden">
+    <div className="rounded-2xl bg-slate-950/70 border border-slate-800 overflow-hidden">
       {/* Top Banner */}
       <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
@@ -306,46 +312,48 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
             <Cpu className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white flex items-center gap-1.5 font-display">
-              VLSI & Integrated Circuit Simulator
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-purple-950/80 border border-purple-800 text-purple-300">
-                TU Clausthal
-              </span>
-            </h4>
-            <p className="text-[10px] text-slate-400 font-mono">
-              Prof. Dr. Christian Siemers Research · Very Large Scale Integrated Circuits
-            </p>
+            <h4 className="text-xs font-semibold text-white">VLSI circuit simulator</h4>
+            <p className="text-[11px] text-slate-500">TU Clausthal · Very Large Scale Integrated Circuits</p>
           </div>
         </div>
 
         {/* Mode Selector */}
-        <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+        <div role="tablist" aria-label="Simulator view" className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
           <button
+            type="button"
+            role="tab"
+            aria-selected={circuitMode === 'layout'}
             onClick={() => setCircuitMode('layout')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               circuitMode === 'layout'
-                ? 'bg-purple-600/30 text-purple-300 border border-purple-500/50'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-slate-800 text-white border-slate-700'
+                : 'text-slate-400 hover:text-white border-transparent'
             }`}
           >
             Silicon Die
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={circuitMode === 'waveform'}
             onClick={() => setCircuitMode('waveform')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               circuitMode === 'waveform'
-                ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-slate-800 text-white border-slate-700'
+                : 'text-slate-400 hover:text-white border-transparent'
             }`}
           >
             Waveforms
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={circuitMode === 'logic'}
             onClick={() => setCircuitMode('logic')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] transition-all ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               circuitMode === 'logic'
-                ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/50'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-slate-800 text-white border-slate-700'
+                : 'text-slate-400 hover:text-white border-transparent'
             }`}
           >
             Logic Gates
@@ -355,12 +363,17 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
       {/* Canvas Area */}
       <div className="relative w-full h-[320px] overflow-hidden bg-slate-950">
-        <canvas ref={canvasRef} className="w-full h-full block cursor-crosshair" />
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full block"
+          role="img"
+          aria-label={`VLSI circuit simulation, ${circuitMode} view at ${frequencyMhz} MHz`}
+        />
 
         {/* Live Status Overlay */}
         <div className="absolute top-2.5 left-2.5 flex items-center gap-2 pointer-events-none">
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono text-emerald-400 backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
             CLK: {frequencyMhz} MHz
           </span>
           <span className="px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono text-slate-300 backdrop-blur-sm">
@@ -373,32 +386,30 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
       <div className="px-4 py-2.5 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between flex-wrap gap-2 text-xs">
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setIsRunning(!isRunning)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+            aria-pressed={!isRunning}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
           >
-            {isRunning ? <Pause className="w-3 h-3 text-amber-400" /> : <Play className="w-3 h-3 text-emerald-400" />}
-            <span>{isRunning ? 'Pause Clock' : 'Resume Clock'}</span>
+            {isRunning ? <Pause className="w-3 h-3 text-amber-400" aria-hidden="true" /> : <Play className="w-3 h-3 text-emerald-400" aria-hidden="true" />}
+            <span>{isRunning ? 'Pause' : 'Play'}</span>
           </button>
 
-          <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
-            <span>Clock Freq:</span>
+          <div className="flex items-center gap-1 text-[11px] font-mono text-slate-400" role="group" aria-label="Clock frequency">
             {[200, 400, 800].map((f) => (
               <button
                 key={f}
+                type="button"
+                aria-pressed={frequencyMhz === f}
                 onClick={() => setFrequencyMhz(f)}
-                className={`px-1.5 py-0.5 rounded ${
-                  frequencyMhz === f ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' : 'hover:text-white'
+                className={`px-1.5 py-0.5 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                  frequencyMhz === f ? 'bg-emerald-500/15 text-emerald-300 font-bold border-emerald-500/40' : 'border-transparent hover:text-white'
                 }`}
               >
-                {f}M
+                {f} MHz
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="text-[11px] font-mono text-slate-400 flex items-center gap-2">
-          <span className="text-purple-400 font-semibold">TU Clausthal Lab:</span>
-          <span>Digital Microelectronics & Logic Design</span>
         </div>
       </div>
     </div>

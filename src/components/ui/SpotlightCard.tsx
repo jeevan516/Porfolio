@@ -83,22 +83,26 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={enableTilt ? { rotateX, rotateY, transformPerspective: 1000 } : undefined}
-      className={`group relative overflow-hidden rounded-2xl bg-slate-900/80 border border-slate-800/80 transition-colors duration-300 hover:border-slate-700/80 ${className}`}
+      className={`group relative overflow-hidden rounded-2xl bg-slate-900/80 border border-slate-800/80 transition-[border-color,box-shadow,translate] duration-300 hover:border-slate-700 hover:shadow-lg hover:shadow-black/30 ${className}`}
       {...(props as any)}
     >
       {/* Dynamic Cursor Spotlight Radial Overlay */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-0"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-0"
         style={{ background: backgroundGradient }}
       />
 
-      {/* Dynamic Cursor Spotlight Border Accent */}
+      {/* Dynamic Cursor Spotlight Border Accent (masked to a 1px ring) */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-0"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-2xl p-px opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-0"
         style={{
           background: borderGradient,
-          maskImage: 'linear-gradient(black, black)',
-          WebkitMaskImage: 'linear-gradient(black, black)',
+          maskImage: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+          WebkitMaskImage: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+          maskComposite: 'exclude',
+          WebkitMaskComposite: 'xor',
         }}
       />
 

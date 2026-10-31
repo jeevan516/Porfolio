@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { 
-  Sparkles, 
-  Activity, 
-  Volume2, 
-  Mic, 
-  Radio, 
-  CheckCircle2, 
+import {
+  Sparkles,
+  Activity,
+  Volume2,
+  Mic,
+  Radio,
+  CheckCircle2,
   Maximize2,
   Sliders,
   Eye,
@@ -234,8 +234,8 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = currentStyle === 'studio' 
-          ? `rgba(52, 211, 153, ${p.alpha * (isSpeaking ? 0.7 : 0.3)})` 
+        ctx.fillStyle = currentStyle === 'studio'
+          ? `rgba(52, 211, 153, ${p.alpha * (isSpeaking ? 0.7 : 0.3)})`
           : `rgba(56, 189, 248, ${p.alpha * 0.8})`;
         ctx.fill();
       });
@@ -246,8 +246,8 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
         for (let i = 0; i < 4; i++) {
           const ringRad = 70 + i * 28 + ((frame * 1.8) % 36);
           const ringAlpha = Math.max(0, 0.22 - (ringRad / 210));
-          ctx.strokeStyle = currentStyle === 'studio' 
-            ? `rgba(16, 185, 129, ${ringAlpha})` 
+          ctx.strokeStyle = currentStyle === 'studio'
+            ? `rgba(16, 185, 129, ${ringAlpha})`
             : `rgba(6, 182, 212, ${ringAlpha})`;
           ctx.lineWidth = 1.4;
           ctx.beginPath();
@@ -822,25 +822,27 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none">
-      
+
       {/* Moving Avatar Canvas Stage */}
-      <div 
+      <div
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative w-full max-w-[340px] aspect-[4/5] max-h-[360px] rounded-3xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-[#040711] border-2 border-emerald-500/50 shadow-2xl shadow-emerald-500/20 flex items-center justify-center cursor-crosshair group"
+        className="relative w-full max-w-[340px] aspect-[4/5] max-h-[360px] rounded-3xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-[#040711] border border-emerald-500/40 flex items-center justify-center group"
       >
         <canvas
           ref={canvasRef}
           className="w-full h-full object-contain"
+          role="img"
+          aria-label={language === 'de' ? 'Animierter Avatar-Präsentator' : 'Animated avatar presenter'}
         />
 
         {/* Top Floating Badge: Explaining Live Telemetry */}
         <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-emerald-500/50 text-[10px] font-mono text-emerald-300 backdrop-blur-md shadow-lg">
-          <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}`} />
+          <span className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} aria-hidden="true" />
           <span className="font-bold">
-            {isSpeaking 
-              ? (language === 'de' ? 'LIVE-ERKLÄRUNG' : 'EXPLAINING LIVE') 
+            {isSpeaking
+              ? (language === 'de' ? 'LIVE-ERKLÄRUNG' : 'EXPLAINING LIVE')
               : (language === 'de' ? 'BEREIT' : 'READY')}
           </span>
         </div>
@@ -848,24 +850,32 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
         {/* Top Right: Style & Gaze Switcher */}
         <div className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-slate-950/90 p-0.5 rounded-xl border border-slate-800 text-[10px] font-mono shadow-md backdrop-blur-md">
           <button
-            onClick={() => setMouseTracking(!mouseTracking)}
-            className={`p-1.5 rounded-lg transition-colors ${
-              mouseTracking 
-                ? 'bg-emerald-500/20 text-emerald-400' 
+            type="button"
+            aria-pressed={mouseTracking}
+            aria-label={mouseTracking ? 'Eye gaze follows cursor (click for camera gaze)' : 'Eye gaze at camera (click to follow cursor)'}
+            onClick={() => {
+              if (mouseTracking) mousePosRef.current = { x: 0, y: 0 };
+              setMouseTracking(!mouseTracking);
+            }}
+            className={`p-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+              mouseTracking
+                ? 'bg-emerald-500/20 text-emerald-400'
                 : 'text-slate-500 hover:text-slate-300'
             }`}
-            title={mouseTracking ? 'Eye Gaze: Following Cursor' : 'Eye Gaze: Direct Camera'}
+            title={mouseTracking ? 'Gaze: following cursor' : 'Gaze: camera'}
           >
             <Eye className="w-3.5 h-3.5" />
           </button>
           <button
+            type="button"
+            aria-pressed={currentStyle === 'holographic'}
             onClick={() => setCurrentStyle(currentStyle === 'studio' ? 'holographic' : 'studio')}
-            className={`px-2 py-0.5 rounded-lg transition-colors font-bold ${
-              currentStyle === 'studio' 
-                ? 'bg-slate-800 text-slate-200' 
+            className={`px-2 py-0.5 rounded-lg transition-colors font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+              currentStyle === 'studio'
+                ? 'bg-slate-800 text-slate-200'
                 : 'bg-cyan-500 text-slate-950'
             }`}
-            title="Toggle Studio Presenter vs Holographic AI mode"
+            title="Toggle studio / holographic style"
           >
             {currentStyle === 'studio' ? 'Studio' : 'Holo'}
           </button>
@@ -877,10 +887,6 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             <Activity className="w-3 h-3 text-emerald-400 shrink-0" />
             <span className="truncate">{activeTopic}</span>
           </div>
-          <span className="text-emerald-400 font-bold shrink-0 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            60 FPS Kinetics
-          </span>
         </div>
       </div>
 
@@ -892,10 +898,12 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             {language === 'de' ? 'Geste:' : 'Gesture:'}
           </span>
           <button
+            type="button"
+            aria-pressed={gestureMode === 'conversational'}
             onClick={() => setGestureMode('conversational')}
-            className={`flex-1 py-1 rounded-lg transition-all ${
+            className={`flex-1 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               gestureMode === 'conversational'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                ? 'bg-emerald-500 text-slate-950 font-bold'
                 : 'text-slate-400 hover:text-white'
             }`}
             title="Natural conversational interview gestures"
@@ -903,10 +911,12 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             {language === 'de' ? 'Gespräch' : 'Natural'}
           </button>
           <button
+            type="button"
+            aria-pressed={gestureMode === 'architecture'}
             onClick={() => setGestureMode('architecture')}
-            className={`flex-1 py-1 rounded-lg transition-all ${
+            className={`flex-1 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               gestureMode === 'architecture'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                ? 'bg-emerald-500 text-slate-950 font-bold'
                 : 'text-slate-400 hover:text-white'
             }`}
             title="Hands gesturing towards distributed system architecture"
@@ -914,10 +924,12 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             {language === 'de' ? 'Systeme' : 'Systems'}
           </button>
           <button
+            type="button"
+            aria-pressed={gestureMode === 'highlights'}
             onClick={() => setGestureMode('highlights')}
-            className={`flex-1 py-1 rounded-lg transition-all ${
+            className={`flex-1 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               gestureMode === 'highlights'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                ? 'bg-emerald-500 text-slate-950 font-bold'
                 : 'text-slate-400 hover:text-white'
             }`}
             title="High-precision executive pitch gestures"
@@ -927,14 +939,16 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
         </div>
 
         {/* Expression Mood Selector */}
-        <div className="flex items-center justify-between gap-1 p-1 rounded-xl bg-slate-950/80 border border-slate-900 text-[10px] font-mono">
+        <div className="flex items-center justify-between gap-1 p-1 rounded-xl bg-slate-950/90 border border-slate-800 text-[10px] font-mono">
           <span className="text-slate-400 px-1.5 flex items-center gap-1">
             <Smile className="w-3 h-3 text-cyan-400" />
             {language === 'de' ? 'Mimik:' : 'Mood:'}
           </span>
           <button
+            type="button"
+            aria-pressed={expressionMood === 'confident'}
             onClick={() => setExpressionMood('confident')}
-            className={`flex-1 py-0.5 rounded-md transition-all ${
+            className={`flex-1 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               expressionMood === 'confident'
                 ? 'bg-slate-800 text-emerald-300 font-bold'
                 : 'text-slate-500 hover:text-slate-300'
@@ -943,8 +957,10 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             {language === 'de' ? 'Souverän' : 'Confident'}
           </button>
           <button
+            type="button"
+            aria-pressed={expressionMood === 'analytical'}
             onClick={() => setExpressionMood('analytical')}
-            className={`flex-1 py-0.5 rounded-md transition-all ${
+            className={`flex-1 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               expressionMood === 'analytical'
                 ? 'bg-slate-800 text-cyan-300 font-bold'
                 : 'text-slate-500 hover:text-slate-300'
@@ -953,8 +969,10 @@ export const MovingExplainingAvatar: React.FC<MovingExplainingAvatarProps> = ({
             {language === 'de' ? 'Analytisch' : 'Analytical'}
           </button>
           <button
+            type="button"
+            aria-pressed={expressionMood === 'warm'}
             onClick={() => setExpressionMood('warm')}
-            className={`flex-1 py-0.5 rounded-md transition-all ${
+            className={`flex-1 py-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               expressionMood === 'warm'
                 ? 'bg-slate-800 text-amber-300 font-bold'
                 : 'text-slate-500 hover:text-slate-300'

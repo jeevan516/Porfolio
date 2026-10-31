@@ -37,6 +37,7 @@ export default function App() {
   const [isBriefOpen, setIsBriefOpen] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isGitHubSyncOpen, setIsGitHubSyncOpen] = useState(false);
+  const [chatbotOpenSignal, setChatbotOpenSignal] = useState(0);
   const [language, setLanguage] = useState<'en' | 'de'>(() => {
     try {
       const stored = localStorage.getItem('jeevan_portfolio_lang');
@@ -78,6 +79,24 @@ export default function App() {
       document.body.classList.remove('light-theme');
     }
   }, [theme]);
+
+  // Drive the cursor spotlight via CSS variables, throttled to one update per frame
+  useEffect(() => {
+    let frame = 0;
+    const onMove = (e: PointerEvent) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--spot-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--spot-y', `${e.clientY}px`);
+        frame = 0;
+      });
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -123,7 +142,13 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${theme === 'dark' ? 'dark-theme bg-[#070a12] text-[#e2e8f0]' : 'light-theme bg-[#f8fafc] text-[#0f172a]'} selection:bg-emerald-500/30 selection:text-emerald-200`}>
-      
+
+      {/* Ambient background layers */}
+      <div className="aurora-backdrop" aria-hidden="true">
+        <div className="aurora-grid" />
+      </div>
+      <div className="cursor-spotlight" aria-hidden="true" />
+
       {/* Navigation */}
       <Navbar
         activeView={activeView}
@@ -139,7 +164,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="relative z-[2] flex-1">
         {activeView === 'showcase' ? (
           <>
             {/* High-Impact Hero with Live Graphics & Role Filter */}
@@ -169,6 +194,7 @@ export default function App() {
             {/* Master's Thesis Dedicated Deep-Dive Block (TU Clausthal & Prof. Dr. Christian Siemers) */}
             <MasterThesisSection
               onOpenContact={() => setIsContactOpen(true)}
+              onOpenChatbot={() => setChatbotOpenSignal((n) => n + 1)}
             />
 
             {/* Projects with Real-World Industrial & AI Impact */}
@@ -221,15 +247,18 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer
-        onOpenContact={() => setIsContactOpen(true)}
-        onOpenBrief={() => setIsBriefOpen(true)}
-      />
+      <div className="relative z-[2]">
+        <Footer
+          onOpenContact={() => setIsContactOpen(true)}
+          onOpenBrief={() => setIsBriefOpen(true)}
+        />
+      </div>
 
       {/* AI Portfolio Career Chatbot */}
       <JeevanChatbot
         onOpenContact={() => setIsContactOpen(true)}
         onOpenBrief={() => setIsBriefOpen(true)}
+        openSignal={chatbotOpenSignal}
       />
 
       {/* Modals */}

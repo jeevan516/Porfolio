@@ -12,7 +12,7 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   featured: boolean;
-  status: 'Production at WaDaCon' | 'Open Source' | 'Research' | 'Deployed' | 'Defended & Verified (TU Clausthal)' | 'Production at WaDaCon (Completed)';
+  status: 'neuefische Course Project' | 'Production at WaDaCon' | 'Open Source' | 'Research' | 'Deployed' | 'Defended & Verified (TU Clausthal)' | 'Production at WaDaCon (Completed)';
   viewsCount: number;
 }
 

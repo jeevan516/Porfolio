@@ -1,32 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Layers, 
-  Activity, 
-  Cpu, 
-  Radio, 
-  ArrowRight, 
-  Database, 
-  Server, 
-  Clock, 
-  ShieldCheck, 
-  Zap, 
-  FileCode2, 
-  Binary, 
-  Play, 
+import {
+  Layers,
+  ArrowRight,
+  Server,
+  ShieldCheck,
+  Zap,
+  Play,
   Pause,
-  Maximize2,
   Network,
-  RefreshCw,
   CheckCircle2,
   AlertTriangle,
-  GitFork,
   Sliders,
   Copy,
   Check,
   Flame,
   Gauge,
-  Wifi,
   RadioTower,
   Shield
 } from 'lucide-react';
@@ -37,8 +25,8 @@ interface InteractiveArchitectureStudioProps {
   language?: 'en' | 'de';
 }
 
-export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStudioProps> = ({ 
-  language = 'en' 
+export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStudioProps> = ({
+  language = 'en'
 }) => {
   const t = TRANSLATIONS[language]?.architecture || TRANSLATIONS.en.architecture;
   const isDe = language === 'de';
@@ -47,7 +35,7 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
   const [isSimulating, setIsSimulating] = useState(true);
   const [lbAlgorithm, setLbAlgorithm] = useState<'roundrobin' | 'weighted' | 'leastconn' | 'iphash'>('roundrobin');
   const [trafficRate, setTrafficRate] = useState<'normal' | 'high' | 'surge'>('normal');
-  
+
   // Interactive Load Balancer node health states
   const [nodesHealth, setNodesHealth] = useState({
     node1: true,
@@ -56,11 +44,7 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
   });
 
   // Weights for Weighted Round Robin
-  const [nodeWeights, setNodeWeights] = useState({
-    node1: 100,
-    node2: 100,
-    node3: 50
-  });
+  const nodeWeights = { node1: 100, node2: 100, node3: 50 };
 
   // Dynamic connection counts
   const [nodeConns, setNodeConns] = useState({
@@ -68,7 +52,7 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
     node2: 139,
     node3: 0
   });
-  
+
   const [simulatedRequests, setSimulatedRequests] = useState(24580);
   const [activeRoutingNode, setActiveRoutingNode] = useState<1 | 2 | 3>(1);
   const [copiedConfig, setCopiedConfig] = useState<string | null>(null);
@@ -76,10 +60,10 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
 
   // Traffic rate speed multiplier
   const rateMultiplier = trafficRate === 'normal' ? 1 : trafficRate === 'high' ? 3 : 8;
-  const rateLabel = trafficRate === 'normal' 
-    ? (isDe ? '100 Anfr./s' : '100 req/s') 
-    : trafficRate === 'high' 
-    ? (isDe ? '500 Anfr./s' : '500 req/s') 
+  const rateLabel = trafficRate === 'normal'
+    ? (isDe ? '100 Anfr./s' : '100 req/s')
+    : trafficRate === 'high'
+    ? (isDe ? '500 Anfr./s' : '500 req/s')
     : (isDe ? '1.500 Anfr./s' : '1,500 req/s');
 
   useEffect(() => {
@@ -128,7 +112,13 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
           return availableNodes[0];
         }
 
-        // Standard round robin / iphash sequential alternation
+        if (lbAlgorithm === 'iphash') {
+          // Hash a simulated client IP so the same client always lands on the same worker
+          const clientOctet = Math.floor(Math.random() * 4);
+          return availableNodes[clientOctet % availableNodes.length];
+        }
+
+        // Round robin: sequential alternation
         const nextIdx = (availableNodes.indexOf(prev) + 1) % availableNodes.length;
         return availableNodes[nextIdx];
       });
@@ -140,8 +130,8 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
         return {
           node1: nodesHealth.node1 ? Math.max(10, base + jitter()) : 0,
           node2: nodesHealth.node2 ? Math.max(10, Math.floor(base * 0.96) + jitter()) : 0,
-          node3: nodesHealth.node3 || (!nodesHealth.node1 && !nodesHealth.node2) 
-            ? Math.max(10, Math.floor(base * 0.8) + jitter()) 
+          node3: nodesHealth.node3 || (!nodesHealth.node1 && !nodesHealth.node2)
+            ? Math.max(10, Math.floor(base * 0.8) + jitter())
             : 0
         };
       });
@@ -149,7 +139,8 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
     }, intervalMs);
 
     return () => clearInterval(interval);
-  }, [isSimulating, nodesHealth, trafficRate, lbAlgorithm, nodeWeights, rateMultiplier]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSimulating, nodesHealth, trafficRate, lbAlgorithm, rateMultiplier]);
 
   const toggleNodeHealth = (nodeKey: 'node1' | 'node2' | 'node3') => {
     setNodesHealth((prev) => ({
@@ -158,11 +149,18 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
     }));
   };
 
-  const copyToClipboard = (text: string, tabId: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedConfig(tabId);
-    setTimeout(() => setCopiedConfig(null), 2000);
+  const copyToClipboard = async (text: string, tabId: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedConfig(tabId);
+      setTimeout(() => setCopiedConfig(null), 2000);
+    } catch {
+      setCopiedConfig(null);
+    }
   };
+
+  const haproxyBalance =
+    lbAlgorithm === 'leastconn' ? 'leastconn' : lbAlgorithm === 'iphash' ? 'source' : 'roundrobin';
 
   const layers = [
     {
@@ -172,7 +170,7 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
       tag: isDe ? 'Cloud & Infrastruktur · HA-Systeme' : 'Cloud & Infrastructure · HA Systems',
       latency: '< 0.4 ms Round-Robin',
       badgeColor: 'from-blue-500 to-indigo-500',
-      description: isDe 
+      description: isDe
         ? 'Redundanter Load-Balancing-Cluster mit Keepalived VRRP Virtual-IP-Failover, aktiven HTTP Layer-7 Health-Checks und gewichteter Round-Robin-Verteilung zur Weiterleitung hochfrequenter industrieller Sensordaten ohne Paketverlust.'
         : 'Redundant Load Balancing cluster with Keepalived VRRP virtual IP failover, active HTTP Layer 7 health checks, and weighted round-robin distribution to route high-frequency industrial telemetry across backend clusters with zero packet drop.',
       specs: [
@@ -193,7 +191,7 @@ frontend telemetry_gateway
   default_backend edge_ingestion_workers
 
 backend edge_ingestion_workers
-  balance roundrobin
+  balance ${haproxyBalance}
   option httpchk GET /healthz
   http-check expect status 200
   server edge_worker_1 10.0.1.11:8080 check inter 1500ms fall 2 rise 3 weight 100
@@ -218,10 +216,10 @@ backend edge_ingestion_workers
       ],
       codeSnippet: `// Industrial edge scraper - WaDaCon MRF
 const sensor = await modbus.readHoldingRegisters(0x100, 8);
-const metric = { 
-  rpm: sensor[0], 
+const metric = {
+  rpm: sensor[0],
   isoVibRms: sensor[1] / 100,
-  pneumaticBar: sensor[2] / 10 
+  pneumaticBar: sensor[2] / 10
 };
 prometheusGauge.set({ facility: 'hamburg_mrf' }, metric.isoVibRms);`,
     },
@@ -355,75 +353,74 @@ vrrp_instance VI_TELEMETRY {
 }`;
 
   return (
-    <section id="observability" className="py-20 border-t border-slate-800/80 bg-slate-950/70 relative overflow-hidden">
-      {/* Ambient background glow */}
-      <div className="absolute top-1/2 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+    <section id="observability" className="py-16 sm:py-20 border-t border-slate-800/80 relative overflow-hidden">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700/80 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">
+              <Zap className="w-4 h-4" aria-hidden="true" />
               {t.tag}
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">
               {t.title}
             </h2>
-            <p className="text-slate-300 text-sm sm:text-base mt-3 leading-relaxed">
+            <p className="text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
               {t.desc}
             </p>
           </div>
 
           {/* Quick Simulation controls */}
-          <div className="flex items-center gap-3 p-2 bg-slate-900/90 border border-slate-800 rounded-2xl">
-            <motion.button
+          <div className="flex flex-wrap items-center gap-3 p-2 bg-slate-900/80 border border-slate-800 rounded-xl self-start lg:self-auto">
+            <button
+              type="button"
+              aria-pressed={!isSimulating}
               onClick={() => {
                 playTactileClick();
                 setIsSimulating(!isSimulating);
               }}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                isSimulating 
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/20' 
-                  : 'bg-slate-800 text-slate-400'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                isSimulating
+                  ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                  : 'bg-slate-800 text-slate-300 border-slate-700'
               }`}
             >
-              {isSimulating ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              {isSimulating ? <Pause className="w-3.5 h-3.5" aria-hidden="true" /> : <Play className="w-3.5 h-3.5" aria-hidden="true" />}
               <span>{isSimulating ? t.simActive : t.simPaused}</span>
-            </motion.button>
+            </button>
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-300 pr-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className={`w-2 h-2 rounded-full ${isSimulating ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} aria-hidden="true" />
               <span>{t.vipActive}</span>
             </div>
           </div>
         </div>
 
         {/* 5 Interactive Layer Selection Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+        <div role="tablist" aria-label={isDe ? 'Architekturebenen' : 'Architecture layers'} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
           {layers.map((layer, idx) => {
             const isSelected = selectedLayer === layer.id;
             return (
-              <motion.div
+              <button
                 key={layer.id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                aria-controls="architecture-layer-detail"
                 onClick={() => {
                   playTactileClick();
-                  setSelectedLayer(layer.id as any);
+                  setSelectedLayer(layer.id as typeof selectedLayer);
                 }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                whileTap={{ scale: 0.98 }}
-                className={`cursor-pointer p-4 rounded-2xl border transition-all duration-300 relative ${
+                className={`text-left p-4 rounded-2xl border transition-[border-color,background-color,translate] duration-200 hover:-translate-y-0.5 relative min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                   isSelected
-                    ? 'bg-gradient-to-b from-slate-900 to-slate-950 border-emerald-400/80 shadow-xl shadow-emerald-500/10 ring-1 ring-emerald-500/30 -translate-y-1'
-                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/80'
+                    ? 'bg-slate-900 border-emerald-400/70'
+                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs mb-2">
-                  <span className="font-mono text-slate-500 font-bold">0{idx + 1} // TIER</span>
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold ${
+                <div className="flex items-center justify-between gap-2 text-xs mb-2">
+                  <span className="font-mono text-slate-500 font-bold">0{idx + 1}</span>
+                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold truncate ${
                     isSelected ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {layer.latency}
@@ -441,23 +438,23 @@ vrrp_instance VI_TELEMETRY {
                   <span className="text-[10px] font-mono text-emerald-400/90 font-medium truncate">
                     {layer.tag}
                   </span>
-                  <ArrowRight className={`w-3 h-3 shrink-0 transition-transform ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-600'}`} />
+                  <ArrowRight className={`w-3 h-3 shrink-0 transition-transform ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-600'}`} aria-hidden="true" />
                 </div>
-              </motion.div>
+              </button>
             );
           })}
         </div>
 
         {/* Detail Inspection Workbench */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 backdrop-blur-md space-y-6">
+        <div id="architecture-layer-detail" role="tabpanel" className="p-4 sm:p-8 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Left Specs & Context */}
-            <div className="lg:col-span-6 space-y-6">
+            <div className="lg:col-span-6 space-y-6 min-w-0">
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-mono text-cyan-300">
-                  <Layers className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{isDe ? 'Architektur-Detailansicht & Spezifikationen' : 'Architecture Deep-Dive & Hardware Specifications'}</span>
+                <div className="inline-flex items-center gap-2 text-xs text-slate-400">
+                  <Layers className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                  <span>{current.tag}</span>
                 </div>
                 <h3 className="text-2xl font-bold font-display text-white">
                   {current.title}
@@ -471,7 +468,7 @@ vrrp_instance VI_TELEMETRY {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {current.specs.map((spec, i) => (
                   <div key={i} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80">
-                    <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+                    <div className="text-[11px] text-slate-400">
                       {spec.label}
                     </div>
                     <div className="text-xs sm:text-sm font-bold text-slate-100 font-mono mt-1">
@@ -486,7 +483,7 @@ vrrp_instance VI_TELEMETRY {
                 <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold text-white">{isDe ? 'Praxisverifizierte Zuverlässigkeit: ' : 'Engineering Provenance: '}</span>
-                  {isDe 
+                  {isDe
                     ? 'Ausgelegt auf maximale Verfügbarkeit (99,99%) mit Aktiv-Passiv-Redundanz und kontinuierlichen Layer-7 Health-Checks unter Echtzeit-Bedingungen.'
                     : 'Designed for high uptime (99.99%) and active-passive redundancy. Implemented under real industrial operations or verified academic research.'}
                 </div>
@@ -494,23 +491,23 @@ vrrp_instance VI_TELEMETRY {
             </div>
 
             {/* Right Live Visual Code & Telemetry Terminal */}
-            <div className="lg:col-span-6 space-y-4">
+            <div className="lg:col-span-6 space-y-4 min-w-0">
               {/* Code Snippet Terminal with Tab Selection for Load Balancers */}
               <div className="rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-2xl">
-                <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-xs text-slate-400 font-mono">
+                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-xs text-slate-400 font-mono">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" aria-hidden="true" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" aria-hidden="true" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" aria-hidden="true" />
                     <span className="text-slate-300 ml-2 font-semibold">
-                      {selectedLayer === 'load-balancer' 
+                      {selectedLayer === 'load-balancer'
                         ? (activeConfigTab === 'haproxy' ? 'haproxy.cfg' : activeConfigTab === 'nginx' ? 'nginx.conf' : 'keepalived.conf')
-                        : selectedLayer === 'vlsi' 
-                        ? 'zanderlink_node.vhd' 
-                        : selectedLayer === 'edge' 
-                        ? 'edge_scraper.ts' 
-                        : selectedLayer === 'telemetry' 
-                        ? 'prometheus_rules.yml' 
+                        : selectedLayer === 'vlsi'
+                        ? 'zanderlink_node.vhd'
+                        : selectedLayer === 'edge'
+                        ? 'edge_scraper.ts'
+                        : selectedLayer === 'telemetry'
+                        ? 'prometheus_rules.yml'
                         : 'lstm_anomaly.py'}
                     </span>
                   </div>
@@ -519,34 +516,41 @@ vrrp_instance VI_TELEMETRY {
                     {selectedLayer === 'load-balancer' && (
                       <div className="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
                         <button
+                          type="button"
+                          aria-pressed={activeConfigTab === 'haproxy'}
                           onClick={() => setActiveConfigTab('haproxy')}
-                          className={`px-2 py-0.5 rounded transition-all ${activeConfigTab === 'haproxy' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'haproxy' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                         >
                           HAProxy
                         </button>
                         <button
+                          type="button"
+                          aria-pressed={activeConfigTab === 'nginx'}
                           onClick={() => setActiveConfigTab('nginx')}
-                          className={`px-2 py-0.5 rounded transition-all ${activeConfigTab === 'nginx' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'nginx' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                         >
                           NGINX
                         </button>
                         <button
+                          type="button"
+                          aria-pressed={activeConfigTab === 'keepalived'}
                           onClick={() => setActiveConfigTab('keepalived')}
-                          className={`px-2 py-0.5 rounded transition-all ${activeConfigTab === 'keepalived' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'keepalived' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
                         >
                           VRRP
                         </button>
                       </div>
                     )}
-                    
+
                     <button
+                      type="button"
                       onClick={() => {
-                        const snippet = selectedLayer === 'load-balancer' 
+                        const snippet = selectedLayer === 'load-balancer'
                           ? (activeConfigTab === 'haproxy' ? current.codeSnippet : activeConfigTab === 'nginx' ? nginxConfigCode : keepalivedConfigCode)
                           : current.codeSnippet;
                         copyToClipboard(snippet, selectedLayer);
                       }}
-                      className="flex items-center gap-1 text-[10px] text-cyan-300 hover:text-white bg-slate-800 px-2 py-1 rounded transition-colors"
+                      className="flex items-center gap-1 text-[10px] text-slate-200 hover:text-emerald-300 bg-slate-800 px-2 py-1 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
                       title={t.copyConfig}
                     >
                       {copiedConfig === selectedLayer ? (
@@ -564,9 +568,9 @@ vrrp_instance VI_TELEMETRY {
                   </div>
                 </div>
 
-                <div className="p-4 overflow-x-auto text-xs font-mono text-cyan-300 leading-relaxed bg-[#050811] max-h-72">
+                <div className="p-4 overflow-auto text-xs font-mono text-emerald-200/90 leading-relaxed bg-[#050811] max-h-72">
                   <pre>
-                    {selectedLayer === 'load-balancer' 
+                    {selectedLayer === 'load-balancer'
                       ? (activeConfigTab === 'haproxy' ? current.codeSnippet : activeConfigTab === 'nginx' ? nginxConfigCode : keepalivedConfigCode)
                       : current.codeSnippet}
                   </pre>
@@ -574,10 +578,10 @@ vrrp_instance VI_TELEMETRY {
               </div>
 
               {/* Live Signal Status */}
-              <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 flex items-center justify-between text-xs font-mono">
+              <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-3">
                   <div className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    {isSimulating && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />}
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
                   </div>
                   <div className="space-y-0.5">
@@ -608,9 +612,6 @@ vrrp_instance VI_TELEMETRY {
                   <h4 className="text-base sm:text-lg font-bold text-white font-display">
                     {t.lbDemoTitle}
                   </h4>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-700/50">
-                    Live Demo
-                  </span>
                 </div>
                 <p className="text-xs text-slate-300">
                   {t.lbDemoDesc}
@@ -620,85 +621,99 @@ vrrp_instance VI_TELEMETRY {
               {/* Algorithm & Traffic Rate Controls */}
               <div className="flex flex-wrap items-center gap-3">
                 {/* Traffic Rate */}
-                <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+                <div role="group" aria-label={t.trafficRate} className="flex flex-wrap items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
                   <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
                     <Gauge className="w-3.5 h-3.5 text-cyan-400" />
                     {t.trafficRate}
                   </span>
                   <button
+                    type="button"
+                    aria-pressed={trafficRate === 'normal'}
                     onClick={() => setTrafficRate('normal')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      trafficRate === 'normal' 
-                        ? 'bg-cyan-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      trafficRate === 'normal'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     100 r/s
                   </button>
                   <button
+                    type="button"
+                    aria-pressed={trafficRate === 'high'}
                     onClick={() => setTrafficRate('high')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      trafficRate === 'high' 
-                        ? 'bg-cyan-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      trafficRate === 'high'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     500 r/s
                   </button>
                   <button
+                    type="button"
+                    aria-pressed={trafficRate === 'surge'}
                     onClick={() => setTrafficRate('surge')}
-                    className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 ${
-                      trafficRate === 'surge' 
-                        ? 'bg-amber-400 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 flex items-center gap-1 ${
+                      trafficRate === 'surge'
+                        ? 'bg-amber-400 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-amber-300'
                     }`}
                   >
-                    <Flame className="w-3 h-3 text-red-500" />
+                    <Flame className="w-3 h-3 text-red-500" aria-hidden="true" />
                     1.5k r/s
                   </button>
                 </div>
 
                 {/* Algorithm Switcher */}
-                <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+                <div role="group" aria-label={t.algorithm} className="flex flex-wrap items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
                   <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
                     <Sliders className="w-3.5 h-3.5 text-emerald-400" />
                     {t.algorithm}
                   </span>
                   <button
+                    type="button"
+                    aria-pressed={lbAlgorithm === 'roundrobin'}
                     onClick={() => setLbAlgorithm('roundrobin')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      lbAlgorithm === 'roundrobin' 
-                        ? 'bg-emerald-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      lbAlgorithm === 'roundrobin'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     Round Robin
                   </button>
                   <button
+                    type="button"
+                    aria-pressed={lbAlgorithm === 'leastconn'}
                     onClick={() => setLbAlgorithm('leastconn')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      lbAlgorithm === 'leastconn' 
-                        ? 'bg-emerald-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      lbAlgorithm === 'leastconn'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     Least Conn
                   </button>
                   <button
+                    type="button"
+                    aria-pressed={lbAlgorithm === 'weighted'}
                     onClick={() => setLbAlgorithm('weighted')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      lbAlgorithm === 'weighted' 
-                        ? 'bg-emerald-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      lbAlgorithm === 'weighted'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     Weighted
                   </button>
                   <button
+                    type="button"
+                    aria-pressed={lbAlgorithm === 'iphash'}
                     onClick={() => setLbAlgorithm('iphash')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${
-                      lbAlgorithm === 'iphash' 
-                        ? 'bg-emerald-500 text-slate-950 font-bold' 
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                      lbAlgorithm === 'iphash'
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -710,7 +725,7 @@ vrrp_instance VI_TELEMETRY {
 
             {/* Visual Load Balancer Flow Diagram */}
             <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 relative overflow-hidden">
-              <div className="text-[11px] font-mono text-slate-400 mb-3 flex items-center justify-between">
+              <div className="text-[11px] font-mono text-slate-400 mb-3 flex flex-wrap items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5">
                   <RadioTower className="w-3.5 h-3.5 text-emerald-400" />
                   {isDe ? 'Echtzeit-Traffic-Routen & Paketfluss' : 'Live Traffic Routing & Ingress Flow'}
@@ -722,7 +737,7 @@ vrrp_instance VI_TELEMETRY {
 
               {/* Graphic Flow Lines */}
               <div className="relative py-2 flex flex-col md:flex-row items-center justify-between gap-4">
-                
+
                 {/* 1. Client Ingress Stream */}
                 <div className="w-full md:w-1/4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-center">
                   <div className="text-[10px] font-mono text-slate-400 uppercase">
@@ -732,7 +747,7 @@ vrrp_instance VI_TELEMETRY {
                     HTTPS / WebSocket
                   </div>
                   <div className="mt-2 flex justify-center items-center gap-1 text-[10px] text-cyan-300 font-mono">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                    <span className={`w-1.5 h-1.5 rounded-full bg-cyan-400 ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
                     <span>{rateLabel}</span>
                   </div>
                 </div>
@@ -744,7 +759,7 @@ vrrp_instance VI_TELEMETRY {
                 </div>
 
                 {/* 2. Virtual IP (VIP) Load Balancer */}
-                <div className="w-full md:w-1/3 p-4 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-emerald-500/60 text-center space-y-1.5 shadow-lg shadow-emerald-500/10">
+                <div className="w-full md:w-1/3 p-4 rounded-2xl bg-slate-900 border border-emerald-500/50 text-center space-y-1.5">
                   <div className="flex items-center justify-center gap-1 text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
                     <Shield className="w-3.5 h-3.5" />
                     {t.virtualIp}
@@ -771,7 +786,7 @@ vrrp_instance VI_TELEMETRY {
                   <div className="space-y-1">
                     <div className="text-[10px] text-slate-400">{isDe ? 'Aktiver Zielknoten:' : 'Active Target Node:'}</div>
                     <div className="text-emerald-400 font-bold flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span className={`w-2.5 h-2.5 rounded-full bg-emerald-400 ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
                       <span>WORKER 0{activeRoutingNode}</span>
                     </div>
                   </div>
@@ -786,12 +801,12 @@ vrrp_instance VI_TELEMETRY {
 
             {/* Load Balancer Nodes Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-              
+
               {/* Node 1 */}
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
-                nodesHealth.node1 
-                  ? activeRoutingNode === 1 
-                    ? 'bg-emerald-950/40 border-emerald-400/80 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40' 
+                nodesHealth.node1
+                  ? activeRoutingNode === 1
+                    ? 'bg-emerald-950/40 border-emerald-400/80'
                     : 'bg-slate-950/80 border-slate-800'
                   : 'bg-red-950/20 border-red-500/50'
               }`}>
@@ -818,15 +833,16 @@ vrrp_instance VI_TELEMETRY {
                       <span className="text-emerald-300 font-bold">{nodeConns.node1}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Latenz</span>
+                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
                       <span className="text-slate-200 font-bold">{nodesHealth.node1 ? '0.3 ms' : '∞ ms'}</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <button
+                  type="button"
                   onClick={() => toggleNodeHealth('node1')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all shadow-sm ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                     nodesHealth.node1
                       ? 'bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-500/50'
                       : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50'
@@ -838,9 +854,9 @@ vrrp_instance VI_TELEMETRY {
 
               {/* Node 2 */}
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
-                nodesHealth.node2 
-                  ? activeRoutingNode === 2 
-                    ? 'bg-emerald-950/40 border-emerald-400/80 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40' 
+                nodesHealth.node2
+                  ? activeRoutingNode === 2
+                    ? 'bg-emerald-950/40 border-emerald-400/80'
                     : 'bg-slate-950/80 border-slate-800'
                   : 'bg-red-950/20 border-red-500/50'
               }`}>
@@ -867,15 +883,16 @@ vrrp_instance VI_TELEMETRY {
                       <span className="text-emerald-300 font-bold">{nodeConns.node2}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Latenz</span>
+                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
                       <span className="text-slate-200 font-bold">{nodesHealth.node2 ? '0.4 ms' : '∞ ms'}</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <button
+                  type="button"
                   onClick={() => toggleNodeHealth('node2')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all shadow-sm ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                     nodesHealth.node2
                       ? 'bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-500/50'
                       : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50'
@@ -887,9 +904,9 @@ vrrp_instance VI_TELEMETRY {
 
               {/* Node 3 (Backup / Standby) */}
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
-                nodesHealth.node3 
-                  ? activeRoutingNode === 3 
-                    ? 'bg-cyan-950/40 border-cyan-400/80 shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500/40' 
+                nodesHealth.node3
+                  ? activeRoutingNode === 3
+                    ? 'bg-cyan-950/40 border-cyan-400/80'
                     : 'bg-slate-950/80 border-slate-800'
                   : 'bg-slate-950/40 border-slate-800/60'
               }`}>
@@ -916,15 +933,16 @@ vrrp_instance VI_TELEMETRY {
                       <span className="text-cyan-300 font-bold">{nodeConns.node3}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">Latenz</span>
+                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
                       <span className="text-slate-200 font-bold">{nodesHealth.node3 ? '0.4 ms' : 'Standby'}</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <button
+                  type="button"
                   onClick={() => toggleNodeHealth('node3')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-all shadow-sm ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                     nodesHealth.node3
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
                       : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
@@ -939,10 +957,14 @@ vrrp_instance VI_TELEMETRY {
             {/* Live Failover Guarantee Status */}
             <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-wrap items-center justify-between text-xs font-mono text-slate-300 gap-3">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>
-                  {(!nodesHealth.node1 || !nodesHealth.node2) 
-                    ? t.failoverActive 
+                {(!nodesHealth.node1 || !nodesHealth.node2) ? (
+                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+                ) : (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+                )}
+                <span aria-live="polite">
+                  {(!nodesHealth.node1 || !nodesHealth.node2)
+                    ? t.failoverActive
                     : t.allHealthy}
                 </span>
               </div>

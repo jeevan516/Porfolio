@@ -1,18 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { 
-  X, 
-  Download, 
-  Printer, 
-  Copy, 
-  Check, 
-  FileText, 
-  Sparkles, 
-  Globe, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Linkedin, 
-  Github, 
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  X,
+  Download,
+  Printer,
+  Copy,
+  Check,
+  FileText,
+  Sparkles,
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  Linkedin,
+  Github,
   ExternalLink,
   Award,
   GraduationCap,
@@ -27,7 +27,11 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import confetti from 'canvas-confetti';
 import { playSuccessChime } from '../services/soundFx';
-import { PERSONAL_INFO, EXPERIENCES, EDUCATION_DATA, CERTIFICATIONS, SKILL_CATEGORIES, MASTER_THESIS_DETAILS } from '../data/portfolioData';
+import { PERSONAL_INFO, EXPERIENCES, CERTIFICATIONS, MASTER_THESIS_DETAILS } from '../data/portfolioData';
+import { useModalA11y } from '../services/useModalA11y';
+import { copyText } from '../services/clientUtils';
+import { normalizeColorsForCanvas, printElement } from '../services/documentExport';
+import { ui } from '../services/uiClasses';
 
 interface ResumeExportModalProps {
   isOpen: boolean;
@@ -44,7 +48,22 @@ export const ResumeExportModal: React.FC<ResumeExportModalProps> = ({
   const [themeStyle, setThemeStyle] = useState<'executive' | 'modern'>('executive');
   const [isExporting, setIsExporting] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const resumeRef = useRef<HTMLDivElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClose = () => {
+    if (!isExporting) onClose();
+  };
+  useModalA11y(isOpen, handleClose, dialogRef);
+
+  // Follow the site language each time the modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setLang(initialLang);
+      setExportError(null);
+    }
+  }, [isOpen, initialLang]);
 
   if (!isOpen) return null;
 
@@ -54,29 +73,39 @@ export const ResumeExportModal: React.FC<ResumeExportModalProps> = ({
   const handleDownloadPDF = async () => {
     if (!resumeRef.current) return;
     setIsExporting(true);
+    setExportError(null);
 
     try {
       const element = resumeRef.current;
-      
-      // Capture at 2x scale for 300 DPI print quality
+
+      // Capture at 2x scale. Render at a fixed A4-like width so phones get the same layout,
+      // and convert Tailwind v4 oklch()/oklab() colors that html2canvas 1.4 cannot parse.
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
         windowWidth: 1024,
+        onclone: (clonedDoc: Document, clonedEl: HTMLElement) => {
+          clonedEl.style.width = '850px';
+          clonedEl.style.maxWidth = '850px';
+          clonedEl.style.borderRadius = '0';
+          clonedEl.style.boxShadow = 'none';
+          clonedEl.style.border = '0';
+          normalizeColorsForCanvas(clonedDoc, clonedEl);
+        },
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      
+
       // Standard A4 dimensions in mm: 210 x 297
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-      
+
       let heightLeft = imgHeight;
       let position = 0;
 
@@ -92,10 +121,10 @@ export const ResumeExportModal: React.FC<ResumeExportModalProps> = ({
         heightLeft -= pdfHeight;
       }
 
-      const fileName = isDe 
-        ? `Jeevan_Dutta_Lebenslauf_2026.pdf` 
+      const fileName = isDe
+        ? `Jeevan_Dutta_Lebenslauf_2026.pdf`
         : `Jeevan_Dutta_Executive_CV_2026.pdf`;
-      
+
       pdf.save(fileName);
       playSuccessChime();
       confetti({
@@ -106,20 +135,25 @@ export const ResumeExportModal: React.FC<ResumeExportModalProps> = ({
       });
     } catch (err) {
       console.error('Failed to generate PDF:', err);
-      // Fallback to browser native print
-      window.print();
+      setExportError(
+        isDe
+          ? 'PDF konnte nicht erstellt werden. Bitte nutzen Sie "Drucken" und wählen Sie "Als PDF speichern".'
+          : 'Could not generate the PDF. Use "Print" and choose "Save as PDF" instead.'
+      );
     } finally {
       setIsExporting(false);
     }
   };
 
-  // Browser Native Print (Vector PDF)
+  // Browser native print of just the CV (vector PDF via "Save as PDF")
   const handlePrint = () => {
-    window.print();
+    if (resumeRef.current) {
+      printElement(resumeRef.current, isDe ? 'Jeevan Dutta - Lebenslauf' : 'Jeevan Dutta - CV');
+    }
   };
 
   // Plain Text ATS Resume Copy
-  const handleCopyAtsText = () => {
+  const handleCopyAtsText = async () => {
     const text = `
 JEEVAN DUTTA
 IT Specialist & AI Engineer · MSc Informatics (TU Clausthal)
@@ -188,103 +222,88 @@ CORE TECHNICAL COMPETENCIES
 - Languages: English (Fluent / C1), German (BAMF Certified B1/B2)
 `.trim();
 
-    navigator.clipboard.writeText(text);
-    setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2000);
+    if (await copyText(text)) {
+      setCopiedText(true);
+      window.setTimeout(() => setCopiedText(false), 2000);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-5xl h-[92vh] flex flex-col rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden">
-        
-        {/* Top Control Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-slate-950 border-b border-slate-800 text-xs font-mono">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-white font-display">
-                {isDe ? 'Professioneller Lebenslauf (PDF-Export)' : 'Professional Executive CV (PDF Export)'}
+    <div className={`${ui.overlay} !items-center`} onMouseDown={(e) => e.target === e.currentTarget && handleClose()}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resume-modal-title"
+        tabIndex={-1}
+        className={`${ui.panel} max-w-5xl h-[92vh] flex flex-col overflow-hidden`}
+      >
+        {/* Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-slate-800">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="min-w-0">
+              <h3 id="resume-modal-title" className="text-sm font-semibold text-white font-display truncate">
+                {isDe ? 'Lebenslauf exportieren' : 'Export CV'}
               </h3>
-              <p className="text-[11px] text-slate-400">
-                {isDe ? 'DIN A4 Format · Recruiter- & ATS-Optimiert' : 'DIN A4 Standard · Recruiter & ATS-Optimized'}
-              </p>
+              <p className="text-[11px] text-slate-500 hidden sm:block">{isDe ? 'DIN A4 · ATS-freundlich' : 'A4 · ATS-friendly'}</p>
             </div>
           </div>
 
-          {/* Right Action Controls */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            {/* Language Selector */}
-            <div className="flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
-              <button
-                onClick={() => setLang('en')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  lang === 'en' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                EN (CV)
-              </button>
-              <button
-                onClick={() => setLang('de')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  lang === 'de' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                DE (Lebenslauf)
-              </button>
+          <button type="button" onClick={handleClose} className={`${ui.iconBtn} sm:order-last`} aria-label={isDe ? 'Schließen' : 'Close CV export'}>
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            <div className="flex items-center rounded-xl border border-slate-700 p-0.5" role="group" aria-label={isDe ? 'Sprache' : 'Language'}>
+              {(['en', 'de'] as const).map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  aria-pressed={lang === l}
+                  onClick={() => setLang(l)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${ui.focusRing} ${
+                    lang === l ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
             </div>
 
-            {/* Copy ATS Text */}
-            <button
-              onClick={handleCopyAtsText}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors text-xs"
-              title="Copy plain text version for ATS job boards"
-            >
+            <button type="button" onClick={handleCopyAtsText} className={`${ui.btnSecondary} !px-3 !py-2`} title={isDe ? 'Klartext für Bewerbungsportale kopieren' : 'Copy plain text for ATS job boards'}>
               {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedText ? 'Copied ATS Text' : 'Copy ATS Text'}</span>
+              <span>{copiedText ? (isDe ? 'Kopiert' : 'Copied') : isDe ? 'Text' : 'ATS text'}</span>
             </button>
 
-            {/* Print / Save as PDF */}
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors text-xs"
-              title="Print via browser native print dialog"
-            >
-              <Printer className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Print</span>
+            <button type="button" onClick={handlePrint} className={`${ui.btnSecondary} !px-3 !py-2`}>
+              <Printer className="w-3.5 h-3.5" />
+              <span>{isDe ? 'Drucken' : 'Print'}</span>
             </button>
 
-            {/* Primary Download PDF Button */}
-            <button
-              onClick={handleDownloadPDF}
-              disabled={isExporting}
-              className="flex items-center gap-2 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95 disabled:opacity-50"
-            >
-              <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-bounce' : ''}`} />
-              <span>{isExporting ? (isDe ? 'Erstelle PDF...' : 'Generating PDF...') : (isDe ? 'PDF Herunterladen' : 'Download PDF')}</span>
-            </button>
-
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            >
-              <X className="w-5 h-5" />
+            <button type="button" onClick={handleDownloadPDF} disabled={isExporting} className={`${ui.btnPrimary} !px-3.5 !py-2 flex-1 sm:flex-none`}>
+              {isExporting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+              <span>{isExporting ? (isDe ? 'Erstelle PDF…' : 'Generating…') : isDe ? 'PDF herunterladen' : 'Download PDF'}</span>
             </button>
           </div>
         </div>
 
+        {exportError && (
+          <div role="alert" className="px-4 sm:px-6 py-2.5 bg-rose-950/50 border-b border-rose-500/30 text-xs text-rose-200">
+            {exportError}
+          </div>
+        )}
+
         {/* Scrollable Preview Container */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-950/60 flex justify-center">
-          
+        <div className="flex-1 overflow-y-auto p-3 sm:p-8 bg-slate-950/60 flex justify-center">
+
           {/* Printable White A4 Document Canvas */}
-          <div 
+          <div
             ref={resumeRef}
             id="printable-cv-document"
-            className="w-full max-w-[850px] bg-white text-slate-900 rounded-2xl shadow-2xl p-8 sm:p-12 font-sans text-xs leading-normal border border-slate-200 select-text print:p-0 print:border-none print:shadow-none print:rounded-none"
+            className="w-full max-w-[850px] h-fit bg-white text-slate-900 rounded-xl shadow-2xl p-5 sm:p-12 font-sans text-xs leading-normal border border-slate-200 select-text print:p-0 print:border-none print:shadow-none print:rounded-none"
           >
-            
+
             {/* Header: Name, Title, Contact Info */}
             <header className="border-b-2 border-slate-900 pb-5 mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
@@ -332,7 +351,7 @@ CORE TECHNICAL COMPETENCIES
                 <span>{isDe ? 'Kurzprofil & Fachliche Ausrichtung' : 'Executive Profile & Objective'}</span>
               </h2>
               <p className="text-slate-700 text-[11px] leading-relaxed text-justify">
-                {isDe 
+                {isDe
                   ? 'Ergebnisorientierter IT-Experte mit dualem Fundament in Datenanalyse und IT-Engineering. Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit über synchrone 4-Knoten-SPS-Netzwerke unter Betreuung von Prof. Dr. Christian Siemers). Mehr als 10 Jahre Praxiserfahrung in industrieller Telemetrie (WaDaCon GmbH), System- und Netzwerkadministration (Cogent Networks), KI-Backend-Entwicklung (RadicalX), E-Commerce-Analytics (Netidentity) und skalierbarer Softwareentwicklung (Avast Technologies). Spezialisiert auf hochverfügbare Infrastruktur, InfluxDB/Prometheus-Pipelines, Docker CI/CD, HAProxy-Load-Balancing und KI-Anomalieerkennung. Absolviert derzeit ein professionelles Bootcamp bei der neuefische GmbH (Künstliche Intelligenz, Machine Learning, Data Science, Data Engineering und Software Engineering) und ist ab sofort einsatzbereit für neue Aufgaben in Deutschland.'
                   : 'Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal with specialized Master’s Thesis research on deterministic 4-node PLC networks under Prof. Dr. Christian Siemers. Brings over a decade of hands-on experience spanning industrial observability pipelines (WaDaCon GmbH), enterprise systems & network engineering (Cogent Networks), cloud AI architectures (RadicalX), business intelligence (Netidentity), and scalable object-oriented software development (Avast Technologies). Currently attending an intensive professional engineering bootcamp at neuefische GmbH covering Artificial Intelligence, Machine Learning, Data Science, Data Engineering, and modern Software Engineering. Available immediately and ready for work across Germany.'}
               </p>
@@ -369,7 +388,7 @@ CORE TECHNICAL COMPETENCIES
                     <span><strong>{isDe ? 'Matrikel-Nr.:' : 'Matriculation No.:'}</strong> 517360</span>
                   </div>
                   <p className="text-slate-600 text-[10.5px] leading-relaxed pt-0.5">
-                    {isDe 
+                    {isDe
                       ? 'Entwicklung und Simulation eines synchronen 4-Knoten-ZanderLink-Kommunikationsnetzwerks in VHDL mit Xilinx Vivado (2020.2) über EIA-485. Garantierte deterministische Reaktionszeiten unter 12 µs ohne Jitter sowie Hardware-CRC-8-Fehlerkorrektur.'
                       : 'Engineered and simulated a synchronous 4-node ZanderLink bus protocol in VHDL using Xilinx Vivado (2020.2) over EIA-485. Achieved guaranteed deterministic reaction times under 12 µs without jitter across distributed control nodes with hardware CRC-8 error detection.'}
                   </p>

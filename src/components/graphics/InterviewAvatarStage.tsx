@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Mic, 
-  Volume2, 
-  Play, 
-  Pause, 
-  CheckCircle2, 
-  FileText, 
-  MessageSquare,
-  Sparkles,
-  HelpCircle,
-  Radio
-} from 'lucide-react';
+import { Mic, Play, Pause, CheckCircle2, FileText, Sparkles } from 'lucide-react';
 import { Chapter } from '../VideoPortfolioSection';
 import { MovingExplainingAvatar } from './MovingExplainingAvatar';
 
@@ -46,6 +35,14 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
   const [eqLevels, setEqLevels] = useState<number[]>([40, 65, 80, 50, 70]);
   const [isPlayingCalibration, setIsPlayingCalibration] = useState(false);
   const [avatarFocusMode, setAvatarFocusMode] = useState(false);
+  const speechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+
+  // Stop any voice preview when the stage unmounts.
+  useEffect(() => {
+    return () => {
+      if (speechSupported) window.speechSynthesis.cancel();
+    };
+  }, [speechSupported]);
 
   // Animate audio EQ bars dynamically when playing
   useEffect(() => {
@@ -107,15 +104,15 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
   const currentQuestionIdx = parseInt(activeChapter.number) - 1;
 
   const handleTestClonedSample = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (!speechSupported) return;
     setIsPlayingCalibration(true);
     window.speechSynthesis.cancel();
-    
+
     // Sample phrase matching the user's uploaded voice calibration
     const sampleText = isDe
       ? "Ja, genau, ich verstehe was Sie meinen. Lassen Sie uns das im Detail prüfen, um auf der sicheren Seite zu sein."
       : "Yeah, no, I see what you mean. It's not a big deal, honestly. I just think we should check it later, you know, to be safe.";
-    
+
     const utterance = new SpeechSynthesisUtterance(sampleText);
     utterance.rate = 0.96;
     utterance.pitch = 0.95; // Calibrated directly to match uploaded audio pitch
@@ -126,8 +123,8 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
       const germanVoice = voices.find(v => v.lang.startsWith('de') && !v.name.toLowerCase().includes('female'));
       if (germanVoice) utterance.voice = germanVoice;
     } else {
-      const maleVoice = voices.find(v => 
-        (v.lang === 'en-IN' || v.lang.startsWith('en')) && 
+      const maleVoice = voices.find(v =>
+        (v.lang === 'en-IN' || v.lang.startsWith('en')) &&
         (v.name.toLowerCase().includes('ravi') || v.name.toLowerCase().includes('pradeep') || v.name.toLowerCase().includes('heera') || v.name.toLowerCase().includes('george') || v.name.toLowerCase().includes('oliver') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('guy') || v.name.toLowerCase().includes('male'))
       ) || voices.find(v => v.lang.startsWith('en') && !v.name.toLowerCase().includes('female'));
       if (maleVoice) utterance.voice = maleVoice;
@@ -140,14 +137,14 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-6 z-10 bg-gradient-to-b from-[#050811] via-[#090e1a] to-[#04060c] text-white overflow-hidden">
-      
+    <div className="absolute inset-0 flex flex-col justify-between gap-3 p-3 sm:p-6 z-10 bg-gradient-to-b from-[#050811] via-[#090e1a] to-[#04060c] text-white overflow-y-auto overflow-x-hidden">
+
       {/* Top Header: Interview Setting & On-Air Badge */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-mono font-bold tracking-wider">
-            <span className={`w-2 h-2 rounded-full bg-red-500 ${isPlaying ? 'animate-ping' : ''}`} />
-            <span>{isPlaying ? 'ON AIR · INTERVIEW RECORDING' : 'STUDIO INTERVIEW READY'}</span>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700 text-slate-200 text-xs font-semibold">
+            <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-red-500 animate-pulse' : 'bg-slate-500'}`} aria-hidden="true" />
+            <span>{isPlaying ? (isDe ? 'Läuft' : 'Playing') : (isDe ? 'Bereit' : 'Ready')}</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400">
@@ -155,8 +152,8 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
             <span className="text-emerald-400 font-semibold">
               {isDe ? 'Fokus: ' : 'Focus: '}
             </span>
-            <span className="text-slate-200">
-              {isDe ? '„Erzählen Sie von sich“' : '“Tell Me About Yourself”'}
+            <span className="text-slate-200 truncate max-w-[18rem]">
+              {isDe ? activeChapter.titleDe : activeChapter.titleEn}
             </span>
           </div>
         </div>
@@ -164,45 +161,45 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
         {/* Cloned Voice Calibration Indicator & Test Button */}
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setAvatarFocusMode(!avatarFocusMode)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-mono transition-all ${
-              avatarFocusMode 
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20' 
+            aria-pressed={avatarFocusMode}
+            aria-label={avatarFocusMode ? (isDe ? 'Standardansicht' : 'Split view') : (isDe ? 'Avatar-Fokus' : 'Avatar spotlight')}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+              avatarFocusMode
+                ? 'bg-emerald-500 text-slate-950 font-bold'
                 : 'bg-slate-900/90 text-slate-300 border border-slate-800 hover:text-white'
             }`}
-            title="Toggle between Split Stage and Full Avatar Presenter focus"
+            title={isDe ? 'Ansicht umschalten' : 'Toggle layout'}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span className="hidden sm:inline">{avatarFocusMode ? (isDe ? 'Standardansicht' : 'Split View') : (isDe ? 'Avatar-Fokus' : 'Avatar Spotlight')}</span>
           </button>
 
-          <button
-            onClick={handleTestClonedSample}
-            disabled={isPlayingCalibration}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-mono font-semibold transition-all shadow-sm ${
-              isPlayingCalibration 
-                ? 'bg-emerald-500 text-slate-950 animate-pulse' 
-                : 'bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 hover:border-emerald-400'
-            }`}
-            title="Listen to the calibrated audio sample matching your uploaded voice"
-          >
-            <Mic className="w-3.5 h-3.5 text-emerald-400" />
-            <span>
-              {isPlayingCalibration 
-                ? (isDe ? 'Stimmprobe läuft...' : 'Playing Voice Sample...') 
-                : (isDe ? 'Stimmprobe anhören' : 'Test Cloned Voice (0.95)')}
-            </span>
-          </button>
-
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 hidden md:inline">
-            Pitch: 0.95 · Rate: 0.96
-          </span>
+          {speechSupported && (
+            <button
+              type="button"
+              onClick={handleTestClonedSample}
+              disabled={isPlayingCalibration}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-wait ${
+                isPlayingCalibration
+                  ? 'bg-emerald-500 text-slate-950'
+                  : 'bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 hover:border-emerald-400'
+              }`}
+              title={isDe ? 'Kurze Stimmprobe (Text-to-Speech) abspielen' : 'Play a short text-to-speech voice sample'}
+            >
+              <Mic className={`w-3.5 h-3.5 ${isPlayingCalibration ? 'text-slate-950' : 'text-emerald-400'}`} aria-hidden="true" />
+              <span>
+                {isPlayingCalibration ? (isDe ? 'Stimmprobe läuft…' : 'Playing…') : (isDe ? 'Stimmprobe' : 'Voice sample')}
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Main Studio 2-Column Grid: Left Avatar Studio + Right Teleprompter Answer */}
       <div className={`grid grid-cols-1 ${avatarFocusMode ? 'lg:grid-cols-1 max-w-xl mx-auto' : 'lg:grid-cols-12'} gap-6 items-center my-auto py-2`}>
-        
+
         {/* Left Column: Moving Explaining Avatar (Procedural 60FPS Presenter) */}
         <div className={`${avatarFocusMode ? 'w-full' : 'lg:col-span-5'} flex flex-col items-center justify-center`}>
           <MovingExplainingAvatar
@@ -247,7 +244,7 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
 
         {/* Right Column: Question Navigator & Live Teleprompter Script */}
         <div className={`${avatarFocusMode ? 'w-full' : 'lg:col-span-7'} space-y-3`}>
-          
+
           {/* Question / Topic Jump Chips Strip */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
             {interviewQuestions.map((q) => {
@@ -255,15 +252,17 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
               return (
                 <button
                   key={q.index}
+                  type="button"
+                  aria-pressed={isCurrent}
+                  title={isDe ? q.labelDe : q.labelEn}
                   onClick={() => onSelectChapter(q.index)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-mono whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono whitespace-nowrap transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                     isCurrent
-                      ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                      ? 'bg-emerald-500 text-slate-950 font-bold'
                       : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700'
                   }`}
                 >
                   <span>{isDe ? q.tagDe : q.tag}</span>
-                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-pulse" />}
                 </button>
               );
             })}
@@ -310,25 +309,24 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
           {/* Direct CTA Buttons inside avatar stage */}
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={onTogglePlay}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-lg ${
-                isPlaying
-                  ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20'
-                  : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-emerald-500/25'
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-xl text-xs sm:text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                isPlaying ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950'
               }`}
             >
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-slate-950" />}
               <span>
-                {isPlaying 
-                  ? (isDe ? 'Antwort pausieren' : 'Pause Answer') 
+                {isPlaying
+                  ? (isDe ? 'Antwort pausieren' : 'Pause Answer')
                   : (isDe ? 'Antwort jetzt anhören' : 'Play Spoken Answer')}
               </span>
             </button>
 
             <button
+              type="button"
               onClick={onOpenContact}
-              className="py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs sm:text-sm font-semibold text-white transition-colors"
-              title="Schedule Next Round Interview"
+              className="py-3 px-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-xs sm:text-sm font-semibold text-slate-200 hover:text-emerald-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
             >
               {isDe ? 'Gespräch anfragen' : 'Invite to Interview'}
             </button>
@@ -339,12 +337,9 @@ export const InterviewAvatarStage: React.FC<InterviewAvatarStageProps> = ({
 
       {/* Bottom Telemetry Bar: Cloned Voice Details & Chapter Progress */}
       <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-400 gap-2">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>
-            {isDe ? 'Stimmprofil: ' : 'Cloned Voice Profile: '}
-            <strong className="text-white">Jeevan Dutta (Indian/Intl. English · Calibrated 0.95)</strong>
-          </span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className={`w-2 h-2 rounded-full shrink-0 ${isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} aria-hidden="true" />
+          <span className="truncate">{isDe ? 'Sprachausgabe per Browser-Text-to-Speech' : 'Narration via browser text-to-speech'}</span>
         </div>
 
         <div className="flex items-center gap-3 text-slate-300">

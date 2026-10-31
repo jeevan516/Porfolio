@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, AlertTriangle, CheckCircle2, Bell, Cpu, ArrowUpRight, ShieldCheck, Zap } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Activity, AlertTriangle, CheckCircle2, Bell, Cpu, ShieldCheck, Zap } from 'lucide-react';
 
 export const IndustrialIoTMonitor: React.FC = () => {
   const [opticalSorterRpm, setOpticalSorterRpm] = useState<number>(2450);
@@ -13,6 +13,11 @@ export const IndustrialIoTMonitor: React.FC = () => {
     { time: '10:42:18', text: 'Prometheus target scraper healthy · latency 14ms', type: 'info' },
     { time: '10:42:20', text: 'ML anomaly score nominal (0.08 < threshold 0.65)', type: 'success' },
   ]);
+
+  const recoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (recoverTimer.current) clearTimeout(recoverTimer.current);
+  }, []);
 
   // Live sensor oscillation
   useEffect(() => {
@@ -44,7 +49,7 @@ export const IndustrialIoTMonitor: React.FC = () => {
     ]);
 
     // Automatically recover after 6 seconds
-    setTimeout(() => {
+    recoverTimer.current = setTimeout(() => {
       setSimulatingFault(false);
       setVibrationSpectrum(1.24);
       setOpticalSorterRpm(2450);
@@ -61,27 +66,17 @@ export const IndustrialIoTMonitor: React.FC = () => {
   return (
     <div
       id="industrial-iot-monitor"
-      className="relative w-full rounded-2xl bg-gradient-to-b from-slate-900/95 via-[#0c1322]/95 to-slate-950/95 border border-slate-800/80 shadow-2xl backdrop-blur-xl overflow-hidden"
+      className="relative w-full rounded-2xl bg-slate-950/70 border border-slate-800 overflow-hidden"
     >
       {/* Top Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-800/80 bg-slate-950/50">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <Activity className="w-4 h-4 animate-pulse" />
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+            <Activity className="w-4 h-4" aria-hidden="true" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-                WaDaCon GmbH · MRF Recycling Telemetry
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Edge Ingest Live
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 font-mono">
-              Dockerized InfluxDB + Prometheus + Grafana Alerting Stack
-            </p>
+          <div className="min-w-0">
+            <div className="text-xs font-semibold text-slate-200">MRF recycling telemetry · WaDaCon</div>
+            <p className="text-[11px] text-slate-500">InfluxDB + Prometheus + Grafana alerting (simulated)</p>
           </div>
         </div>
 
@@ -90,19 +85,20 @@ export const IndustrialIoTMonitor: React.FC = () => {
           id="simulate-iot-anomaly-btn"
           onClick={handleSimulateFault}
           disabled={simulatingFault}
-          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-all border ${
+          type="button"
+          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed ${
             simulatingFault
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse'
-              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 hover:border-cyan-500/50'
+              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 hover:border-emerald-500/50'
           }`}
         >
-          <Zap className={`w-3.5 h-3.5 ${simulatingFault ? 'text-amber-400' : 'text-cyan-400'}`} />
-          {simulatingFault ? 'Simulating Machinery Spike...' : 'Simulate Sensor Anomaly'}
+          <Zap className={`w-3.5 h-3.5 ${simulatingFault ? 'text-amber-400' : 'text-emerald-400'}`} aria-hidden="true" />
+          {simulatingFault ? 'Anomaly in progress…' : 'Simulate anomaly'}
         </button>
       </div>
 
       {/* Grid of Telemetry Sensors */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 p-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 sm:p-5">
         {/* Sensor 1: Optical Sorter */}
         <div className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
@@ -177,9 +173,8 @@ export const IndustrialIoTMonitor: React.FC = () => {
           <div className="mt-2">
             <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-500 rounded-full ${
-                  isAlerting ? 'bg-rose-500 w-[89%]' : 'bg-emerald-500 w-[12%]'
-                }`}
+                className={`h-full transition-all duration-500 rounded-full ${isAlerting ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                style={{ width: `${Math.round(Math.min(1, Math.max(0, anomalyScore)) * 100)}%` }}
               />
             </div>
           </div>
@@ -187,25 +182,24 @@ export const IndustrialIoTMonitor: React.FC = () => {
       </div>
 
       {/* Live Pipeline Log Feed */}
-      <div className="px-5 pb-4">
+      <div className="px-4 sm:px-5 pb-4">
         <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800/70 font-mono text-[11px]">
           <div className="flex items-center justify-between text-slate-400 mb-2 border-b border-slate-800 pb-1.5">
             <span className="flex items-center gap-1.5 text-xs text-slate-300 font-semibold">
-              <Zap className="w-3 h-3 text-cyan-400" /> Real-Time Telemetry Pipeline Stream
+              <Zap className="w-3 h-3 text-emerald-400" aria-hidden="true" /> Pipeline log
             </span>
-            <span className="text-[10px] text-slate-500">Auto-synced with edge broker</span>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1" aria-live="polite">
             {logMessages.map((log, idx) => (
-              <div key={idx} className="flex items-start gap-2">
+              <div key={`${log.time}-${idx}`} className="flex items-start gap-2 min-w-0">
                 <span className="text-slate-500 shrink-0">[{log.time}]</span>
                 <span
-                  className={
+                  className={'break-words min-w-0 ' + (
                     log.type === 'warn'
                       ? 'text-amber-300 font-medium'
                       : log.type === 'success'
                       ? 'text-emerald-400'
-                      : 'text-slate-300'
+                      : 'text-slate-300')
                   }
                 >
                   {log.text}

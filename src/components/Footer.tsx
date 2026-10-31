@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, Github, Linkedin, MapPin, ArrowUp, ExternalLink, ShieldCheck, Clock } from 'lucide-react';
+import { Mail, Phone, Github, Linkedin, MapPin, ArrowUp, FileText, Clock } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
 
 interface FooterProps {
@@ -7,25 +7,30 @@ interface FooterProps {
   onOpenBrief: () => void;
 }
 
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#05070d]';
+
+const LINK = `inline-flex items-center gap-2 rounded-md hover:text-emerald-400 transition-colors ${FOCUS_RING}`;
+
 export const Footer: React.FC<FooterProps> = ({ onOpenContact, onOpenBrief }) => {
   const [hamburgTime, setHamburgTime] = useState<string>('');
 
   useEffect(() => {
     const updateTime = () => {
       try {
-        const timeStr = new Intl.DateTimeFormat('de-DE', {
-          timeZone: 'Europe/Berlin',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        }).format(new Date());
-        setHamburgTime(timeStr);
+        setHamburgTime(
+          new Intl.DateTimeFormat('de-DE', {
+            timeZone: 'Europe/Berlin',
+            hour: '2-digit',
+            minute: '2-digit',
+          }).format(new Date())
+        );
       } catch {
-        setHamburgTime(new Date().toLocaleTimeString());
+        setHamburgTime('');
       }
     };
     updateTime();
-    const timer = setInterval(updateTime, 1000);
+    const timer = setInterval(updateTime, 30_000);
     return () => clearInterval(timer);
   }, []);
 
@@ -34,15 +39,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact, onOpenBrief }) =>
   };
 
   return (
-    <footer id="contact" className="border-t border-slate-800 bg-[#05070d] text-slate-400 text-xs">
-      {/* Top Banner with Direct Contact Pitch */}
+    <footer id="contact" className="border-t border-slate-800 bg-[#05070d] text-slate-400 text-sm">
+      {/* Contact call-to-action */}
       <div className="border-b border-slate-800/80 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 shadow-2xl">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-6 sm:p-8 rounded-3xl bg-slate-900/70 border border-slate-800">
             <div className="space-y-2 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>Ready for Next Technical Challenge</span>
+              <div className="inline-flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>Ready for the next technical challenge</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-display font-bold text-white">
                 Let's Build Resilient Systems Together
@@ -56,17 +61,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact, onOpenBrief }) =>
               <button
                 id="footer-contact-btn"
                 onClick={onOpenContact}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-colors ${FOCUS_RING}`}
               >
                 <Mail className="w-4 h-4" />
                 <span>Get in Touch</span>
               </button>
-
               <button
                 id="footer-brief-btn"
                 onClick={onOpenBrief}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-semibold transition-all"
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white text-sm font-semibold transition-colors ${FOCUS_RING}`}
               >
+                <FileText className="w-4 h-4 text-cyan-400" />
                 <span>Recruiter Brief</span>
               </button>
             </div>
@@ -74,106 +79,91 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact, onOpenBrief }) =>
         </div>
       </div>
 
-      {/* Main Footer Links */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
           {/* Identity */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-emerald-500/40 shrink-0 bg-slate-800">
-                <img
-                  src="./jeevan-dutta.jpg"
-                  alt="Jeevan Dutta"
-                  className="w-full h-full object-cover object-top"
-                />
+                <img src="./jeevan-dutta.jpg" alt="" className="w-full h-full object-cover object-top" />
               </div>
               <div>
-                <span className="font-display font-bold text-white text-base">
-                  {PERSONAL_INFO.name}
-                </span>
-                <div className="text-[11px] text-emerald-400 font-mono">
-                  MSc Informatics · TU Clausthal
-                </div>
+                <div className="font-display font-bold text-white text-base">{PERSONAL_INFO.name}</div>
+                <div className="text-xs text-slate-400">MSc Informatics · TU Clausthal</div>
               </div>
             </div>
-            <p className="text-slate-400 text-xs leading-relaxed">
-              IT Specialist & AI Engineer based in Hamburg, Germany. Bootcamp at neuefische GmbH (AI, Data Science & SE) · Available immediately & ready for work.
+            <p className="text-slate-400 text-sm leading-relaxed">
+              IT Specialist & AI Engineer based in Hamburg, Germany. Bootcamp at neuefische GmbH (AI, Data Science & SE). Available immediately.
             </p>
-            <div className="flex items-center gap-2 font-mono text-[11px] text-emerald-400">
-              <Clock className="w-3.5 h-3.5" />
-              <span>Hamburg Time: {hamburgTime || '10:42 CET'}</span>
-            </div>
+            {hamburgTime && (
+              <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+                <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Hamburg {hamburgTime}</span>
+              </div>
+            )}
           </div>
 
-          {/* Direct Contact */}
-          <div className="space-y-2">
-            <h4 className="font-semibold text-white uppercase tracking-wider font-mono text-[11px]">
-              Direct Inquiries
-            </h4>
-            <ul className="space-y-1.5 font-mono text-xs">
+          {/* Direct contact */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-white text-sm">Contact</h4>
+            <ul className="space-y-2">
               <li>
-                <a
-                  href={`mailto:${PERSONAL_INFO.email}`}
-                  className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
-                >
-                  <Mail className="w-3.5 h-3.5 text-slate-500" />
+                <a href={`mailto:${PERSONAL_INFO.email}`} className={`${LINK} break-all`}>
+                  <Mail className="w-4 h-4 text-slate-500 shrink-0" />
                   <span>{PERSONAL_INFO.email}</span>
                 </a>
               </li>
               <li>
-                <a
-                  href={`tel:${PERSONAL_INFO.phone.replace(/\s+/g, '')}`}
-                  className="hover:text-cyan-400 transition-colors flex items-center gap-1.5"
-                >
-                  <Phone className="w-3.5 h-3.5 text-slate-500" />
+                <a href={`tel:${PERSONAL_INFO.phone.replace(/\s+/g, '')}`} className={LINK}>
+                  <Phone className="w-4 h-4 text-slate-500 shrink-0" />
                   <span>{PERSONAL_INFO.phone}</span>
                 </a>
               </li>
-              <li className="flex items-center gap-1.5 text-slate-400">
-                <MapPin className="w-3.5 h-3.5 text-slate-500" />
+              <li className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
                 <span>Hamburg, Germany</span>
               </li>
             </ul>
           </div>
 
-          {/* Quick Actions */}
-          <div className="space-y-2">
-            <h4 className="font-semibold text-white uppercase tracking-wider font-mono text-[11px]">
-              Recruiter Quick Actions
-            </h4>
-            <div className="space-y-2">
-              <button
-                onClick={onOpenBrief}
-                className="w-full text-left px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs transition-colors flex items-center justify-between"
-              >
-                <span>Executive Recruiter Brief</span>
-                <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
-              </button>
-              <button
-                onClick={scrollToTop}
-                className="w-full text-left px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs transition-colors flex items-center justify-between"
-              >
-                <span>Back to Top</span>
-                <ArrowUp className="w-3.5 h-3.5 text-emerald-400" />
-              </button>
-            </div>
+          {/* Links */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-white text-sm">Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className={LINK}>
+                  <Github className="w-4 h-4 text-slate-500" />
+                  <span>GitHub</span>
+                </a>
+              </li>
+              <li>
+                <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" className={LINK}>
+                  <Linkedin className="w-4 h-4 text-slate-500" />
+                  <span>LinkedIn</span>
+                </a>
+              </li>
+              <li>
+                <button onClick={onOpenBrief} className={LINK}>
+                  <FileText className="w-4 h-4 text-slate-500" />
+                  <span>Recruiter Brief</span>
+                </button>
+              </li>
+              <li>
+                <button onClick={scrollToTop} className={LINK}>
+                  <ArrowUp className="w-4 h-4 text-slate-500" />
+                  <span>Back to top</span>
+                </button>
+              </li>
+            </ul>
           </div>
-
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-8 mt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+        <div className="pt-6 mt-10 border-t border-slate-800/70 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 text-center">
           <div>
-            Built for Jeevan Dutta &copy; {new Date().getFullYear()} · Hamburg, Germany · Master of Science in Informatics (TU Clausthal)
+            &copy; {new Date().getFullYear()} {PERSONAL_INFO.name} · Hamburg, Germany
           </div>
-          <div className="flex items-center gap-4">
-            <span>Portfolio Tracker & Engineering Showcase</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span>Open to Opportunities</span>
-          </div>
+          <div>MSc Informatics (TU Clausthal) · Open to opportunities</div>
         </div>
-
       </div>
     </footer>
   );

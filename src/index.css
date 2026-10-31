@@ -277,3 +277,144 @@
   animation: pulseGlow 6s ease-in-out infinite;
 }
 
+
+/* ---------- Global polish ---------- */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+/* Keep anchored sections clear of the sticky header */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.3);
+  color: #d1fae5;
+}
+
+:where(button, a, [role='button'], input, textarea, select):focus-visible {
+  outline: 2px solid rgba(52, 211, 153, 0.7);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Ambient aurora backdrop behind all content */
+.aurora-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-backdrop::before,
+.aurora-backdrop::after {
+  content: '';
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.16;
+  animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+
+.aurora-backdrop::before {
+  top: -20vmax;
+  left: -15vmax;
+  background: radial-gradient(circle, #10b981 0%, transparent 65%);
+}
+
+.aurora-backdrop::after {
+  bottom: -25vmax;
+  right: -15vmax;
+  background: radial-gradient(circle, #0ea5e9 0%, transparent 65%);
+  animation-delay: -13s;
+}
+
+/* Subtle dot grid that fades towards the edges */
+.aurora-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+}
+
+/* Soft spotlight that follows the cursor (position set from App via CSS vars) */
+.cursor-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--spot-x, 50%) var(--spot-y, -20%),
+    rgba(16, 185, 129, 0.07),
+    transparent 45%
+  );
+  transition: opacity 0.3s ease;
+}
+
+@keyframes auroraDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(8vmax, 6vmax, 0) scale(1.15); }
+  100% { transform: translate3d(-4vmax, 10vmax, 0) scale(0.95); }
+}
+
+.light-theme .aurora-backdrop::before,
+.light-theme .aurora-backdrop::after {
+  opacity: 0.1;
+}
+
+.light-theme .aurora-grid {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+}
+
+.light-theme .cursor-spotlight {
+  opacity: 0;
+}
+
+.light-theme ::selection {
+  color: #064e3b;
+}
+
+/* Gradient headline text utility */
+.text-gradient-brand {
+  background: linear-gradient(110deg, #6ee7b7 0%, #34d399 30%, #38bdf8 70%, #a78bfa 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+@media (hover: none) {
+  .cursor-spotlight { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -28,7 +28,6 @@ export const SystemArchitectureVisualizer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'architecture' | 'telemetry' | 'terminal'>('architecture');
   const [selectedNode, setSelectedNode] = useState<string>('load-balancer-ha');
   const [streamCount, setStreamCount] = useState<number>(1420);
-  const [pulseActive, setPulseActive] = useState<boolean>(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,48 +96,55 @@ export const SystemArchitectureVisualizer: React.FC = () => {
   ];
 
   return (
-    <div className="rounded-3xl bg-slate-950/90 border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-xl">
+    <div className="rounded-2xl bg-slate-950/80 border border-slate-800 overflow-hidden">
       {/* Top Controller Header */}
-      <div className="px-5 py-3.5 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="px-4 sm:px-5 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5" aria-hidden="true">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
           </div>
-          <span className="text-xs font-mono font-bold text-slate-200">
-            WaDaCon MRF Telemetry & IT Stack
-          </span>
+          <span className="text-xs font-semibold text-slate-200">WaDaCon MRF telemetry stack</span>
         </div>
 
         {/* View Switcher */}
-        <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
+        <div role="tablist" aria-label="Stack views" className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-[11px]">
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'architecture'}
             onClick={() => setActiveTab('architecture')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               activeTab === 'architecture'
-                ? 'bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-slate-800 text-white font-semibold border-slate-700'
+                : 'text-slate-400 hover:text-slate-200 border-transparent'
             }`}
           >
             System Map
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'telemetry'}
             onClick={() => setActiveTab('telemetry')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               activeTab === 'telemetry'
-                ? 'bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-slate-800 text-white font-semibold border-slate-700'
+                : 'text-slate-400 hover:text-slate-200 border-transparent'
             }`}
           >
             Live Vitals
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'terminal'}
             onClick={() => setActiveTab('terminal')}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
               activeTab === 'terminal'
-                ? 'bg-purple-500/20 text-purple-300 font-semibold border border-purple-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-slate-800 text-white font-semibold border-slate-700'
+                : 'text-slate-400 hover:text-slate-200 border-transparent'
             }`}
           >
             CLI Output
@@ -147,15 +153,15 @@ export const SystemArchitectureVisualizer: React.FC = () => {
       </div>
 
       {/* Main Body Depending on Tab */}
-      <div className="p-5">
+      <div className="p-4 sm:p-5" role="tabpanel">
         {activeTab === 'architecture' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <Radio className="w-3.5 h-3.5 animate-pulse" />
-                Live Industrial Topology
+            <div className="flex items-center justify-between gap-2 text-xs text-slate-400">
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <Radio className="w-3.5 h-3.5" aria-hidden="true" />
+                Industrial topology
               </span>
-              <span>Click node to inspect</span>
+              <span className="text-slate-500">Select a node</span>
             </div>
 
             {/* Architecture Node Grid */}
@@ -165,19 +171,20 @@ export const SystemArchitectureVisualizer: React.FC = () => {
                 return (
                   <button
                     key={node.id}
+                    type="button"
+                    aria-pressed={isSelected}
                     onClick={() => setSelectedNode(node.id)}
-                    className={`p-3 rounded-2xl border text-left transition-all ${
+                    className={`p-3 rounded-xl border text-left transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
                       isSelected
-                        ? 'bg-slate-900/95 border-emerald-500/60 shadow-lg shadow-emerald-500/10'
+                        ? 'bg-slate-900 border-emerald-500/60'
                         : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/80'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
                       <span className="font-bold text-slate-200 text-xs truncate">
                         {node.name}
                       </span>
                       <span className="flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800/50 shrink-0">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         {node.metric}
                       </span>
                     </div>
@@ -191,13 +198,8 @@ export const SystemArchitectureVisualizer: React.FC = () => {
 
             {/* Selected Node Deep Inspector */}
             {selectedNode && (
-              <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-semibold">
-                    Node Configuration & Ownership:
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400">Jeevan Dutta · Lead Engineer</span>
-                </div>
+              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs" aria-live="polite">
+                <div className="text-sm font-semibold text-white mb-1">{nodes.find((n) => n.id === selectedNode)?.name}</div>
                 <p className="text-slate-300 text-xs leading-relaxed">
                   {nodes.find((n) => n.id === selectedNode)?.detail} Designed with zero-downtime reliability, proactive Prometheus threshold monitors, and end-to-end ownership.
                 </p>
@@ -209,30 +211,30 @@ export const SystemArchitectureVisualizer: React.FC = () => {
         {activeTab === 'telemetry' && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center">
+              <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center">
                 <div className="text-2xl font-bold font-display text-emerald-400">99.98%</div>
                 <div className="text-[11px] font-mono text-slate-400 mt-0.5">Pipeline Uptime</div>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-center">
+              <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center">
                 <div className="text-2xl font-bold font-display text-cyan-400">&gt; 60%</div>
                 <div className="text-[11px] font-mono text-slate-400 mt-0.5">MTTR Incident Reduction</div>
               </div>
             </div>
 
             <div className="space-y-2 font-mono text-xs">
-              <div className="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
                 <span className="text-slate-400">InfluxDB Ingestion Rate:</span>
                 <span className="text-emerald-400 font-bold">{streamCount} data points / sec</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
                 <span className="text-slate-400">Teleport Zero-Trust Proxy:</span>
                 <span className="text-cyan-400 font-bold">Encrypted mTLS (Active)</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
                 <span className="text-slate-400">HAProxy Load Balancer Cluster:</span>
                 <span className="text-emerald-400 font-bold">VIP 10.0.1.100 · 3 Nodes Active (0.4ms)</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
                 <span className="text-slate-400">Grafana Incident Alerts:</span>
                 <span className="text-purple-300 font-bold">MS Teams Webhook (Configured)</span>
               </div>
@@ -241,7 +243,7 @@ export const SystemArchitectureVisualizer: React.FC = () => {
         )}
 
         {activeTab === 'terminal' && (
-          <div className="p-4 rounded-2xl bg-black/80 border border-slate-800 font-mono text-xs space-y-3 text-slate-300">
+          <div className="p-4 rounded-xl bg-black/80 border border-slate-800 font-mono text-xs space-y-3 text-slate-300 break-words">
             <div>
               <span className="text-emerald-400">jeevan@tu-clausthal:~$</span> whoami
               <div className="text-slate-400 pl-3 mt-0.5">
@@ -260,7 +262,7 @@ export const SystemArchitectureVisualizer: React.FC = () => {
             <div>
               <span className="text-emerald-400">jeevan@tu-clausthal:~$</span> systemctl status career-status
               <div className="text-emerald-400 pl-3 mt-0.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" aria-hidden="true" />
                 <span>ACTIVE: Available for New Role (Immediate Availability Across Germany)</span>
               </div>
             </div>
@@ -269,13 +271,6 @@ export const SystemArchitectureVisualizer: React.FC = () => {
       </div>
 
       {/* Footer Status Bar */}
-      <div className="px-5 py-3 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-        <span className="flex items-center gap-1.5 text-emerald-400">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Production Engineering Rigor
-        </span>
-        <span>TU Clausthal & WaDaCon Proven</span>
-      </div>
     </div>
   );
 };

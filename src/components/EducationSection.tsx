@@ -1,5 +1,5 @@
 import React from 'react';
-import { EDUCATION_DATA, MASTER_THESIS_DETAILS } from '../data/portfolioData';
+import { EDUCATION_DATA, PERSONAL_INFO } from '../data/portfolioData';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -18,6 +18,18 @@ import {
   School
 } from 'lucide-react';
 import { TRANSLATIONS } from '../data/translations';
+
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
+
+const scrollToSection = (e: React.MouseEvent, id: string) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  e.preventDefault();
+  const header = document.querySelector('header');
+  const offset = (header instanceof HTMLElement ? header.offsetHeight : 80) + 8;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+};
 
 interface EducationSectionProps {
   language?: 'en' | 'de';
@@ -38,7 +50,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-purple-500/40 text-xs font-mono text-purple-300 font-semibold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 text-sm text-purple-300 font-semibold mb-3">
               <GraduationCap className="w-3.5 h-3.5 text-purple-400" />
               {t.tag}
             </div>
@@ -48,10 +60,10 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
             <p className="text-slate-300 text-sm sm:text-base mt-3 leading-relaxed">
               {t.desc}{' '}
               <a 
-                href="https://www.linkedin.com/in/jeevan-dutta/" 
+                href={PERSONAL_INFO.linkedin} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 inline-flex items-center gap-1 font-medium"
+                className={`text-cyan-400 hover:text-cyan-300 underline underline-offset-2 inline-flex items-center gap-1 font-medium rounded ${FOCUS_RING}`}
               >
                 LinkedIn <ExternalLink className="w-3 h-3" />
               </a>
@@ -61,13 +73,14 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
 
           <div className="flex items-center gap-2">
             <a
-              href="https://www.linkedin.com/in/jeevan-dutta/"
+              href={PERSONAL_INFO.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 font-mono text-xs transition-colors"
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200 hover:text-white text-sm font-semibold transition-colors ${FOCUS_RING}`}
             >
               <Linkedin className="w-3.5 h-3.5 text-[#0A66C2]" />
               <span>{isDe ? 'Auf LinkedIn überprüfen' : 'Verify on LinkedIn'}</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -104,7 +117,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
 
                     <div>
                       <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider border ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                           isBootcamp
                             ? 'bg-emerald-950 text-emerald-300 border-emerald-600/60'
                             : isMaster
@@ -112,20 +125,20 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
                             : 'bg-cyan-950 text-cyan-300 border-cyan-800/60'
                         }`}>
                           {isBootcamp 
-                            ? (isDe ? 'Professionelles Bootcamp (Aktuell)' : 'Professional Engineering Bootcamp (Active)')
+                            ? (isDe ? 'Bootcamp (aktuell)' : 'Bootcamp (current)')
                             : isMaster 
                             ? 'Master of Science (M.Sc.)' 
                             : 'Bachelor of Science (B.Sc.)'}
                         </span>
                         {edu.verifiedOnLinkedIn && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-full">
                             <CheckCircle2 className="w-3 h-3" />
                             LinkedIn Verified
                           </span>
                         )}
                         {isBootcamp && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-mono text-cyan-300 bg-cyan-950/60 border border-cyan-700/60 px-2.5 py-0.5 rounded-full">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                          <span className="inline-flex items-center gap-1 text-[11px] text-cyan-300 bg-cyan-950/60 border border-cyan-700/60 px-2.5 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                             {isDe ? 'Sofort einsatzbereit' : 'Available Immediately'}
                           </span>
                         )}
@@ -137,8 +150,8 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
                       <div className="text-base font-semibold text-emerald-400 mt-0.5">
                         {edu.institution}
                       </div>
-                      <div className="text-xs font-mono text-slate-400 mt-0.5">
-                        Field of Study: <span className="text-slate-200">{edu.fieldOfStudy}</span>
+                      <div className="text-xs text-slate-400 mt-1">
+                        {isDe ? 'Studienfach' : 'Field of study'}: <span className="text-slate-200">{edu.fieldOfStudy}</span>
                       </div>
                     </div>
                   </div>
@@ -169,53 +182,44 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
 
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3 pb-3 border-b border-purple-800/40">
                       <div>
-                        <div className="inline-flex items-center gap-1.5 text-xs font-mono text-purple-300 font-bold uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-1.5 text-xs text-purple-300 font-semibold">
                           <BookOpen className="w-4 h-4 text-cyan-400" />
-                          Master's Thesis Research Project (Supervised by Prof. Dr. Christian Siemers)
+                          Master's Thesis · Supervised by Prof. Dr. Christian Siemers
                         </div>
                         <h4 className="text-base sm:text-lg font-bold text-white mt-1">
                           "{edu.thesisTitle}"
                         </h4>
-                        <div className="text-xs font-mono text-purple-300/80 mt-1">
+                        <div className="text-xs text-purple-300/80 mt-1">
                           Academic Advisors: {edu.thesisAdvisors?.join(' · ')} · Matriculation No. 517360
                         </div>
                       </div>
 
                       {/* GitHub & Public Page CTA Buttons */}
                       <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        <a
-                          href="https://github.com/jeevan516/4-node-communication-network-master-thesis"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-semibold text-xs border border-purple-500/60 hover:border-cyan-400 transition-all shadow-md group"
-                        >
-                          <Github className="w-4 h-4 text-slate-300 group-hover:text-white" />
-                          <span>Thesis on GitHub</span>
-                          <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-cyan-400" />
-                        </a>
 
                         <a
                           href="#master-thesis"
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold text-xs transition-all shadow-lg shadow-purple-600/30"
+                          onClick={(e) => scrollToSection(e, 'master-thesis')}
+                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-colors ${FOCUS_RING}`}
                         >
-                          <span>Explore Deep Dive</span>
+                          <span>{isDe ? 'Details ansehen' : 'Explore deep dive'}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </a>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs mt-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs mt-3">
                       <div className="p-2.5 rounded-xl bg-slate-950/60 border border-purple-900/50">
-                        <span className="text-slate-400 block text-[10px]">Guaranteed Latency:</span>
+                        <span className="text-slate-400 block text-[11px]">Guaranteed Latency:</span>
                         <span className="text-emerald-400 font-bold">&lt; 12 µs Reaction Time</span>
                       </div>
                       <div className="p-2.5 rounded-xl bg-slate-950/60 border border-purple-900/50">
-                        <span className="text-slate-400 block text-[10px]">Hardware Synthesis:</span>
+                        <span className="text-slate-400 block text-[11px]">Hardware Synthesis:</span>
                         <span className="text-cyan-400 font-bold">1,086 Nets / 832 Leaf Cells</span>
                       </div>
                       <div className="p-2.5 rounded-xl bg-slate-950/60 border border-purple-900/50">
-                        <span className="text-slate-400 block text-[10px]">Code Artifacts:</span>
-                        <span className="text-purple-300 font-bold">Open-Source VHDL on GitHub</span>
+                        <span className="text-slate-400 block text-[11px]">Code Artifacts:</span>
+                        <span className="text-purple-300 font-bold">VHDL in Xilinx Vivado</span>
                       </div>
                     </div>
                   </div>
@@ -223,9 +227,9 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
 
                 {/* Academic Highlights */}
                 <div className="space-y-2 mb-6">
-                  <div className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                    <Award className="w-3.5 h-3.5 text-emerald-400" />
-                    Key Academic Highlights & Research Deliverables:
+                  <div className="text-sm font-semibold text-slate-200 flex items-center gap-1.5 mb-2">
+                    <Award className="w-4 h-4 text-emerald-400" />
+                    {isDe ? 'Schwerpunkte' : 'Highlights'}
                   </div>
                   <div className="grid grid-cols-1 gap-2">
                     {edu.highlights.map((item, idx) => (
@@ -239,15 +243,15 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ language = '
 
                 {/* Acquired Skills & Coursework */}
                 <div className="pt-4 border-t border-slate-800">
-                  <div className="text-xs font-mono text-slate-400 mb-2 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Skills & Coursework Acquired (from LinkedIn):</span>
+                  <div className="text-sm font-semibold text-slate-200 mb-2 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <span>{isDe ? 'Kompetenzen & Kurse' : 'Skills & coursework'}</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {edu.skillsAcquired.map((skill, sIdx) => (
                       <span
                         key={sIdx}
-                        className="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-800/90 text-cyan-300 border border-slate-700/60"
+                        className="px-2.5 py-1 rounded-md text-xs bg-slate-800/80 text-slate-300 border border-slate-700/60"
                       >
                         {skill}
                       </span>

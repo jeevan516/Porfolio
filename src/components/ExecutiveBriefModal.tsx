@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { FileText, Copy, Check, Printer, Download, ExternalLink, MapPin, Mail, Phone, Globe, Award, Briefcase, GraduationCap } from 'lucide-react';
-import { PERSONAL_INFO, EXPERIENCES, CERTIFICATIONS } from '../data/portfolioData';
+import React, { useState, useRef } from 'react';
+import { FileText, Copy, Check, Printer, Briefcase, X } from 'lucide-react';
+import { PERSONAL_INFO, EXPERIENCES } from '../data/portfolioData';
+import { useModalA11y } from '../services/useModalA11y';
+import { copyText } from '../services/clientUtils';
+import { printElement } from '../services/documentExport';
+import { ui } from '../services/uiClasses';
 
 interface ExecutiveBriefModalProps {
   isOpen: boolean;
@@ -12,10 +16,13 @@ export const ExecutiveBriefModal: React.FC<ExecutiveBriefModalProps> = ({
   onClose,
 }) => {
   const [copied, setCopied] = useState(false);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const briefRef = useRef<HTMLDivElement | null>(null);
+  useModalA11y(isOpen, onClose, dialogRef);
 
   if (!isOpen) return null;
 
-  const handleCopyText = () => {
+  const handleCopyText = async () => {
     const briefText = `======================================================================
 EXECUTIVE CANDIDATE BRIEF: JEEVAN DUTTA
 ======================================================================
@@ -59,54 +66,51 @@ CERTIFICATIONS:
 - German Language Qualification (BAMF DTZ B1 gut erfüllt)
 ======================================================================`;
 
-    navigator.clipboard.writeText(briefText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (await copyText(briefText)) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    }
   };
 
+  // Print only the brief (window.print() would print the entire page)
   const handlePrint = () => {
-    window.print();
+    if (briefRef.current) printElement(briefRef.current, `${PERSONAL_INFO.name} - Executive Brief`);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto print:p-0 print:bg-white">
-      <div className="w-full max-w-3xl rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden my-8 print:border-none print:shadow-none print:bg-white print:text-black">
-        
-        {/* Top Action Bar (Hidden when printing) */}
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between print:hidden">
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 font-semibold">
-            <FileText className="w-4 h-4" />
-            <span>EXECUTIVE CANDIDATE BRIEF · HIRING MANAGER READY</span>
+    <div className={ui.overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="brief-modal-title"
+        tabIndex={-1}
+        className={`${ui.panel} max-w-3xl overflow-hidden`}
+      >
+        {/* Action bar */}
+        <div className="px-4 sm:px-6 py-3 border-b border-slate-800 flex items-center justify-between gap-3">
+          <div id="brief-modal-title" className="flex items-center gap-2 text-sm font-semibold text-white min-w-0">
+            <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="truncate">Executive brief</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleCopyText}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
-            >
+          <div className="flex items-center gap-2 shrink-0">
+            <button type="button" onClick={handleCopyText} className={`${ui.btnSecondary} !px-3 !py-2`} aria-label="Copy brief as plain text">
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied ATS Text!' : 'Copy Summary'}</span>
+              <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy text'}</span>
             </button>
-
-            <button
-              onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors"
-            >
+            <button type="button" onClick={handlePrint} className={`${ui.btnPrimary} !px-3 !py-2`} aria-label="Print or save as PDF">
               <Printer className="w-3.5 h-3.5" />
-              <span>Print / Save PDF</span>
+              <span className="hidden sm:inline">Print / PDF</span>
             </button>
-
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center ml-2"
-            >
-              ✕
+            <button type="button" onClick={onClose} className={ui.iconBtn} aria-label="Close executive brief">
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Printable Executive Brief Content */}
-        <div className="p-8 sm:p-10 space-y-6 text-slate-200 print:text-slate-900 print:p-4 bg-slate-900 print:bg-white font-sans">
+        <div ref={briefRef} className="p-5 sm:p-10 space-y-6 text-slate-200 print:text-slate-900 print:p-0 bg-slate-900 print:bg-white font-sans">
           
           {/* Header */}
           <div className="border-b border-slate-800 pb-6 print:border-slate-300">

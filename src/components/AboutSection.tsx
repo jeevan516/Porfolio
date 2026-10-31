@@ -32,7 +32,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
           <div className="lg:col-span-7 space-y-6">
             
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center gap-2 text-sm text-emerald-400 font-semibold mb-2">
                 <Sparkles className="w-4 h-4" />
                 {t.tag}
               </div>
@@ -50,58 +50,45 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
             {/* Pillar Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs">
+                <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
                   <Database className="w-4 h-4" />
                   <span>{t.pillar1Title}</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-normal">
+                <p className="text-sm text-slate-400 leading-relaxed">
                   {t.pillar1Desc}
                 </p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
-                <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs">
+                <div className="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
                   <Server className="w-4 h-4" />
                   <span>{t.pillar2Title}</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-normal">
+                <p className="text-sm text-slate-400 leading-relaxed">
                   {t.pillar2Desc}
                 </p>
               </div>
             </div>
 
             {/* Key Availability & Bootcamp Note */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-slate-900/80 to-cyan-950/40 border border-emerald-500/50 text-xs text-emerald-200 flex flex-col sm:flex-row items-start gap-3.5 shadow-xl shadow-emerald-950/30">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/40 flex flex-col sm:flex-row items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <div className="space-y-1.5 flex-1">
+              <div className="space-y-2 flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-bold text-white uppercase font-mono tracking-wider text-[11px] flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    {t.availTitle}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  <span className="font-semibold text-white text-sm">{t.availTitle}</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                     {t.availBadge}
                   </span>
                 </div>
-                <p className="text-slate-300 leading-relaxed text-xs">
-                  {t.availDesc}
-                </p>
-                <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[10px] text-cyan-300">
-                  <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-600/50 text-emerald-300 font-semibold">
-                    🎓 neuefische GmbH: AI, ML, Data Science, Data Eng & SE
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-emerald-300 font-semibold">
-                    ⚡ Ready for Work: Full-Time / Contract
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-cyan-300">
-                    📍 Hamburg (On-site / Hybrid / Remote)
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-slate-300">
-                    🇩🇪 Full Work Authorization in Germany
-                  </span>
-                </div>
+                <p className="text-slate-300 leading-relaxed text-sm">{t.availDesc}</p>
+                <ul className="flex flex-wrap gap-2 pt-1 text-xs text-slate-300">
+                  <li className="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700">neuefische GmbH: AI, ML, Data Science, Data Eng &amp; SE</li>
+                  <li className="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700">Full-Time / Contract</li>
+                  <li className="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700">Hamburg · On-site / Hybrid / Remote</li>
+                  <li className="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700">Full work authorization in Germany</li>
+                </ul>
               </div>
             </div>
 
@@ -110,7 +97,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
           {/* Right Column: Architectural Highlights, Executive Profile & Interactive Visualizer */}
           <div className="lg:col-span-5 space-y-4">
             {/* Professional Profile Spotlight Card */}
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-xl flex items-center gap-4">
+            <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center gap-4">
               <div className="relative shrink-0">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden ring-2 ring-emerald-500/50 shadow-md bg-slate-800">
                   <img
@@ -124,12 +111,12 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
                 </div>
               </div>
 
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1 text-xs min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="text-base font-bold text-white font-display">
                     Jeevan Dutta
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                     Verified
                   </span>
                 </div>
@@ -139,7 +126,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
                 <div className="text-slate-400 text-[11px] leading-snug">
                   Specializing in Industrial IoT Observability, Deep Sequence Forecasting, and Resilient IT Architecture.
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400 pt-0.5">
+                <div className="flex flex-wrap items-center gap-x-2 text-[11px] text-emerald-400 pt-0.5">
                   <span>Authorized to Work in Germany</span>
                   <span>·</span>
                   <span>DTZ B1 Certified</span>
