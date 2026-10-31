@@ -50,10 +50,7 @@ const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible
 
 export const ExperienceTimeline: React.FC = () => {
   const [filter, setFilter] = useState<Filter>('work');
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
-    'wadacon-gmbh': true,
-    'tu-clausthal-master-thesis': true,
-  });
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (id: string) => setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
 

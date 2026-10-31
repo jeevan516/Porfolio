@@ -5,7 +5,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { TargetRole } from './types';
-import { Languages } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { VideoPortfolioSection } from './components/VideoPortfolioSection';
@@ -19,12 +18,10 @@ import { CareerTrajectoryChartSection } from './components/CareerTrajectoryChart
 import { AcademicReferenceSection } from './components/AcademicReferenceSection';
 import { InteractiveArchitectureStudio } from './components/graphics/InteractiveArchitectureStudio';
 import { TechNewsSection } from './components/TechNewsSection';
-import { VisitorTrackerBlock } from './components/VisitorTrackerBlock';
 import { PortfolioTracker } from './components/PortfolioTracker';
 import { ContactModal } from './components/ContactModal';
 import { ExecutiveBriefModal } from './components/ExecutiveBriefModal';
 import { ResumeExportModal } from './components/ResumeExportModal';
-import { FloatingNavDock } from './components/FloatingNavDock';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { ClassicPortfolioView } from './components/ClassicPortfolioView';
 import { JeevanChatbot } from './components/JeevanChatbot';
@@ -218,14 +215,7 @@ export default function App() {
             {/* Dedicated Technology News & Google Search Grounding Block */}
             <TechNewsSection language={language} />
 
-            {/* Profile Open & Visitor Telemetry Tracker Block */}
-            <VisitorTrackerBlock language={language} />
 
-            {/* Embedded Portfolio Tracker & Recruiter Hub */}
-            <PortfolioTracker
-              onOpenContact={() => setIsContactOpen(true)}
-              onOpenBrief={() => setIsBriefOpen(true)}
-            />
           </>
         ) : activeView === 'classic' ? (
           /* Jeevan's Integrated Original / Classic Developer Portfolio */
@@ -285,38 +275,7 @@ export default function App() {
         language={language}
       />
 
-      {/* Floating Interactive Navigation Dock & Progress Bar */}
-      <FloatingNavDock
-        onOpenResume={() => setIsResumeOpen(true)}
-        onOpenContact={() => setIsContactOpen(true)}
-        language={language}
-      />
 
-      {/* Floating Quick Translate Button (Bottom-Left) */}
-      <div className="fixed bottom-6 left-6 z-40">
-        <button
-          id="floating-translate-btn"
-          onClick={toggleLanguage}
-          className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 hover:bg-slate-800 text-white border-2 border-emerald-500/60 hover:border-emerald-400 shadow-2xl shadow-emerald-500/20 backdrop-blur-xl text-xs font-bold transition-all hover:scale-105 active:scale-95 group"
-          title={language === 'de' ? 'Switch back to English' : 'Gesamte Seite auf Deutsch übersetzen'}
-        >
-          <div className="w-7 h-7 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-12 transition-transform">
-            <Languages className="w-4 h-4" />
-          </div>
-          <div className="text-left leading-tight">
-            <div className="text-[10px] text-slate-400 uppercase font-mono tracking-wider">
-              {language === 'de' ? 'Sprache / Language' : 'Translate Page'}
-            </div>
-            <div className="text-xs font-extrabold flex items-center gap-1.5 text-white">
-              <span>{language === 'de' ? '🇩🇪 Deutsch' : '🇬🇧 English'}</span>
-              <span className="text-emerald-400 text-[10px]">⇄</span>
-              <span className="text-[11px] text-slate-400 font-normal">
-                {language === 'de' ? 'EN' : 'DE'}
-              </span>
-            </div>
-          </div>
-        </button>
-      </div>
 
     </div>
   );

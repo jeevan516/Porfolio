@@ -39,7 +39,10 @@ interface NavbarProps {
 const FOCUS_RING =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
 
-const ICON_BTN = `inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`;
+// Sections shown in the desktop link row; the mobile menu lists every section
+const PRIMARY_SECTIONS = ['about', 'projects', 'experience', 'education', 'master-thesis', 'skills', 'observability', 'contact'];
+
+const ICON_BTN = `items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`;
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeView,
@@ -77,7 +80,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'academic-reference', label: t.academicRef },
     { id: 'observability', label: 'Observability' },
     { id: 'tech-news', label: isDe ? 'Tech-News' : 'Tech News' },
-    { id: 'visitor-tracker', label: isDe ? 'Besucher' : 'Visitors' },
     { id: 'contact', label: t.contact },
   ];
 
@@ -269,7 +271,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="theme-toggle-btn"
               onClick={onToggleTheme}
-              className={ICON_BTN}
+              className={`inline-flex ${ICON_BTN}`}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -332,7 +334,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setMenuOpen((o) => !o)}
-              className={`lg:hidden ${ICON_BTN}`}
+              className={`inline-flex lg:hidden ${ICON_BTN}`}
               aria-label={menuOpen ? (isDe ? 'Menü schließen' : 'Close menu') : isDe ? 'Menü öffnen' : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav-panel"
@@ -347,7 +349,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label={isDe ? 'Abschnitte' : 'Sections'}
           className="hidden lg:flex items-center gap-1 -mx-2 pb-2 overflow-x-auto text-xs font-medium text-slate-400 [scrollbar-width:none]"
         >
-          {sectionLinks.map((link) => (
+          {sectionLinks.filter((link) => PRIMARY_SECTIONS.includes(link.id)).map((link) => (
             <a
               key={link.id}
               href={`#${link.id}`}
@@ -447,7 +449,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className={ICON_BTN}
+                  className={`inline-flex ${ICON_BTN}`}
                   aria-label="GitHub profile"
                 >
                   <Github className="w-4 h-4" />
@@ -457,7 +459,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMenuOpen(false)}
-                  className={ICON_BTN}
+                  className={`inline-flex ${ICON_BTN}`}
                   aria-label="LinkedIn profile"
                 >
                   <Linkedin className="w-4 h-4" />

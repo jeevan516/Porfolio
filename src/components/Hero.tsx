@@ -18,7 +18,6 @@ import {
   Mail, 
   Copy, 
   Check, 
-  FileText, 
   ExternalLink,
   ChevronRight,
   ShieldAlert,
@@ -281,11 +280,6 @@ export const Hero: React.FC<HeroProps> = ({
                     <span>{language === 'de' ? 'CV (PDF)' : 'Download CV'}</span>
                   </button>
                 )}
-
-                <button id="hero-brief-btn" onClick={onOpenBrief} className={BTN_SECONDARY}>
-                  <FileText className="w-4 h-4 text-cyan-400" />
-                  <span>{t.briefBtn}</span>
-                </button>
               </div>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
