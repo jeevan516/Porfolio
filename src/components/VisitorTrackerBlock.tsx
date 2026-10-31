@@ -315,11 +315,11 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
               <CheckCircle2 className="w-3.5 h-3.5" />
               {isDe ? 'Verfügbarkeit für Rollen' : 'Candidate Availability'}
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold font-display text-emerald-300 tracking-tight pt-1">
-              Immediate
+            <div className="text-xl sm:text-2xl font-extrabold font-display text-emerald-300 tracking-tight pt-1">
+              Ready for Work
             </div>
             <p className="text-[11px] text-slate-300 font-mono">
-              {isDe ? 'Sofort einsatzbereit in DE' : 'Available for immediate start across Germany'}
+              {isDe ? 'Im KI- & ML-Bootcamp · Sofort verfügbar' : 'In AI & ML Bootcamp · Available immediately'}
             </p>
           </motion.div>
 
@@ -343,9 +343,9 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
             </div>
 
             <div className="space-y-3">
-              {recentLogs.map((log) => (
+              {recentLogs.map((log, idx) => (
                 <div 
-                  key={log.id}
+                  key={`${log.id}-${idx}`}
                   className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 hover:border-slate-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono"
                 >
                   <div className="space-y-0.5">

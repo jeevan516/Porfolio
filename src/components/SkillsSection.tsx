@@ -239,9 +239,9 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
 
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <AnimatePresence mode="popLayout">
-              {filteredCerts.map((cert) => (
+              {filteredCerts.map((cert, idx) => (
                 <motion.div
-                  key={cert.id}
+                  key={`${cert.id}-${idx}`}
                   layout
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}

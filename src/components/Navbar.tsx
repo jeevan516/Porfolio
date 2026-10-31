@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
                 <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Available Immediately · Hamburg</span>
+                  <span>AI & ML Bootcamp · Ready for Work</span>
                 </div>
               </div>
             </a>

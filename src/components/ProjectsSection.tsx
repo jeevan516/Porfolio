@@ -106,7 +106,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
               return (
                 <SpotlightCard
-                  key={project.id}
+                  key={`${project.id}-${pIdx}`}
                   id={`project-card-${project.id}`}
                   enableTilt={true}
                   spotlightColor="rgba(16, 185, 129, 0.18)"

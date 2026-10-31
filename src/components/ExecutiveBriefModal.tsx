@@ -129,7 +129,7 @@ CERTIFICATIONS:
                 </div>
               </div>
               <div className="text-xs font-mono text-slate-400 print:text-slate-600 sm:text-right space-y-0.5">
-                <div>{PERSONAL_INFO.location} · Available Immediately</div>
+                <div>{PERSONAL_INFO.location} · AI & ML Bootcamp · Ready for Work</div>
                 <div>{PERSONAL_INFO.email} · {PERSONAL_INFO.phone}</div>
               </div>
             </div>
@@ -216,7 +216,7 @@ CERTIFICATIONS:
           {/* Certifications footer */}
           <div className="pt-4 border-t border-slate-800 print:border-slate-300 text-[11px] font-mono text-slate-400 print:text-slate-600 flex flex-wrap justify-between items-center gap-2">
             <span>Verified Credentials: Anthropic (Claude Code), Microsoft & LinkedIn (GenAI), Accenture (Data Analytics)</span>
-            <span className="font-semibold text-emerald-400 print:text-emerald-800">Available Immediately</span>
+            <span className="font-semibold text-emerald-400 print:text-emerald-800">AI & ML Bootcamp · Ready for Work</span>
           </div>
 
         </div>

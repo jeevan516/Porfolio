@@ -131,7 +131,7 @@ Availability: ${PERSONAL_INFO.status}
 --------------------------------------------------------------------------------
 EXECUTIVE SUMMARY
 --------------------------------------------------------------------------------
-Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal (with Master's thesis on 4-Node Synchronous PLC Networks under Prof. Dr. Christian Siemers). Over 10 years of professional experience across industrial observability (WaDaCon GmbH), systems & network engineering (Cogent Networks), distributed AI architectures (RadicalX), business intelligence (Netidentity), and scalable software engineering (Avast Technologies). Available immediately for new roles across Germany.
+Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal (with Master's thesis on 4-Node Synchronous PLC Networks under Prof. Dr. Christian Siemers). Over 10 years of professional experience across industrial observability (WaDaCon GmbH), systems & network engineering (Cogent Networks), distributed AI architectures (RadicalX), business intelligence (Netidentity), and scalable software engineering (Avast Technologies). Currently attending an intensive AI and Machine Learning Bootcamp to deepen production ML capabilities. Available immediately and ready for work across Germany.
 
 --------------------------------------------------------------------------------
 EDUCATION & ACADEMIC RESEARCH
@@ -296,7 +296,7 @@ CORE TECHNICAL COMPETENCIES
                 </div>
                 <div className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-mono text-[10px] font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-                  <span>{isDe ? 'Sofort verfügbar für neue Aufgaben · Deutschlandweit' : 'Available Immediately for New Roles · Across Germany'}</span>
+                  <span>{isDe ? 'Im KI- & ML-Bootcamp · Sofort verfügbar & einsatzbereit' : 'AI & ML Bootcamp · Available Immediately & Ready for Work'}</span>
                 </div>
               </div>
 
@@ -333,8 +333,8 @@ CORE TECHNICAL COMPETENCIES
               </h2>
               <p className="text-slate-700 text-[11px] leading-relaxed text-justify">
                 {isDe 
-                  ? 'Ergebnisorientierter IT-Experte mit dualem Fundament in Datenanalyse und IT-Engineering. Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit über synchrone 4-Knoten-SPS-Netzwerke unter Betreuung von Prof. Dr. Christian Siemers). Mehr als 10 Jahre Praxiserfahrung in industrieller Telemetrie (WaDaCon GmbH), System- und Netzwerkadministration (Cogent Networks), KI-Backend-Entwicklung (RadicalX), E-Commerce-Analytics (Netidentity) und skalierbarer Softwareentwicklung (Avast Technologies). Spezialisiert auf hochverfügbare Infrastruktur, InfluxDB/Prometheus-Pipelines, Docker CI/CD, HAProxy-Load-Balancing und KI-Anomalieerkennung. Sofort verfügbar für Festanstellungen und anspruchsvolle Projekte in Deutschland.'
-                  : 'Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal with specialized Master’s Thesis research on deterministic 4-node PLC networks under Prof. Dr. Christian Siemers. Brings over a decade of hands-on experience spanning industrial observability pipelines (WaDaCon GmbH), enterprise systems & network engineering (Cogent Networks), cloud AI architectures (RadicalX), business intelligence (Netidentity), and scalable object-oriented software development (Avast Technologies). Proven track record of reducing mean time to response by >60% through real-time telemetry. Available immediately for engineering and systems roles across Germany.'}
+                  ? 'Ergebnisorientierter IT-Experte mit dualem Fundament in Datenanalyse und IT-Engineering. Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit über synchrone 4-Knoten-SPS-Netzwerke unter Betreuung von Prof. Dr. Christian Siemers). Mehr als 10 Jahre Praxiserfahrung in industrieller Telemetrie (WaDaCon GmbH), System- und Netzwerkadministration (Cogent Networks), KI-Backend-Entwicklung (RadicalX), E-Commerce-Analytics (Netidentity) und skalierbarer Softwareentwicklung (Avast Technologies). Spezialisiert auf hochverfügbare Infrastruktur, InfluxDB/Prometheus-Pipelines, Docker CI/CD, HAProxy-Load-Balancing und KI-Anomalieerkennung. Absolviert derzeit ein intensives KI- & Machine-Learning-Bootcamp und ist ab sofort einsatzbereit für neue Aufgaben in Deutschland.'
+                  : 'Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal with specialized Master’s Thesis research on deterministic 4-node PLC networks under Prof. Dr. Christian Siemers. Brings over a decade of hands-on experience spanning industrial observability pipelines (WaDaCon GmbH), enterprise systems & network engineering (Cogent Networks), cloud AI architectures (RadicalX), business intelligence (Netidentity), and scalable object-oriented software development (Avast Technologies). Currently attending an intensive AI and Machine Learning Bootcamp to deepen production ML capabilities. Available immediately and ready for work across Germany.'}
               </p>
             </section>
 

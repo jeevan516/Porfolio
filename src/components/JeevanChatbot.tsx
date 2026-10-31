@@ -54,7 +54,7 @@ export const JeevanChatbot: React.FC<JeevanChatbotProps> = ({ onOpenContact, onO
 
 I am a results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. With an MSc in Informatics from TU Clausthal (Master's thesis on 4-Node Synchronous Networks under Prof. Dr. Christian Siemers) and over a decade of hands-on experience, I specialize in transforming complex technical processes into streamlined, impactful outcomes.
 
-🎯 Current Status: Available for New Role (Immediate Availability · Hamburg & across Germany)
+🎯 Current Status: Currently Attending AI & Machine Learning Bootcamp · Available Immediately & Ready for Work (Hamburg & across Germany)
 
 I can provide verified technical details on:
 • Comprehensive Work History: Production engineering at WaDaCon GmbH, Cogent Networks (6+ yrs), RadicalX (Google Gemini Flights & Vertex AI), Netidentity (Power BI), and Avast Technologies.
@@ -113,8 +113,34 @@ How can I assist your evaluation or hiring process today?`,
    • Technical Focus: Netzwerktechnik (Computer Networks), Compilerdesign, C and C++ Systems Programming, Data Structures, Algorithms & Relational Databases.`;
     }
 
-    // Master's Thesis specific query
-    if (q.includes('thesis') || q.includes('master') || q.includes('zanderlink') || q.includes('4-node') || q.includes('siemers') || q.includes('hartmann') || q.includes('vivado') || q.includes('vhdl')) {
+    // Greetings and polite introductions
+    if (/^(hi|hello|hey|greetings|hallo|guten tag|good morning|good afternoon|good evening|who are you|what can you do)/i.test(q.trim())) {
+      return `Hello! I am Jeevan Dutta's AI career and technical portfolio assistant.
+
+I can assist you with verified details about:
+• Jeevan's education (MSc in Informatics from TU Clausthal) & Master's Thesis research (<12 µs deterministic 4-node ZanderLink network)
+• Current upskilling in an intensive AI & Machine Learning Bootcamp
+• Work history at WaDaCon GmbH, Cogent Networks, RadicalX, Netidentity & Avast Technologies
+• Technical skillset (Observability, InfluxDB/Prometheus/Grafana, Docker, Linux, Python, PyTorch)
+• Immediate availability across Germany & contact information
+
+How can I help with your recruitment or technical inquiry?`;
+    }
+
+    // AI & ML Bootcamp query
+    if (q.includes('bootcamp') || q.includes('upskill') || q.includes('training') || q.includes('learning')) {
+      return `Jeevan is currently attending an intensive AI and Machine Learning Bootcamp to deepen advanced neural network architectures, generative AI workflows, and production MLOps.
+
+Key Details:
+• Focus: Deep learning, sequence forecasting, transformer architectures, PyTorch, and cloud AI pipelines.
+• Status: Available immediately and ready for full-time or contract work across Germany (On-site, Hybrid, or Remote).
+• Work Authorization: Unrestricted German work authorization.
+
+Would you like to schedule an introductory interview or review his resume?`;
+    }
+
+    // Master Thesis / Academic Research Query
+    if (q.includes('thesis') || q.includes('master') || q.includes('zanderlink') || q.includes('4-node') || q.includes('siemers') || q.includes('hartmann') || q.includes('vivado') || q.includes('vhdl') || q.includes('fpga') || q.includes('plc') || q.includes('microelectronics') || q.includes('vlsi') || q.includes('fsm') || q.includes('crc')) {
       return `Here are the details on Jeevan's attached Master's Thesis:
 
 🎓 Title: "Definition, Development and Simulation of a 4-Node Communication Network for Reliable Reaction Times Inside Distributed Networks"
@@ -129,11 +155,11 @@ Core Engineering Highlights:
 • Hardware VHDL in Vivado 2020.2: Implemented the entire ZanderLink4 entity in VHDL with separate Master and Slave Finite State Machines (FSMs) handling SCAN, TRANSMIT, RECEIVE, and CRC CHECK.
 • CRC Error Detection: Integrated CRC-5 (polynomial x⁴ + x) and CRC-8 validation, start bit framing ('00' normal byte, '01' last byte), noise injection simulations, and format error recovery.
 • Physical Synthesis: Mapped to 1,086 nets, 832 leaf cells, and 400 RTL cells utilizing Xilinx C5LUTs, CLBs, clock regions (X0Y3..X1Y3), and RPM grid coordinates.
-• Open-Source & Public: The full VHDL source code, testbenches, and synthesis reports are public on GitHub and showcased on this portfolio!`;
+• Open-Source & Public: Full VHDL source code, testbenches, and synthesis reports are public on GitHub and showcased on this portfolio!`;
     }
 
     // Reaction time specific query
-    if (q.includes('reaction time') || q.includes('latency') || q.includes('12') || q.includes('speed') || q.includes('jitter')) {
+    if (q.includes('reaction time') || q.includes('latency') || q.includes('12') || q.includes('speed') || q.includes('jitter') || q.includes('roundtrip')) {
       return `In his Master's Thesis, Jeevan proved and simulated a guaranteed deterministic reaction time of under 12 µs!
 
 Here is the exact mathematical model:
@@ -146,9 +172,31 @@ Here is the exact mathematical model:
 • Factoring 1.0 µs controller execution + 1.0 µs driver delay = 11.75 µs (< 12 µs guaranteed reaction time) across the distributed network with zero jitter.`;
     }
 
-    // Resignation and active job search query
-    if (q.includes('role') || q.includes('open') || q.includes('job') || q.includes('opportunit') || q.includes('availab') || q.includes('hire') || q.includes('resign') || q.includes('seeking')) {
-      return `Jeevan is actively open and exploring full-time engineering and specialist opportunities across Germany with immediate availability.
+    // Location & Relocation & German Work Authorization query
+    if (q.includes('location') || q.includes('hamburg') || q.includes('germany') || q.includes('remote') || q.includes('relocat') || q.includes('visa') || q.includes('authorization') || q.includes('permit') || q.includes('language') || q.includes('german') || q.includes('deutsch')) {
+      return `Here are Jeevan's location and eligibility details:
+
+• Current Location: Hamburg, Germany
+• Mobility: Open to on-site roles in Hamburg / Lower Saxony, hybrid arrangements across Germany, or remote positions.
+• Work Authorization: Unrestricted German work authorization (no visa sponsorship required).
+• Availability: Available immediately and ready for work while currently attending an AI & ML Bootcamp.
+• Languages: Fluent English (professional & technical), Professional German (DTZ B1 certified).`;
+    }
+
+    // Resume / CV / Executive Brief query
+    if (q.includes('resume') || q.includes('cv') || q.includes('brief') || q.includes('download') || q.includes('pdf')) {
+      return `You can view and export Jeevan's complete credentials right here on this portfolio:
+
+• Executive Brief & PDF CV: Click the "Executive Brief & Resume" button in the navigation or top banner to download a clean, ATS-compliant PDF resume.
+• Plain Text Export: The modal also offers instant copying of a plain-text markdown resume.
+• Verified References: Contains his TU Clausthal degree verification, research overview, and industrial telemetry deliverables.
+
+Would you like me to open the Executive Brief modal for you?`;
+    }
+
+    // Target roles and active job search query
+    if (q.includes('role') || q.includes('open') || q.includes('job') || q.includes('opportunit') || q.includes('availab') || q.includes('hire') || q.includes('resign') || q.includes('seeking') || q.includes('position')) {
+      return `Jeevan is actively open and exploring full-time engineering and specialist opportunities across Germany with immediate availability while attending an AI & ML Bootcamp.
 
 Target Positions:
 • IT Specialist / Systems Engineer
@@ -160,8 +208,8 @@ Target Positions:
 Professional Profile Summary:
 • Location: Based in Hamburg, Germany (Available for on-site roles in Hamburg / Lower Saxony, hybrid models across Germany, or remote).
 • Work Authorization: Full, unrestricted German work authorization.
-• Availability: Immediate.
-• Languages: Fluent English, Professional German.
+• Availability: Immediate & Ready for Work.
+• Languages: Fluent English, Professional German (DTZ B1).
 • Education: Master of Science (MSc) in Informatics, Technische Universität Clausthal.
 
 Would you like to schedule an introductory discussion or inspect his Executive Brief?`;
@@ -172,7 +220,7 @@ Would you like to schedule an introductory discussion or inspect his Executive B
       return `Here is a summary of Jeevan's 10+ year engineering track record across industry:
 
 1. WaDaCon GmbH (Hamburg · May 2025 – May 2026, Full-Time):
-   IT Specialist & Observability Engineer powering industrial recycling plants. Architected InfluxDB/Prometheus/Grafana pipelines, Docker CI/CD, Teleport zero-trust SSH, automated Teams alerts, and AI anomaly detection models. (Resigned · Immediate availability).
+   IT Specialist & Observability Engineer powering industrial recycling plants. Architected InfluxDB/Prometheus/Grafana pipelines, Docker CI/CD, Teleport zero-trust SSH, automated Teams alerts, and AI anomaly detection models. (Immediate availability & ready for work).
 
 2. Cogent Networks (Stade, Lower Saxony · Mar 2019 – Apr 2025, 6+ yrs, Freelance):
    IT Support Engineer managing workstation hardware, system upgrades, VoIP telephony, enterprise networks, L1/L2 support, and infrastructure rollouts.
@@ -198,7 +246,7 @@ Key Production Accomplishments:
 • Predictive AI: Integrated time-series machine learning to flag equipment wear up to 72 hours before failure.
 • REST Services & Administration: Developed Python (Flask/Django) APIs and performed Linux system administration and network troubleshooting.
 
-Having completed all handovers, Jeevan is now open to new engineering opportunities with immediate availability.`;
+Having completed all handovers, Jeevan is attending an AI & ML Bootcamp and is ready for work with immediate availability.`;
     }
 
     // Certifications query
@@ -216,7 +264,7 @@ Having completed all handovers, Jeevan is now open to new engineering opportunit
     }
 
     // Contact and hiring query
-    if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('linkedin') || q.includes('interview') || q.includes('reach')) {
+    if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('linkedin') || q.includes('interview') || q.includes('reach') || q.includes('call') || q.includes('message')) {
       return `You can reach Jeevan directly for job inquiries or interviews:
 
 • Email: jeevannaidu516@gmail.com
@@ -228,8 +276,8 @@ Having completed all handovers, Jeevan is now open to new engineering opportunit
 You can also use the 'Hire / Interview Jeevan' button on this page to log an opportunity directly into his tracker!`;
     }
 
-    // Skills query
-    if (q.includes('skill') || q.includes('stack') || q.includes('python') || q.includes('docker') || q.includes('tools')) {
+    // Technical Skills query
+    if (q.includes('skill') || q.includes('stack') || q.includes('python') || q.includes('docker') || q.includes('tools') || q.includes('tech') || q.includes('pytorch') || q.includes('kubernetes') || q.includes('linux')) {
       return `Jeevan's comprehensive technical toolkit includes:
 
 • Distributed Systems & Hardware: VHDL, Xilinx Vivado (2020.2), FPGA Synthesis, RS-485 / EIA-485, PLC Communication, Finite State Machines (FSM), CRC Error Detection.
@@ -238,10 +286,38 @@ You can also use the 'Hire / Interview Jeevan' button on this page to log an opp
 • Data & Analytics: SQL, PostgreSQL, SQLAlchemy ORM, Power BI, DAX modeling.`;
     }
 
-    // Default response
-    return `Thank you for asking! This is Jeevan's Bot. Jeevan has recently resigned from WaDaCon GmbH and is actively looking for his next job as an IT Specialist or AI Engineer in Germany (immediate availability).
+    // Projects query
+    if (q.includes('project') || q.includes('portfolio') || q.includes('telemetry') || q.includes('pipeline') || q.includes('dashboard')) {
+      return `Jeevan's portfolio features several production-grade engineering projects:
 
-Feel free to ask about his attached Master's Thesis under Prof. Dr. Christian Siemers (4-Node ZanderLink Network in VHDL/Vivado), his WaDaCon achievements, verified certifications, or click below to schedule an interview!`;
+1. Industrial IoT Observability Pipeline (WaDaCon GmbH):
+   • InfluxDB + Prometheus + Grafana telemetry system monitoring industrial recycling plant sensor streams.
+   • Reduced mean time to response by >60% through automated webhook alerts into Microsoft Teams.
+
+2. Deterministic 4-Node Synchronous PLC Network:
+   • Master's Thesis research at TU Clausthal under Prof. Dr. Christian Siemers.
+   • Simulated in Xilinx Vivado with guaranteed <12 µs deterministic reaction time and zero jitter.
+
+3. Google Gemini Flights Backend (RadicalX):
+   • Built using Google Cloud Vertex AI, Gemini models, FastAPI, and Docker.
+
+4. E-Commerce KPI Analytics Dashboard (Netidentity):
+   • Interactive Power BI dashboards, DAX data modeling, and customer acquisition funnel metrics.
+
+You can inspect all projects and interactive architecture diagrams in the Projects section above!`;
+    }
+
+    // Irrelevant Question Fallback: Explicit refusal
+    return `I apologize, but I cannot answer this question.
+
+As Jeevan Dutta's AI Career Assistant, I am specifically designed to answer questions regarding Jeevan's professional qualifications, such as:
+• Education & Master's Thesis research at TU Clausthal
+• Current AI & Machine Learning Bootcamp upskilling
+• Industry experience at WaDaCon GmbH, Cogent Networks, RadicalX, Netidentity, and Avast Technologies
+• Technical skills (Observability, InfluxDB, Prometheus, Grafana, Docker, Python, PyTorch)
+• Immediate work availability across Germany and direct contact details
+
+Please feel free to ask any question related to Jeevan's professional background, or select one of the suggested prompts below!`;
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -322,7 +398,7 @@ Feel free to ask about his attached Master's Thesis under Prof. Dr. Christian Si
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-bold text-white font-display">This is Jeevan's Bot</span>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-950/90 text-emerald-300 border border-emerald-700/60">
-                    Available for New Role
+                    AI & ML Bootcamp · Ready for Work
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-mono">Click to restore chat window</p>

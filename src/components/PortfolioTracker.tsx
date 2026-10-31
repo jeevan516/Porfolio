@@ -363,9 +363,9 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
                     {/* Cards inside this stage */}
                     <div className="space-y-3 flex-1 overflow-y-auto max-h-[500px]">
-                      {stageItems.map((item) => (
+                      {stageItems.map((item, idx) => (
                         <div
-                          key={item.id}
+                          key={`${item.id}-${idx}`}
                           className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800/90 hover:border-cyan-500/50 transition-all shadow-md space-y-2.5 text-xs"
                         >
                           <div className="flex items-start justify-between gap-1">

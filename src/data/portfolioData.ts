@@ -8,8 +8,8 @@ export const PERSONAL_INFO = {
   currentCompany: 'WaDaCon GmbH (Former)',
   currentRole: 'IT Specialist & AI Engineer',
   location: 'Hamburg, Germany (Open to Relocation / Remote)',
-  status: 'Available for New Role (Immediate Availability)',
-  availability: 'Available for New Role · Immediate Availability · Full-Time / Contract · Germany-wide',
+  status: 'Attending AI & ML Bootcamp · Available Immediately & Ready for Work',
+  availability: 'Available Immediately & Ready for Work · Currently Attending AI & Machine Learning Bootcamp · Germany-Wide / Remote',
   email: 'jeevannaidu516@gmail.com',
   phone: '+49 176 36369761',
   linkedin: 'https://www.linkedin.com/in/jeevan-dutta',
@@ -19,7 +19,7 @@ export const PERSONAL_INFO = {
   stats: [
     { label: 'Academic Credential', value: 'MSc Informatics', detail: 'TU Clausthal (Grade 2023)' },
     { label: 'Master Thesis', value: 'ZanderLink 4-Node', detail: 'Supervised by Prof. Dr. Siemers' },
-    { label: 'Career Status', value: 'Available Now', detail: 'Available for New Role (Immediate)' },
+    { label: 'Career Status', value: 'Ready for Work', detail: 'AI & ML Bootcamp · Available Immediately' },
     { label: 'Incident TTR Reduction', value: '60% Quicker', detail: 'Grafana + InfluxDB Alerting' },
   ],
 };

@@ -129,16 +129,16 @@ const TRAJECTORY_DATA: MilestonePoint[] = [
   {
     year: '2026+',
     displayYear: '2026 (Now)',
-    role: 'Available for New Role (Immediate)',
-    roleDe: 'Sofort Verfügbar für neue Aufgaben',
+    role: 'AI & ML Bootcamp · Ready for Work',
+    roleDe: 'KI- & ML-Bootcamp · Sofort Einsatzbereit',
     company: 'Next Engineering Chapter',
     location: 'Across Germany',
     impactScore: 100,
     cycleReduction: 65,
     throughputK: 55,
     highlight: true,
-    keyAchievement: 'Ready to drive enterprise cloud infrastructure, industrial telemetry, AI systems, and distributed platforms.',
-    keyAchievementDe: 'Bereit für Führungs- und Systemaufgaben in Cloud, Telemetrie, KI und verteilten Systemen.'
+    keyAchievement: 'Attending AI & ML Bootcamp while available immediately for cloud infrastructure, industrial telemetry, and AI systems.',
+    keyAchievementDe: 'Im KI- & ML-Bootcamp und ab sofort einsatzbereit für Aufgaben in Cloud, Telemetrie, KI und verteilten Systemen.'
   }
 ];
 
@@ -420,12 +420,16 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
                 <CheckCircle2 className="w-3 h-3" />
                 {isDe ? 'Aktueller Status' : 'Immediate Readiness'}
               </span>
-              <div className="text-base font-bold text-white font-display">Available for New Role</div>
-              <div className="text-xs text-emerald-400 font-mono">Across Germany · 2026+</div>
+              <div className="text-base font-bold text-white font-display">
+                {isDe ? 'KI- & ML-Bootcamp · Sofort einsatzbereit' : 'AI & ML Bootcamp · Ready for Work'}
+              </div>
+              <div className="text-xs text-emerald-400 font-mono">
+                {isDe ? 'Ab sofort verfügbar · Deutschlandweit' : 'Available Immediately · Across Germany'}
+              </div>
               <p className="text-[11px] text-slate-300 leading-normal pt-1">
                 {isDe 
-                  ? 'Sofort einsatzbereit für DevOps, Observability, verteilte Systeme und Softwarearchitektur.' 
-                  : 'Available immediately for cloud infrastructure, observability pipelines, and AI systems architecture.'}
+                  ? 'Vertieft derzeit State-of-the-Art Machine Learning & KI im intensiven Bootcamp. Sofort einsatzbereit für DevOps, Observability, verteilte Systeme und Softwarearchitektur.' 
+                  : 'Currently attending an intensive AI & Machine Learning Bootcamp while available immediately for cloud infrastructure, observability pipelines, and AI systems architecture.'}
               </p>
             </div>
           </div>

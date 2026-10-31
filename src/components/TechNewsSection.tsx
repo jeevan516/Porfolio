@@ -213,7 +213,7 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
           <AnimatePresence mode="popLayout">
             {articles.map((art, aIdx) => (
               <motion.article 
-                key={art.id}
+                key={`${art.id}-${aIdx}`}
                 layout
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

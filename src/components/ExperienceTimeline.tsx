@@ -77,10 +77,10 @@ export const ExperienceTimeline: React.FC = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                Immediate Availability
+                Active Upskilling · Ready for Work
               </div>
               <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                Available for New Role · Across Germany (Immediate Start)
+                Attending AI & Machine Learning Bootcamp · Available Immediately Across Germany
               </p>
             </div>
           </div>
@@ -252,7 +252,7 @@ export const ExperienceTimeline: React.FC = () => {
 
             return (
               <motion.div 
-                key={item.id} 
+                key={`${item.id}-${idx}`} 
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-40px' }}

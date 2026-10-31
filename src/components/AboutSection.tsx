@@ -70,23 +70,35 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ language = 'en' }) =
               </div>
             </div>
 
-            {/* Key Availability Note */}
-            <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 flex items-start sm:items-center gap-3 shadow-lg shadow-emerald-950/20">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                <ShieldCheck className="w-4 h-4" />
+            {/* Key Availability & Bootcamp Note */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 via-slate-900/80 to-cyan-950/40 border border-emerald-500/50 text-xs text-emerald-200 flex flex-col sm:flex-row items-start gap-3.5 shadow-xl shadow-emerald-950/30">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                <ShieldCheck className="w-5 h-5" />
               </div>
-              <div>
+              <div className="space-y-1.5 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-bold text-white uppercase font-mono tracking-wider text-[11px]">
+                  <span className="font-bold text-white uppercase font-mono tracking-wider text-[11px] flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     {t.availTitle}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-900/60 text-emerald-300 border border-emerald-700/50">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                     {t.availBadge}
                   </span>
                 </div>
-                <p className="text-slate-300 mt-1">
+                <p className="text-slate-300 leading-relaxed text-xs">
                   {t.availDesc}
                 </p>
+                <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[10px] text-cyan-300">
+                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-emerald-300 font-semibold">
+                    ⚡ Ready for Work: Full-Time / Contract
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-cyan-300">
+                    📍 Hamburg (On-site / Hybrid / Remote)
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-slate-800/90 border border-slate-700 text-slate-300">
+                    🇩🇪 Full Work Authorization in Germany
+                  </span>
+                </div>
               </div>
             </div>
 

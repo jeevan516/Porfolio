@@ -167,7 +167,7 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({
           {/* Top Status Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-emerald-500/40 text-xs text-emerald-300 font-mono mb-6 shadow-lg shadow-emerald-500/10">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>{isDe ? 'Verfügbar für neue Aufgaben · Deutschland' : 'Available for Opportunities · Germany'}</span>
+            <span>{isDe ? 'Im KI- & ML-Bootcamp · Sofort verfügbar & einsatzbereit' : 'AI & ML Bootcamp · Available Immediately & Ready for Work'}</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
