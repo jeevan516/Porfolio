@@ -5,7 +5,9 @@ import { PROJECTS_DATA, PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
 import { SpotlightCard } from './ui/SpotlightCard';
 import { playTactileClick } from '../services/soundFx';
-import { Github, ExternalLink, Layers, TrendingUp, ArrowRight } from 'lucide-react';
+import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images } from 'lucide-react';
+import type { Project } from '../types';
+import { ProjectGallery, assetUrl } from './ProjectGallery';
 
 interface ProjectsSectionProps {
   activeRole: TargetRole;
@@ -42,6 +44,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
   const isDe = language === 'de';
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [gallery, setGallery] = useState<{ project: Project; index: number } | null>(null);
 
   const categories = [
     { id: 'all', label: t.filterAll },
@@ -129,6 +132,29 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                     className="h-full p-6 hover:-translate-y-1"
                   >
                     <div className="space-y-4">
+                      {project.images && project.images.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            playTactileClick();
+                            setGallery({ project, index: 0 });
+                          }}
+                          aria-label={`${isDe ? 'Screenshots ansehen' : 'View screenshots'}: ${project.title}`}
+                          className="group relative block w-full aspect-[16/10] overflow-hidden rounded-xl border border-slate-800 bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                        >
+                          <img
+                            src={assetUrl(project.images[0].src)}
+                            alt={project.images[0].alt}
+                            loading="lazy"
+                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                          />
+                          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-950/85 text-slate-200 border border-slate-700">
+                            <Images className="w-3 h-3" aria-hidden="true" />
+                            {project.images.length} {isDe ? 'Bilder' : project.images.length === 1 ? 'screenshot' : 'screenshots'}
+                          </span>
+                        </button>
+                      )}
+
                       <div className="flex items-center justify-between gap-2">
                         <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded-full border ${statusStyle(project.status)}`}>
                           {statusLabel(project.status, isDe)}
@@ -183,7 +209,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                         ))}
                       </div>
 
-                      {(project.githubUrl || live) && (
+                      {(project.githubUrl || live || project.docs?.length) && (
                         <div className="flex flex-wrap items-center gap-2">
                           {project.githubUrl && (
                             <a
@@ -197,6 +223,18 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                               <ExternalLink className="w-3 h-3" aria-hidden="true" />
                             </a>
                           )}
+                          {project.docs?.map((doc) => (
+                            <a
+                              key={doc.url}
+                              href={doc.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-slate-200 hover:border-emerald-500/50 hover:text-emerald-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                            >
+                              <FileText className="w-3.5 h-3.5" aria-hidden="true" />
+                              {doc.label}
+                            </a>
+                          ))}
                           {live && (
                             <a
                               href={live.href}
@@ -232,6 +270,17 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {gallery && (
+          <ProjectGallery
+            project={gallery.project}
+            startIndex={gallery.index}
+            onClose={() => setGallery(null)}
+            language={language}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

@@ -1,5 +1,18 @@
 export type TargetRole = 'all' | 'ai-ml' | 'it-devops' | 'observability' | 'data-eng';
 
+/** A screenshot shown on a project card. `src` is relative to public/, e.g. "projects/<id>/dashboard.webp". */
+export interface ProjectImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+/** An extra link on a project card, e.g. slides or a write-up. */
+export interface ProjectLink {
+  label: string;
+  url: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -11,6 +24,10 @@ export interface Project {
   metrics?: { label: string; value: string }[];
   githubUrl?: string;
   liveUrl?: string;
+  /** Screenshots: the first one is the card thumbnail, all of them open in a gallery. */
+  images?: ProjectImage[];
+  /** Slides, write-ups and other documents about the project. */
+  docs?: ProjectLink[];
   featured: boolean;
   status: 'neuefische Course Project' | 'Production at WaDaCon' | 'Open Source' | 'Research' | 'Deployed' | 'Defended & Verified (TU Clausthal)' | 'Production at WaDaCon (Completed)';
   viewsCount: number;
