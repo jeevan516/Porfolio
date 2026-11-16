@@ -1,6 +1,6 @@
 # Personal Portfolio Website: project notes
 
-_Last updated: 15 Nov 2026_
+_Last updated: 16 Nov 2026_
 
 ## Project
 **Personal Portfolio Website.** Recruiters need one place to see my projects, experience and
@@ -51,3 +51,4 @@ finishes and deploys itself on every push.
   contact form with confirmation email; cleaner showcase layout. Deploy passes from here on.
 - 3 Nov 2026: ProjectGallery for full-screen screenshots.
 - 15 Nov 2026: project notes created.
+- 16 Nov 2026: presentation deck added: presentation/portfolio-website.pptx (9 slides).
