@@ -3,7 +3,6 @@ export type AppLanguage = 'en' | 'de';
 export const TRANSLATIONS = {
   en: {
     nav: {
-      videoPitch: 'Video Pitch',
       about: 'About',
       education: 'Education',
       masterThesis: "Master's Thesis",
@@ -41,7 +40,6 @@ export const TRANSLATIONS = {
       devopsRole: 'IT Specialist & DevOps',
       obsRole: 'Observability & SRE',
       dataRole: 'Data & Backend',
-      watchVideo: 'Interview Avatar & Video Pitch',
       hireJeevan: 'Get in Touch / Hire Jeevan',
       briefBtn: 'Executive Brief & Resume',
       copyEmail: 'Copy Email',
@@ -137,7 +135,6 @@ export const TRANSLATIONS = {
   },
   de: {
     nav: {
-      videoPitch: 'Video-Pitch',
       about: 'Über mich',
       education: 'Studium & Bildung',
       masterThesis: 'Masterarbeit',
@@ -175,7 +172,6 @@ export const TRANSLATIONS = {
       devopsRole: 'IT-Spezialist & DevOps',
       obsRole: 'Observability & SRE',
       dataRole: 'Daten & Backend',
-      watchVideo: 'Interview-Avatar & Video-Pitch',
       hireJeevan: 'Kontakt aufnehmen / Jeevan anfragen',
       briefBtn: 'Executive Brief & Lebenslauf',
       copyEmail: 'E-Mail kopieren',

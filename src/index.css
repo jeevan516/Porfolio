@@ -218,37 +218,6 @@
   background: #94a3b8 !important;
 }
 
-/* Cinema Stage Screen - Preserves crisp high-contrast playback in light theme */
-.light-theme .video-cinema-stage {
-  background: linear-gradient(to bottom, #060913, #0c1222) !important;
-  color: #e2e8f0 !important;
-}
-
-.light-theme .video-cinema-stage .text-white {
-  color: #ffffff !important;
-}
-
-.light-theme .video-cinema-stage .text-slate-300 {
-  color: #cbd5e1 !important;
-}
-
-.light-theme .video-cinema-stage .text-slate-400 {
-  color: #94a3b8 !important;
-}
-
-.light-theme .video-cinema-stage .bg-slate-900\/80,
-.light-theme .video-cinema-stage .bg-slate-900\/90 {
-  background-color: rgba(15, 23, 42, 0.9) !important;
-  border-color: rgba(51, 65, 85, 0.6) !important;
-}
-
-.light-theme .video-cinema-stage .bg-slate-950,
-.light-theme .video-cinema-stage .bg-slate-950\/80,
-.light-theme .video-cinema-stage .bg-slate-950\/90 {
-  background-color: rgba(2, 6, 23, 0.9) !important;
-  border-color: rgba(51, 65, 85, 0.7) !important;
-}
-
 /* Custom scrollbars (Dark mode default) */
 ::-webkit-scrollbar {
   width: 7px;

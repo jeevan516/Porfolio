@@ -24,7 +24,6 @@ import {
   Sparkles,
   Cpu,
   GraduationCap,
-  Video,
   Network,
   Download
 } from 'lucide-react';
@@ -261,7 +260,7 @@ export const Hero: React.FC<HeroProps> = ({
                   className={`${BTN_PRIMARY} group`}
                 >
                   <GraduationCap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span>{language === 'de' ? 'Bootcamp-Projekte ansehen' : 'See my bootcamp projects'}</span>
+                  <span>{language === 'de' ? 'Bootcamp-Projekte & Folien' : 'Bootcamp projects & slides'}</span>
                 </a>
 
                 <button id="hero-contact-btn" onClick={onOpenContact} className={BTN_SECONDARY}>

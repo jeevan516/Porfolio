@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { GraduationCap, Github, FileText, Lock, CalendarDays, Layers, Sparkles } from 'lucide-react';
+import { GraduationCap, Github, FileText, Lock, CalendarDays, Layers, Sparkles, Download, ChevronDown } from 'lucide-react';
 import { JOURNEY, type JourneyProject } from '../data/journey';
 import { assetUrl } from './ProjectGallery';
 
@@ -28,6 +28,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
   const { stages, projects } = JOURNEY;
   const [stage, setStage] = useState<string>('all');
   const [skill, setSkill] = useState<string | null>(null);
+  const [showDecks, setShowDecks] = useState(false);
 
   const byStage = useMemo(
     () => stages.map((s) => ({ stage: s, projects: projects.filter((p) => p.stage === s) })),
@@ -73,19 +74,74 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                 : 'From Python foundations to deployed ML systems: every project with its real results and slides.'}
             </p>
           </div>
-          <dl className="grid grid-cols-3 gap-3 text-center">
-            {[
-              { k: isDe ? 'Projekte' : 'Projects', v: projects.length },
-              { k: isDe ? 'Etappen' : 'Stages', v: stages.length },
-              { k: isDe ? 'Foliensätze' : 'Slide decks', v: decks },
-            ].map((s) => (
-              <div key={s.k} className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3 min-w-[92px]">
-                <dd className="text-2xl font-bold text-white tabular-nums">{s.v}</dd>
-                <dt className="text-[11px] text-slate-400 uppercase tracking-wide">{s.k}</dt>
-              </div>
-            ))}
-          </dl>
+          <div className="flex flex-col items-stretch gap-3">
+            <dl className="grid grid-cols-3 gap-3 text-center">
+              {[
+                { k: isDe ? 'Projekte' : 'Projects', v: projects.length },
+                { k: isDe ? 'Etappen' : 'Stages', v: stages.length },
+              ].map((s) => (
+                <div key={s.k} className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3 min-w-[92px]">
+                  <dd className="text-2xl font-bold text-white tabular-nums">{s.v}</dd>
+                  <dt className="text-[11px] text-slate-400 uppercase tracking-wide">{s.k}</dt>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setShowDecks((v) => !v)}
+                aria-expanded={showDecks}
+                aria-controls="neuefische-decks"
+                className={`rounded-xl border px-4 py-3 min-w-[92px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                  showDecks ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-emerald-700/50 bg-slate-900/60 hover:border-emerald-500/60'
+                }`}
+              >
+                <span className="block text-2xl font-bold text-emerald-300 tabular-nums">{decks}</span>
+                <span className="inline-flex items-center gap-1 text-[11px] text-emerald-300/90 uppercase tracking-wide">
+                  {isDe ? 'Foliensätze' : 'Slide decks'}
+                  <ChevronDown className={`w-3 h-3 transition-transform ${showDecks ? 'rotate-180' : ''}`} aria-hidden="true" />
+                </span>
+              </button>
+            </dl>
+          </div>
         </div>
+
+        {/* Every deck in one place */}
+        <AnimatePresence initial={false}>
+          {showDecks && (
+            <motion.div
+              id="neuefische-decks"
+              initial={reduce ? false : { opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={reduce ? undefined : { opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden mb-8"
+            >
+              <div className="rounded-2xl border border-emerald-700/40 bg-slate-900/70 p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-white">
+                  <FileText className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                  {isDe ? 'Alle neuefische-Foliensätze (PowerPoint)' : 'All neuefische slide decks (PowerPoint)'}
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1">
+                  {byStage.flatMap((g, i) =>
+                    g.projects
+                      .filter((p) => p.deckUrl)
+                      .map((p) => (
+                        <a
+                          key={p.id}
+                          href={assetUrl(p.deckUrl as string)}
+                          download
+                          className="group flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-slate-300 hover:bg-slate-800/70 hover:text-emerald-300 transition-colors"
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STAGE_DOT[i % 5]}`} aria-hidden="true" />
+                          <span className="truncate">{p.title}</span>
+                          <Download className="w-3.5 h-3.5 ml-auto shrink-0 opacity-50 group-hover:opacity-100" aria-hidden="true" />
+                        </a>
+                      )),
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Stage stepper: the path through the bootcamp */}
         <div className="relative mb-8">
@@ -274,7 +330,7 @@ const JourneyCard: React.FC<{
           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-700 text-[11px] font-semibold text-slate-200 hover:border-emerald-500/50 hover:text-emerald-300 transition-colors"
         >
           <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-          {isDe ? 'Folien' : 'Slides'}
+          {isDe ? 'Folien (.pptx)' : 'Slides (.pptx)'}
         </a>
       )}
       {p.githubUrl ? (

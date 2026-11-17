@@ -21,7 +21,9 @@ finishes and deploys itself on every push.
 4. **Gallery** (3 Nov): `ProjectGallery` component for full-screen screenshots with navigation.
 5. **Repeatable updates:** `ADDING_PROJECTS.md` defines the steps (WebP screenshots, a
    `PROJECTS_DATA` entry, `npm run lint`, `npm run build`, push).
-6. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
+6. **Bootcamp journey** (17 Nov): generated from `project-notes`; voice interviewer and video pitch removed;
+   one panel lists every slide deck.
+7. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
    and the build, then deploys `dist/` to GitHub Pages from `main`.
 
 ## Results
@@ -29,7 +31,7 @@ finishes and deploys itself on every push.
 |---|---|
 | Live site | https://jeevan516.github.io/Porfolio/ (GitHub Pages) |
 | Project cards | **28**: 19 hand-written + 9 generated bootcamp projects; all 18 bootcamp projects in "My bootcamp journey" |
-| Bootcamp journey | 18 projects in 5 stages, 18 slide decks served from `public/decks/`; built from `project-notes` run-info, updates automatically |
+| Bootcamp journey | 18 projects in 5 stages, 18 slide decks served from `public/decks/`, all listed in one download panel (click "Slide decks"); built from `project-notes` run-info, updates automatically |
 | Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors) |
 | Security | production CSP meta tag; `server.js` no longer deployed; all new-tab links `rel=noopener` |
 | Certifications listed | 21 |
@@ -57,3 +59,4 @@ finishes and deploys itself on every push.
 - 15 Nov 2026: project notes created.
 - 16 Nov 2026: presentation deck added: presentation/portfolio-website.pptx (9 slides).
 - 17 Nov 2026: removed the voice interviewer (VideoPortfolioSection and avatar components); added "My bootcamp journey" (5 stages, 18 projects, skills chart, filters, animations) generated automatically from project-notes; 9 new bootcamp cards; private-repo links removed; CSP for production builds; server.js kept off GitHub Pages.
+- 17 Nov 2026: web-service-deployment deck updated with the real GCP results; leftover video-pitch text and styles removed; "Slide decks" tile opens a list of all 18 decks; slide buttons labelled ".pptx"; hero button "Bootcamp projects & slides".
