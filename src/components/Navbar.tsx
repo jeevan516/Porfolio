@@ -40,7 +40,7 @@ const FOCUS_RING =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
 
 // Sections shown in the desktop link row; the mobile menu lists every section
-const PRIMARY_SECTIONS = ['about', 'projects', 'experience', 'education', 'master-thesis', 'skills', 'observability', 'contact'];
+const PRIMARY_SECTIONS = ['neuefische-journey', 'about', 'projects', 'experience', 'education', 'master-thesis', 'skills', 'observability', 'contact'];
 
 const ICON_BTN = `items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`;
 
@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const showGitHubSync = isDev && !!onOpenGitHubSync;
 
   const sectionLinks: { id: string; label: string }[] = [
-    { id: 'video-portfolio', label: t.videoPitch },
+    { id: 'neuefische-journey', label: isDe ? 'Bootcamp-Reise' : 'Bootcamp journey' },
     { id: 'about', label: t.about },
     { id: 'education', label: t.education },
     { id: 'master-thesis', label: t.masterThesis },

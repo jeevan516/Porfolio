@@ -1,3 +1,4 @@
+import { withJourneyProjects } from './journey';
 import { Project, SkillCategory, Certification, ExperienceItem, PortfolioAnalytics, RecruiterInquiry, AcademicReference, EducationItem } from '../types';
 
 export const PERSONAL_INFO = {
@@ -59,7 +60,7 @@ export const MASTER_THESIS_DETAILS = {
   ]
 };
 
-export const PROJECTS_DATA: Project[] = [
+const CURATED_PROJECTS: Project[] = [
   {
     id: 'master-thesis-zanderlink',
     title: 'Master Thesis: 4-Node Synchronous PLC Network',
@@ -356,6 +357,10 @@ export const PROJECTS_DATA: Project[] = [
     viewsCount: 760,
   },
 ];
+
+// Bootcamp projects from ~/Projects/project-notes are merged in automatically (see journey.ts).
+export const PROJECTS_DATA: Project[] = withJourneyProjects(CURATED_PROJECTS, 'master-thesis-zanderlink');
+
 
 export const SKILL_CATEGORIES: SkillCategory[] = [
   {

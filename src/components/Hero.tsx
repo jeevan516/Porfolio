@@ -23,7 +23,7 @@ import {
   ShieldAlert,
   Sparkles,
   Cpu,
-  Play,
+  GraduationCap,
   Video,
   Network,
   Download
@@ -255,13 +255,13 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="space-y-3 pt-2">
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href="#video-portfolio"
-                  id="hero-watch-video-btn"
-                  onClick={(e) => scrollToSection(e, 'video-portfolio')}
+                  href="#neuefische-journey"
+                  id="hero-journey-btn"
+                  onClick={(e) => scrollToSection(e, 'neuefische-journey')}
                   className={`${BTN_PRIMARY} group`}
                 >
-                  <Play className="w-4 h-4 fill-slate-950 group-hover:scale-110 transition-transform" />
-                  <span>{t.watchVideo}</span>
+                  <GraduationCap className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span>{language === 'de' ? 'Bootcamp-Projekte ansehen' : 'See my bootcamp projects'}</span>
                 </a>
 
                 <button id="hero-contact-btn" onClick={onOpenContact} className={BTN_SECONDARY}>

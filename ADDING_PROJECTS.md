@@ -1,5 +1,15 @@
 # Adding a finished project to the portfolio
 
+## Automatic: neuefische bootcamp projects
+
+Bootcamp projects need no manual step. When a project's notes are collected
+(`cd ~/Projects/project-notes && python3 collect.py`), its `run-info/<project>.json` "portfolio"
+block becomes an entry in `src/data/journey.generated.json` and its deck is copied to
+`public/decks/`. The project then shows up in "My bootcamp journey" and as a project card.
+Commit those changes on a branch and merge the PR to publish.
+
+## Manual: hand-written cards with screenshots
+
 Do this every time a project in the Projects folder is finished (on Windows or the Mac).
 
 ## 1. Screenshots → `public/projects/<project-id>/`
