@@ -1,6 +1,6 @@
 # Personal Portfolio Website: project notes
 
-_Last updated: 16 Nov 2026_
+_Last updated: 17 Nov 2026_
 
 ## Project
 **Personal Portfolio Website.** Recruiters need one place to see my projects, experience and
@@ -28,7 +28,10 @@ finishes and deploys itself on every push.
 | Check | Result |
 |---|---|
 | Live site | https://jeevan516.github.io/Porfolio/ (GitHub Pages) |
-| Project cards | **19** in `PROJECTS_DATA`, 10 of them neuefische projects |
+| Project cards | **28**: 19 hand-written + 9 generated bootcamp projects; all 18 bootcamp projects in "My bootcamp journey" |
+| Bootcamp journey | 18 projects in 5 stages, 18 slide decks served from `public/decks/`; built from `project-notes` run-info, updates automatically |
+| Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors) |
+| Security | production CSP meta tag; `server.js` no longer deployed; all new-tab links `rel=noopener` |
 | Certifications listed | 21 |
 | React components | 22 in `src/components/` |
 | Screenshots | 1 project so far (Batch & Stream, 4 WebP images) |
@@ -36,6 +39,7 @@ finishes and deploys itself on every push.
 | Automated tests | none; CI checks security audit, type check and build only |
 
 ## Future engineering
+- Screenshots for the generated bootcamp cards (the journey shows metrics and slides already).
 - Add screenshots for the other neuefische projects (only one has images).
 - Add tests: a type-safe data check for `PROJECTS_DATA` and a few component tests (Vitest).
 - GitHub Pages serves only static files: confirm which features need the Express server
@@ -52,3 +56,4 @@ finishes and deploys itself on every push.
 - 3 Nov 2026: ProjectGallery for full-screen screenshots.
 - 15 Nov 2026: project notes created.
 - 16 Nov 2026: presentation deck added: presentation/portfolio-website.pptx (9 slides).
+- 17 Nov 2026: removed the voice interviewer (VideoPortfolioSection and avatar components); added "My bootcamp journey" (5 stages, 18 projects, skills chart, filters, animations) generated automatically from project-notes; 9 new bootcamp cards; private-repo links removed; CSP for production builds; server.js kept off GitHub Pages.

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
-import { Video, Briefcase, TrendingUp, Layers, Users, Download, ArrowUp, Mail, Activity, Globe } from 'lucide-react';
+import { GraduationCap, Briefcase, TrendingUp, Layers, Users, Download, ArrowUp, Mail, Activity, Globe } from 'lucide-react';
 import { playTactileClick } from '../services/soundFx';
 
 interface FloatingNavDockProps {
@@ -36,7 +36,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
   const [availableIds, setAvailableIds] = useState<string[]>([]);
 
   const navItems = [
-    { id: 'video-portfolio', label: 'Video Pitch', icon: Video },
+    { id: 'neuefische-journey', label: isDe ? 'Bootcamp' : 'Bootcamp', icon: GraduationCap },
     { id: 'experience', label: isDe ? 'Erfahrung' : 'Experience', icon: Briefcase },
     { id: 'career-trajectory', label: isDe ? 'Werdegang' : 'Trajectory', icon: TrendingUp },
     { id: 'projects', label: isDe ? 'Projekte' : 'Projects', icon: Layers },

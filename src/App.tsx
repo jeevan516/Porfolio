@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { TargetRole } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { VideoPortfolioSection } from './components/VideoPortfolioSection';
+import { NeuefischeJourney } from './components/NeuefischeJourney';
 import { AboutSection } from './components/AboutSection';
 import { EducationSection } from './components/EducationSection';
 import { MasterThesisSection } from './components/MasterThesisSection';
@@ -174,13 +174,8 @@ export default function App() {
               language={language}
             />
 
-            {/* High-Impact Bilingual Video Portfolio & Executive Pitch (English & German) */}
-            <VideoPortfolioSection
-              onOpenContact={() => setIsContactOpen(true)}
-              onOpenBrief={() => setIsBriefOpen(true)}
-              language={language}
-              onToggleLanguage={toggleLanguage}
-            />
+            {/* neuefische bootcamp journey: generated from ~/Projects/project-notes (see src/data/journey.ts) */}
+            <NeuefischeJourney language={language} />
 
             {/* About & Dual Foundation Section */}
             <AboutSection language={language} />

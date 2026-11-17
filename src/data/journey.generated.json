@@ -1,0 +1,603 @@
+{
+  "stages": [
+    "Python foundations",
+    "APIs & cloud",
+    "Data engineering",
+    "Machine learning",
+    "MLOps & deployment"
+  ],
+  "projects": [
+    {
+      "id": "nf-opps",
+      "folder": "Opps",
+      "title": "Clean code, OOP & Pydantic",
+      "stage": "Python foundations",
+      "category": "it-devops",
+      "startDate": "2026-10-19",
+      "headline": "20 exercises; all 4 notebooks run cleanly in CI",
+      "description": "Notebook exercises that refactor messy Python into clean functions, classes and validated Pydantic models.",
+      "stack": [
+        "Python",
+        "pandas",
+        "scikit-learn",
+        "Pydantic",
+        "Jupyter",
+        "Docker",
+        "GitHub Actions"
+      ],
+      "metrics": [
+        {
+          "label": "Exercises",
+          "value": "20"
+        },
+        {
+          "label": "Notebooks in CI",
+          "value": "4 / 4"
+        }
+      ],
+      "githubUrl": "https://github.com/jeevan516/Opps",
+      "deckUrl": "decks/Opps.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-pandas-and-numpy",
+      "folder": "pandas-and-numpy",
+      "title": "pandas & NumPy data analysis",
+      "stage": "Python foundations",
+      "category": "it-devops",
+      "startDate": "2026-10-19",
+      "headline": "144,015 bike-share trips analysed; wine and iris statistics",
+      "description": "Pandas and NumPy practice notebooks that clean, summarise and plot real CSV data, ending in a bike share exploratory analysis.",
+      "stack": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "matplotlib",
+        "Jupyter",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "Bike trips",
+          "value": "144,015"
+        },
+        {
+          "label": "Rides > 1 h",
+          "value": "5,695"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/pandas-and-numpy.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-unit-integration-testing",
+      "folder": "Unit-integration-testing",
+      "title": "Packaging, unit & integration tests",
+      "stage": "Python foundations",
+      "category": "it-devops",
+      "startDate": "2026-10-21",
+      "headline": "47 tests passing, 31 written by me",
+      "description": "Python packaging plus unit, data and integration tests with pytest for small data pipelines.",
+      "stack": [
+        "Python",
+        "pytest",
+        "pandas",
+        "SQLAlchemy",
+        "SQLite",
+        "uv",
+        "GitHub Actions"
+      ],
+      "metrics": [
+        {
+          "label": "Tests",
+          "value": "47 / 47"
+        },
+        {
+          "label": "Integration",
+          "value": "2 / 2"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Unit-integration-testing.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-docker",
+      "folder": "docker",
+      "title": "Typed CRUD API with FastAPI, PostgreSQL & Docker",
+      "stage": "APIs & cloud",
+      "category": "it-devops",
+      "startDate": "2026-10-26",
+      "headline": "6-route API; 200 todos fetched, 5 validated with Pydantic",
+      "description": "A FastAPI user-directory CRUD API on PostgreSQL, packaged with Docker and run with Docker Compose.",
+      "stack": [
+        "Python",
+        "FastAPI",
+        "Pydantic",
+        "SQLAlchemy",
+        "PostgreSQL",
+        "Docker",
+        "Docker Compose",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "API routes",
+          "value": "6"
+        },
+        {
+          "label": "Validated",
+          "value": "5 / 5"
+        }
+      ],
+      "githubUrl": "https://github.com/jeevan516/docker",
+      "deckUrl": "decks/docker.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-mle-refactoring-project",
+      "folder": "mle-refactoring-project",
+      "title": "King County: notebook to production",
+      "stage": "Machine learning",
+      "category": "ai-ml",
+      "startDate": "2026-10-27",
+      "headline": "Test R² 0.845; feature 400 s → 0.1 s; 37 tests",
+      "description": "Refactors a King County house-price notebook into a tested Python package, with a houses API, Docker and CI.",
+      "stack": [
+        "Python",
+        "pandas",
+        "scikit-learn",
+        "pytest",
+        "FastAPI",
+        "PostgreSQL",
+        "Docker Compose",
+        "GitHub Actions"
+      ],
+      "metrics": [
+        {
+          "label": "Test R²",
+          "value": "0.845"
+        },
+        {
+          "label": "Tests",
+          "value": "37 / 37"
+        }
+      ],
+      "githubUrl": "https://github.com/jeevan516/mle-refactoring-project",
+      "deckUrl": "decks/mle-refactoring-project.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-model-review-board",
+      "folder": "model-review-board",
+      "title": "Model Review Board (Flask)",
+      "stage": "APIs & cloud",
+      "category": "it-devops",
+      "startDate": "2026-10-27",
+      "headline": "29 tests; deployed on Render with Postgres persistence",
+      "description": "A Flask app where an ML team reviews model predictions, deployed on Render with PostgreSQL and runnable in Docker.",
+      "stack": [
+        "Flask",
+        "SQLAlchemy",
+        "PostgreSQL",
+        "SQLite",
+        "gunicorn",
+        "pytest",
+        "Docker",
+        "Render"
+      ],
+      "metrics": [
+        {
+          "label": "Tests",
+          "value": "29 / 29"
+        },
+        {
+          "label": "Deployed",
+          "value": "Render"
+        }
+      ],
+      "githubUrl": "https://github.com/jeevan516/model-review-board",
+      "deckUrl": "decks/model-review-board.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-web-service-deployment",
+      "folder": "web-service-deployment",
+      "title": "Web app on Google Cloud",
+      "stage": "APIs & cloud",
+      "category": "it-devops",
+      "startDate": "2026-10-27",
+      "headline": "Deployed to a GCP VM with Cloud SQL PostgreSQL 14; scripted with gcloud",
+      "description": "A guide for deploying a Dockerised FastAPI web server on a Google Cloud VM, connected to a managed Cloud SQL PostgreSQL database.",
+      "stack": [
+        "Google Cloud",
+        "Compute Engine",
+        "Cloud SQL",
+        "PostgreSQL",
+        "Artifact Registry",
+        "Docker",
+        "FastAPI",
+        "gcloud CLI"
+      ],
+      "metrics": [
+        {
+          "label": "Cloud",
+          "value": "GCP"
+        },
+        {
+          "label": "API checks",
+          "value": "all passed"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/web-service-deployment.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-data-pipeline-and-modelling",
+      "folder": "Data-pipeline-and-modelling",
+      "title": "NYC taxi ETL & star schema",
+      "stage": "Data engineering",
+      "category": "data-eng",
+      "startDate": "2026-10-29",
+      "headline": "3,475,226 rides into a star schema; every table reconciles",
+      "description": "Loads January 2025 NYC yellow taxi trips into PostgreSQL and remodels them into a star schema with an editable dashboard.",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "pandas",
+        "SQLAlchemy",
+        "FastAPI",
+        "Docker",
+        "Portainer",
+        "dbt"
+      ],
+      "metrics": [
+        {
+          "label": "Rows",
+          "value": "3,475,226"
+        },
+        {
+          "label": "Dimensions",
+          "value": "5"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Data-pipeline-and-modelling.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-datapipeline-with-dbt",
+      "folder": "datapipeline-with-dbt",
+      "title": "Analytics pipeline with dbt",
+      "stage": "Data engineering",
+      "category": "data-eng",
+      "startDate": "2026-10-30",
+      "headline": "dbt build 27/27 on 3.5M rides in one Docker stack",
+      "description": "Raw NYC taxi rides turned into tested analytics tables with dbt on Postgres, run as one Docker stack with a dashboard.",
+      "stack": [
+        "dbt",
+        "PostgreSQL",
+        "DuckDB",
+        "Python",
+        "Docker",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "dbt build",
+          "value": "27 / 27"
+        },
+        {
+          "label": "Rides",
+          "value": "3,475,226"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/datapipeline-with-dbt.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-workflow-orchestration",
+      "folder": "Workflow-orchestration",
+      "title": "Workflow orchestration with Prefect",
+      "stage": "Data engineering",
+      "category": "data-eng",
+      "startDate": "2026-11-02",
+      "headline": "Prefect flows and a dbt project, all green in CI",
+      "description": "Prefect ETL and ELT pipelines that load NYC yellow taxi data into PostgreSQL and transform it with dbt.",
+      "stack": [
+        "Python",
+        "Prefect",
+        "PostgreSQL",
+        "dbt",
+        "pandas",
+        "SQLAlchemy",
+        "Docker",
+        "GitHub Actions"
+      ],
+      "metrics": [
+        {
+          "label": "CI runs",
+          "value": "3 / 3"
+        },
+        {
+          "label": "dbt models",
+          "value": "4"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Workflow-orchestration.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-batch-and-stream-processing",
+      "folder": "Batch-and-Stream-processing",
+      "title": "Batch & stream processing pipeline",
+      "stage": "Data engineering",
+      "category": "data-eng",
+      "startDate": "2026-11-03",
+      "headline": "11.2M rides batch + exactly-once streaming, 0 duplicates",
+      "description": "Processes NYC taxi rides two ways: a daily batch lane into Postgres and dbt, and a live exactly-once stream through Redpanda.",
+      "stack": [
+        "Python",
+        "DuckDB",
+        "Polars",
+        "Redpanda",
+        "dbt",
+        "Prefect",
+        "Prometheus",
+        "Grafana"
+      ],
+      "metrics": [
+        {
+          "label": "Rides",
+          "value": "11.2M"
+        },
+        {
+          "label": "Duplicates",
+          "value": "0"
+        },
+        {
+          "label": "dbt tests",
+          "value": "22"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Batch-and-Stream-processing.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-data-pipeline-project",
+      "folder": "Data-pipeline-project",
+      "title": "Green taxi daily revenue pipeline",
+      "stage": "Data engineering",
+      "category": "data-eng",
+      "startDate": "2026-11-03",
+      "headline": "$3.4M revenue over 90 days; refunds matched to their charges",
+      "description": "ETL pipeline that computes NYC green taxi revenue per day for January to March 2025, runnable as a CLI or a Prefect flow.",
+      "stack": [
+        "Python",
+        "pandas",
+        "Parquet",
+        "Click",
+        "Prefect",
+        "pytest",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "Revenue",
+          "value": "$3.40M"
+        },
+        {
+          "label": "Refunds matched",
+          "value": "468 / 478"
+        }
+      ],
+      "githubUrl": "https://github.com/jeevan516/Data-pipeline-project",
+      "deckUrl": "decks/Data-pipeline-project.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-prompt-engineering",
+      "folder": "prompt-engineering",
+      "title": "Prompt engineering with LangChain",
+      "stage": "Machine learning",
+      "category": "ai-ml",
+      "startDate": "2026-11-05",
+      "headline": "Structured JSON output parsed 5/5 with Groq",
+      "description": "Designs and tests support-triage prompts with LangChain on a Groq-hosted model, comparing baseline, stricter and few-shot prompts on a small evaluation set.",
+      "stack": [
+        "Python",
+        "LangChain",
+        "Groq",
+        "gpt-oss-20b",
+        "Jupyter",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "JSON parsed",
+          "value": "5 / 5"
+        },
+        {
+          "label": "Prompts compared",
+          "value": "3"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/prompt-engineering.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-basics-of-ml",
+      "folder": "Basics-of-ml",
+      "title": "Basics of ML",
+      "stage": "Machine learning",
+      "category": "ai-ml",
+      "startDate": "2026-11-06",
+      "headline": "Tuned gradient boosting R² 0.908 on movie revenue",
+      "description": "scikit-learn refresher notebooks plus a tuned movie box-office model served by a FastAPI prediction API.",
+      "stack": [
+        "Python",
+        "scikit-learn",
+        "Optuna",
+        "Jupyter",
+        "FastAPI",
+        "Docker",
+        "GitHub Actions",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "R²",
+          "value": "0.908"
+        },
+        {
+          "label": "Wine within ±1",
+          "value": "97.3%"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Basics-of-ml.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-testing-for-ml",
+      "folder": "Testing-for-ml",
+      "title": "Testing for ML",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-10",
+      "headline": "89% accuracy; behavioural, data and API tests; Prefect + MLflow",
+      "description": "A movie-review sentiment model tested four ways (behavior, code, data, service) and shipped as an API with a Prefect + MLflow training pipeline.",
+      "stack": [
+        "scikit-learn",
+        "pytest",
+        "Great Expectations",
+        "FastAPI",
+        "Prefect",
+        "MLflow",
+        "Docker",
+        "GitHub Actions"
+      ],
+      "metrics": [
+        {
+          "label": "Accuracy",
+          "value": "0.89"
+        },
+        {
+          "label": "Behaviour checks",
+          "value": "3 / 3"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/Testing-for-ml.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-batch-and-stream-predictions",
+      "folder": "batch-and-stream-predictions",
+      "title": "Batch & stream predictions",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-12",
+      "headline": "One MLflow model for Prefect batch and FastAPI; RMSE 4.62",
+      "description": "Trains a taxi trip-duration model, registers it in MLflow, scores a monthly file with Prefect and serves live predictions with FastAPI.",
+      "stack": [
+        "Python",
+        "scikit-learn",
+        "MLflow",
+        "Prefect",
+        "FastAPI",
+        "PostgreSQL",
+        "Docker Compose",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "RMSE (min)",
+          "value": "4.62"
+        },
+        {
+          "label": "Batch preds",
+          "value": "42,588"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/batch-and-stream-predictions.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-api-ml-deployment",
+      "folder": "api-ml-deployment",
+      "title": "ML model API with MLflow & Docker",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-16",
+      "headline": "Registered model served by FastAPI; MLflow + API in Docker",
+      "description": "A taxi-duration model registered in MLflow (alias production) and served by FastAPI, locally and in Docker.",
+      "stack": [
+        "scikit-learn",
+        "MLflow",
+        "FastAPI",
+        "Pydantic",
+        "pytest",
+        "Docker",
+        "Docker Compose"
+      ],
+      "metrics": [
+        {
+          "label": "Tests",
+          "value": "4 / 4"
+        },
+        {
+          "label": "Docker",
+          "value": "compose"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/api-ml-deployment.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-model-deployment-project",
+      "folder": "model-deployment-project",
+      "title": "NYC taxi trip-duration model",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-17",
+      "headline": "6 models compared; served RMSE 3.70 min; data checks, CI",
+      "description": "NYC yellow-taxi trip duration: 6 models compared (RandomForest baseline 4.10 → served HistGradientBoosting 3.70 min), data checks, fit analysis, MLflow + Optuna, FastAPI in Docker.",
+      "stack": [
+        "scikit-learn",
+        "HistGradientBoosting",
+        "XGBoost",
+        "LightGBM",
+        "MLflow",
+        "Optuna",
+        "FastAPI",
+        "pytest"
+      ],
+      "metrics": [
+        {
+          "label": "RMSE (min)",
+          "value": "3.70"
+        },
+        {
+          "label": "Models",
+          "value": "6"
+        },
+        {
+          "label": "Tests",
+          "value": "15 / 15"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/model-deployment-project.pptx",
+      "liveUrl": null
+    }
+  ]
+}
