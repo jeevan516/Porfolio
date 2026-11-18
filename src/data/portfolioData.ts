@@ -80,6 +80,27 @@ const CURATED_PROJECTS: Project[] = [
     viewsCount: 2310,
   },
   {
+    id: 'rag-lab',
+    title: 'RAG Lab: Vector DBs, Evaluation, Agents & MCP',
+    tagline: 'Self-directed learning project · the full RAG stack in Docker Compose',
+    description: 'End-to-end RAG system over a 54-section handbook: structure-aware chunking, Qdrant and pgvector behind one interface, hybrid search (BM25 + RRF) and cross-encoder reranking, a 54-question golden-set evaluation harness with a tuning sweep, embedding fine-tuning with before/after metrics, a tool-use agent and an MCP server (Streamable HTTP). Runs on CPU with no API key; Claude is optional.',
+    category: 'ai-ml',
+    tags: ['RAG', 'Qdrant', 'pgvector', 'sentence-transformers', 'FastAPI', 'MCP', 'AI Agents', 'Docker Compose'],
+    impact: 'Reranking lifted MRR@5 from 0.75 to 0.89; fine-tuning on 322 synthetic pairs did not help, and the harness showed it.',
+    metrics: [
+      { label: 'MRR@5', value: '0.75 → 0.89' },
+      { label: 'Golden set', value: '54 questions' },
+      { label: 'Services', value: '4 containers' },
+    ],
+    images: [
+      { src: 'projects/rag-lab/app.webp', alt: 'RAG Lab answering a question about an uploaded document, with confidence, trace and sources', caption: 'Upload a document, ask, see how the answer was made' },
+      { src: 'projects/rag-lab/agent.webp', alt: 'Agent decomposing a comparison into separate searches', caption: 'Agent: tool-call steps' },
+    ],
+    featured: true,
+    status: 'Research',
+    viewsCount: 0,
+  },
+  {
     id: 'nf-king-county-refactoring',
     title: 'King County House Prices: Notebook to Production Pipeline',
     tagline: 'neuefische ML Engineering project · Refactoring, testing & FastAPI',
