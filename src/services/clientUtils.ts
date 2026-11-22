@@ -33,6 +33,10 @@ export async function copyText(text: string): Promise<boolean> {
  * unless the response is OK *and* actually JSON. Callers fall back client-side.
  */
 export async function fetchApiJson<T>(path: string, init?: RequestInit, timeoutMs = 8000): Promise<T> {
+  // The published site (GitHub Pages) has no server: skip the request instead of logging a 404.
+  if (window.location.hostname.endsWith('.github.io')) {
+    throw new Error('API unavailable on the static site');
+  }
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
