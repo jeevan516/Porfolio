@@ -29,7 +29,7 @@ finishes and deploys itself on every push.
 ## Results
 | Check | Result |
 |---|---|
-| Live site | https://jeevan516.github.io/Porfolio/ (GitHub Pages) |
+| Live site | https://jeevan516.github.io/jeevan-Dutta/ (GitHub Pages; repo renamed from Porfolio) |
 | Project cards | **28**: 19 hand-written + 9 generated bootcamp projects; all 18 bootcamp projects in "My bootcamp journey" |
 | Bootcamp journey | 19 projects in 5 stages, 19 slide decks served from `public/decks/`, all listed in one download panel (click "Slide decks"); built from `project-notes` run-info, updates automatically |
 | Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors) |
@@ -47,7 +47,7 @@ finishes and deploys itself on every push.
 - GitHub Pages serves only static files: confirm which features need the Express server
   (Gemini news, visitor tracker, GitHub sync) and host it or remove those calls.
 - Visitor numbers come from a committed file (`data/visitor-stats.json`), not live analytics; switch to a real analytics source.
-- Rename the package from `react-example` and fix the repo name spelling ("Porfolio").
+- Rename the package from `react-example`.
 - Lighthouse check for performance and accessibility in CI.
 
 ## Update log

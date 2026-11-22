@@ -170,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             href="#hero"
             onClick={handleLogoClick}
             aria-label={isDe ? 'Zum Seitenanfang' : 'Back to top'}
-            className={`flex items-center gap-3 group min-w-0 rounded-xl ${FOCUS_RING}`}
+            className={`flex items-center gap-3 group shrink-0 rounded-xl ${FOCUS_RING}`}
           >
             <div className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shrink-0 bg-slate-800">
               {!imageError ? (
@@ -186,11 +186,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               )}
             </div>
-            <div className="min-w-0">
-              <span className="block font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors truncate">
+            <div>
+              <span className="block font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
                 {PERSONAL_INFO.name}
               </span>
-              <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400">
+              <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 {isDe ? 'Sofort verfügbar' : 'Available for work'}
               </span>
@@ -214,6 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   aria-selected={isActive}
                   onClick={() => handleSelectView(v.id)}
                   title={v.label}
+                  aria-label={v.label}
                   className={`relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${FOCUS_RING} ${
                     isActive ? 'text-slate-950' : 'text-slate-400 hover:text-slate-200'
                   }`}
@@ -226,7 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     />
                   )}
                   <Icon className="w-3.5 h-3.5" />
-                  <span className="hidden lg:inline">{v.short}</span>
+                  <span className="hidden xl:inline">{v.short}</span>
                 </button>
               );
             })}
@@ -307,19 +308,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenResume}
                 className={`hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-emerald-500/40 text-emerald-300 hover:text-white hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors ${FOCUS_RING}`}
                 title={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
+                aria-label={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>{isDe ? 'CV' : 'Resume'}</span>
+                <span className="hidden xl:inline">{isDe ? 'CV' : 'Resume'}</span>
               </button>
             )}
 
             <button
               id="navbar-brief-btn"
               onClick={onOpenBrief}
+              title={t.recruiterBrief}
+              aria-label={t.recruiterBrief}
               className={`hidden lg:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 transition-colors ${FOCUS_RING}`}
             >
               <FileText className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{t.recruiterBrief}</span>
+              <span className="hidden xl:inline">{t.recruiterBrief}</span>
             </button>
 
             <button
@@ -329,7 +333,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors ${FOCUS_RING}`}
             >
               <Mail className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{t.getInTouch}</span>
+              <span className="hidden xl:inline">{t.getInTouch}</span>
             </button>
 
             <button
