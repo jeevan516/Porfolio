@@ -595,8 +595,41 @@
           "value": "15 / 15"
         }
       ],
-      "githubUrl": null,
+      "githubUrl": "https://github.com/jeevan516/model-deployment-project",
       "deckUrl": "decks/model-deployment-project.pptx",
+      "liveUrl": null
+    },
+    {
+      "id": "nf-github-actions-and-cicd",
+      "folder": "github-actions-and-cicd",
+      "title": "GitHub Actions & CI/CD for ML",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-18",
+      "headline": "Tests, DVC data check and CML metrics on every PR; test RMSE 5.0074 min",
+      "description": "CI/CD for an ML model: GitHub Actions runs tests, checks the DVC data version, trains an XGBoost taxi-duration model and posts metrics on each PR with CML.",
+      "stack": [
+        "GitHub Actions",
+        "DVC",
+        "CML",
+        "MLflow",
+        "XGBoost",
+        "scikit-learn",
+        "pytest",
+        "uv"
+      ],
+      "metrics": [
+        {
+          "label": "Test RMSE (min)",
+          "value": "5.0074"
+        },
+        {
+          "label": "Unit tests",
+          "value": "7 / 7"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/github-actions-and-cicd.pptx",
       "liveUrl": null
     }
   ]
