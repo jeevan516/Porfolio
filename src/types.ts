@@ -29,7 +29,7 @@ export interface Project {
   /** Slides, write-ups and other documents about the project. */
   docs?: ProjectLink[];
   featured: boolean;
-  status: 'neuefische Course Project' | 'Production at WaDaCon' | 'Open Source' | 'Research' | 'Deployed' | 'Defended & Verified (TU Clausthal)' | 'Production at WaDaCon (Completed)';
+  status: 'neuefische Course Project' | 'Personal Project' | 'Production at WaDaCon' | 'Open Source' | 'Research' | 'Deployed' | 'Defended & Verified (TU Clausthal)' | 'Production at WaDaCon (Completed)';
   viewsCount: number;
 }
 

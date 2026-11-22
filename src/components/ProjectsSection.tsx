@@ -28,6 +28,7 @@ const statusStyle = (status: string) => {
   if (status.startsWith('Production')) return 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30';
   if (status === 'Open Source') return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30';
   if (status === 'neuefische Course Project') return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
+  if (status === 'Personal Project') return 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/30';
   return 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30';
 };
 
@@ -35,6 +36,7 @@ const statusStyle = (status: string) => {
 const statusLabel = (status: string, isDe: boolean) => {
   if (status.startsWith('Production')) return isDe ? 'Produktiv · WaDaCon' : 'Production · WaDaCon';
   if (status === 'neuefische Course Project') return isDe ? 'neuefische · Kursprojekt' : 'neuefische · Course project';
+  if (status === 'Personal Project') return isDe ? 'Eigenes Projekt' : 'Personal project';
   if (status.startsWith('Defended')) return isDe ? 'Verteidigt · TU Clausthal' : 'Defended · TU Clausthal';
   return status;
 };
@@ -49,6 +51,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
   const categories = [
     { id: 'all', label: t.filterAll },
     { id: 'neuefische', label: 'neuefische Bootcamp' },
+    { id: 'personal', label: isDe ? 'Eigene Projekte' : 'Personal projects' },
     { id: 'it-devops', label: t.filterDevops },
     { id: 'observability', label: t.filterObs },
     { id: 'ai-ml', label: t.filterAi },
@@ -58,6 +61,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
   const filteredProjects = PROJECTS_DATA.filter((p) => {
     if (activeRole !== 'all' && p.category !== activeRole) return false;
     if (selectedCategory === 'neuefische') return p.status === 'neuefische Course Project';
+    if (selectedCategory === 'personal') return p.status === 'Personal Project';
     if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
     return true;
   });

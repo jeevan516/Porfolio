@@ -408,13 +408,14 @@ You can inspect all projects and interactive architecture diagrams in the Projec
               setIsMinimized(false);
             }}
             aria-label="Open Jeevan's career assistant chat"
-            className={`group flex items-center gap-3 p-3 sm:px-4 sm:py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm shadow-xl shadow-emerald-500/25 active:scale-95 transition-all ${ui.focusRing}`}
+            title="Ask Jeevan's bot"
+            className={`group flex items-center gap-3 p-3.5 rounded-full 2xl:px-4 2xl:py-3 2xl:rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm shadow-xl shadow-emerald-500/25 active:scale-95 transition-all ${ui.focusRing}`}
           >
             <span className="relative">
               <Bot className="w-5 h-5" />
               {hasUnread && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white ring-2 ring-emerald-500" />}
             </span>
-            <span className="text-left leading-tight hidden sm:block">
+            <span className="text-left leading-tight hidden 2xl:block">
               <span className="block text-xs font-bold">Ask Jeevan's bot</span>
               <span className="block text-[10px] font-medium text-slate-900/80">Career & skills assistant</span>
             </span>

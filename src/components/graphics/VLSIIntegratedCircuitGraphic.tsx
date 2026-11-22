@@ -162,15 +162,24 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
             }
           }
 
-          // Block Header Label
+          // Labels: id at the top and name at the bottom; a block too short for two lines gets
+          // both on one centred line, so they never overlap.
+          const oneLine = bh < 34;
+          const labelY = oneLine ? by + bh / 2 + 4 : by + 14;
           ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 10px monospace';
-          ctx.fillText(block.id, bx + 8, by + 14);
+          ctx.fillText(block.id, bx + 8, labelY);
 
-          // Secondary text
           ctx.fillStyle = '#94a3b8';
           ctx.font = '9px sans-serif';
-          ctx.fillText(block.name, bx + 8, by + bh - 6);
+          if (oneLine) {
+            ctx.font = 'bold 10px monospace';
+            const idWidth = ctx.measureText(block.id).width;
+            ctx.font = '9px sans-serif';
+            ctx.fillText(`· ${block.name}`, bx + 14 + idWidth, labelY);
+          } else {
+            ctx.fillText(block.name, bx + 8, by + bh - 6);
+          }
         });
 
         // Corner Pin Pads (VLSI Package Leads)
