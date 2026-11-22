@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="block font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
                 {PERSONAL_INFO.name}
               </span>
-              <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 whitespace-nowrap">
+              <span className="flex items-center gap-1.5 text-[11px] text-slate-400 whitespace-nowrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 {isDe ? 'Sofort verfügbar' : 'Available for work'}
               </span>
