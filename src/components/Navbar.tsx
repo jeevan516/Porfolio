@@ -37,12 +37,12 @@ interface NavbarProps {
 }
 
 const FOCUS_RING =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 focus-visible:ring-offset-2 focus-visible:ring-offset-bg';
 
 // Sections shown in the desktop link row; the mobile menu lists every section
 const PRIMARY_SECTIONS = ['neuefische-journey', 'about', 'projects', 'experience', 'education', 'master-thesis', 'skills', 'observability', 'contact'];
 
-const ICON_BTN = `items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`;
+const ICON_BTN = `items-center justify-center w-10 h-10 rounded-lg text-muted hover:text-fg hover:bg-surface-2 transition-colors ${FOCUS_RING}`;
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeView,
@@ -60,6 +60,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [soundOn, setSoundOn] = useState(() => isSoundFxEnabled());
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  // The hero already shows the name; the header only shows it once the hero has scrolled away.
+  const [pastHero, setPastHero] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setPastHero(window.scrollY > 360);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  const showName = pastHero || activeView !== 'showcase';
   const t = TRANSLATIONS[language].nav;
   const isDe = language === 'de';
 
@@ -76,6 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'projects', label: t.projects },
     { id: 'skills', label: t.skills },
     { id: 'experience', label: t.experience },
+    { id: 'research-visuals', label: isDe ? 'Forschung interaktiv' : 'Research visuals' },
     { id: 'career-trajectory', label: isDe ? 'Werdegang' : 'Trajectory' },
     { id: 'academic-reference', label: t.academicRef },
     { id: 'observability', label: 'Observability' },
@@ -161,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#070a12]/85 backdrop-blur-xl"
+      className="sticky top-0 z-50 w-full border-b border-line/80 bg-surface/85 backdrop-blur-xl"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
@@ -172,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             aria-label={isDe ? 'Zum Seitenanfang' : 'Back to top'}
             className={`flex items-center gap-3 group shrink-0 rounded-xl ${FOCUS_RING}`}
           >
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-emerald-500/50 shrink-0 bg-slate-800">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden ring-2 ring-accent/70 shrink-0 bg-surface-2">
               {!imageError ? (
                 <img
                   src="./jeevan-dutta.jpg"
@@ -181,17 +191,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-extrabold text-sm">
+                <div className="w-full h-full bg-ink-2 flex items-center justify-center text-white font-extrabold text-sm">
                   JD
                 </div>
               )}
             </div>
-            <div>
-              <span className="block font-display font-bold text-base tracking-tight text-white group-hover:text-emerald-400 transition-colors whitespace-nowrap">
+            <div className="min-w-0">
+              <span
+                className={`block font-display font-bold text-base tracking-tight text-fg group-hover:text-accent-fg transition-[opacity,transform,color] duration-300 whitespace-nowrap ${
+                  showName ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 h-0 overflow-hidden'
+                }`}
+                aria-hidden={!showName}
+              >
                 {PERSONAL_INFO.name}
               </span>
-              <span className="flex items-center gap-1.5 text-[11px] text-slate-400 whitespace-nowrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="flex items-center gap-1.5 text-[13px] text-muted whitespace-nowrap">
+                <span className="w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true" />
                 {isDe ? 'Sofort verfügbar' : 'Available for work'}
               </span>
             </div>
@@ -201,7 +216,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div
             role="tablist"
             aria-label={isDe ? 'Ansicht wählen' : 'Select view'}
-            className="hidden md:flex items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl"
+            className="hidden md:flex items-center p-1 bg-surface/90 border border-line rounded-xl"
           >
             {views.map((v) => {
               const Icon = v.icon;
@@ -215,14 +230,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => handleSelectView(v.id)}
                   title={v.label}
                   aria-label={v.label}
-                  className={`relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${FOCUS_RING} ${
-                    isActive ? 'text-slate-950' : 'text-slate-400 hover:text-slate-200'
+                  className={`relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${FOCUS_RING} ${
+                    isActive ? 'text-on-accent' : 'text-muted hover:text-fg'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeNavbarModePill"
-                      className="absolute inset-0 bg-emerald-500 rounded-lg -z-10"
+                      className="absolute inset-0 bg-accent rounded-lg -z-10"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -260,11 +275,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="navbar-language-toggle-btn"
                 onClick={onToggleLanguage}
-                className={`hidden sm:inline-flex items-center gap-1.5 h-9 px-2.5 rounded-lg border border-slate-700 hover:border-emerald-500/60 text-xs font-semibold text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                className={`hidden sm:inline-flex items-center gap-1.5 h-10 px-2.5 rounded-lg border border-line-strong hover:border-accent/60 text-sm font-semibold text-fg hover:text-fg transition-colors ${FOCUS_RING}`}
                 aria-label={isDe ? 'Switch to English' : 'Auf Deutsch umschalten'}
                 title={isDe ? 'Switch to English' : 'Auf Deutsch umschalten'}
               >
-                <Languages className="w-3.5 h-3.5 text-emerald-400" />
+                <Languages className="w-3.5 h-3.5 text-accent-fg" />
                 <span className="font-mono">{isDe ? 'DE' : 'EN'}</span>
               </button>
             )}
@@ -276,13 +291,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-cyan-400" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-accent-fg" aria-hidden="true" /> : <Moon className="w-4 h-4 text-teal" aria-hidden="true" />}
             </button>
 
             <button
               id="sound-fx-toggle-btn"
               onClick={handleToggleSound}
-              className={`hidden sm:inline-flex ${ICON_BTN} ${soundOn ? 'text-emerald-400' : ''}`}
+              className={`hidden sm:inline-flex ${ICON_BTN} ${soundOn ? 'text-accent-fg' : ''}`}
               title={soundOn ? 'Sound effects on' : 'Sound effects off'}
               aria-label={soundOn ? 'Mute sound effects' : 'Enable sound effects'}
               aria-pressed={soundOn}
@@ -294,10 +309,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="navbar-github-sync-btn"
                 onClick={onOpenGitHubSync}
-                className={`hidden xl:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-dashed border-slate-600 text-slate-300 hover:text-white hover:border-emerald-500/60 transition-colors ${FOCUS_RING}`}
+                className={`hidden xl:inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-dashed border-line-strong text-muted hover:text-fg hover:border-accent/60 transition-colors ${FOCUS_RING}`}
                 title="Dev only: sync & push to GitHub"
               >
-                <Github className="w-3.5 h-3.5 text-emerald-400" />
+                <Github className="w-3.5 h-3.5 text-accent-fg" />
                 <span>Sync</span>
               </button>
             )}
@@ -306,7 +321,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="navbar-resume-btn"
                 onClick={onOpenResume}
-                className={`hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-emerald-500/40 text-emerald-300 hover:text-white hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors ${FOCUS_RING}`}
+                className={`hidden md:inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-accent/40 text-accent-fg hover:text-fg hover:border-accent hover:bg-accent/10 transition-colors ${FOCUS_RING}`}
                 title={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
                 aria-label={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
               >
@@ -320,9 +335,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onOpenBrief}
               title={t.recruiterBrief}
               aria-label={t.recruiterBrief}
-              className={`hidden lg:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 transition-colors ${FOCUS_RING}`}
+              className={`hidden lg:inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-line-strong text-fg hover:text-fg hover:border-line-strong transition-colors ${FOCUS_RING}`}
             >
-              <FileText className="w-3.5 h-3.5 text-cyan-400" />
+              <FileText className="w-3.5 h-3.5 text-teal" />
               <span className="hidden xl:inline">{t.recruiterBrief}</span>
             </button>
 
@@ -330,7 +345,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               id="navbar-contact-btn"
               onClick={onOpenContact}
               aria-label={t.getInTouch}
-              className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors ${FOCUS_RING}`}
+              className={`inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-bold bg-accent hover:bg-accent-hover text-on-accent transition-colors ${FOCUS_RING}`}
             >
               <Mail className="w-3.5 h-3.5" />
               <span className="hidden xl:inline">{t.getInTouch}</span>
@@ -351,14 +366,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Section links (desktop) */}
         <nav
           aria-label={isDe ? 'Abschnitte' : 'Sections'}
-          className="hidden lg:flex items-center gap-1 -mx-2 pb-2 overflow-x-auto text-xs font-medium text-slate-400 [scrollbar-width:none]"
+          className="hidden lg:flex items-center gap-1 -mx-2 pb-2 overflow-x-auto text-sm font-medium text-muted [scrollbar-width:none]"
         >
           {sectionLinks.filter((link) => PRIMARY_SECTIONS.includes(link.id)).map((link) => (
             <a
               key={link.id}
               href={`#${link.id}`}
               onClick={(e) => handleLinkClick(e, link.id)}
-              className={`shrink-0 px-2 py-1 rounded-md hover:text-emerald-400 hover:bg-slate-800/60 transition-colors ${FOCUS_RING}`}
+              className={`shrink-0 px-2.5 py-1.5 rounded-md hover:text-fg hover:bg-surface-2/60 transition-colors ${FOCUS_RING}`}
             >
               {link.label}
             </a>
@@ -375,11 +390,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden overflow-hidden border-t border-slate-800 bg-[#070a12]"
+            className="lg:hidden overflow-hidden border-t border-line bg-bg"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
               {/* View switcher */}
-              <div className="grid grid-cols-3 gap-1 p-1 bg-slate-900 border border-slate-800 rounded-xl">
+              <div className="grid grid-cols-3 gap-1 p-1 bg-surface border border-line rounded-xl">
                 {views.map((v) => {
                   const Icon = v.icon;
                   const isActive = activeView === v.id;
@@ -388,8 +403,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                       key={v.id}
                       onClick={() => handleSelectView(v.id)}
                       aria-pressed={isActive}
-                      className={`flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg transition-colors ${FOCUS_RING} ${
-                        isActive ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                      className={`flex items-center justify-center gap-1.5 py-2 text-sm font-semibold rounded-lg transition-colors ${FOCUS_RING} ${
+                        isActive ? 'bg-accent text-on-accent' : 'text-muted hover:text-fg'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -406,7 +421,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     key={link.id}
                     href={`#${link.id}`}
                     onClick={(e) => handleLinkClick(e, link.id)}
-                    className={`px-3 py-2 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors ${FOCUS_RING}`}
+                    className={`px-3 py-2 rounded-lg text-sm text-muted hover:text-fg hover:bg-surface-2/70 transition-colors ${FOCUS_RING}`}
                   >
                     {link.label}
                   </a>
@@ -414,11 +429,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </nav>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-800">
+              <div className="flex flex-wrap gap-2 pt-3 border-t border-line">
                 {onOpenResume && (
                   <button
                     onClick={runAndClose(onOpenResume)}
-                    className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-emerald-500/40 text-emerald-300 hover:text-white transition-colors ${FOCUS_RING}`}
+                    className={`inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-accent/40 text-accent-fg hover:text-fg transition-colors ${FOCUS_RING}`}
                   >
                     <Download className="w-3.5 h-3.5" />
                     {isDe ? 'CV (PDF)' : 'Resume (PDF)'}
@@ -426,26 +441,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
                 <button
                   onClick={runAndClose(onOpenBrief)}
-                  className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                  className={`inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-line-strong text-fg hover:text-fg transition-colors ${FOCUS_RING}`}
                 >
-                  <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                  <FileText className="w-3.5 h-3.5 text-teal" />
                   {t.recruiterBrief}
                 </button>
                 {onToggleLanguage && (
                   <button
                     onClick={runAndClose(onToggleLanguage)}
-                    className={`sm:hidden inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                    className={`sm:hidden inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-line-strong text-fg hover:text-fg transition-colors ${FOCUS_RING}`}
                   >
-                    <Languages className="w-3.5 h-3.5 text-emerald-400" />
+                    <Languages className="w-3.5 h-3.5 text-accent-fg" />
                     {isDe ? 'English' : 'Deutsch'}
                   </button>
                 )}
                 <button
                   onClick={handleToggleSound}
                   aria-pressed={soundOn}
-                  className={`sm:hidden inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold border border-slate-700 text-slate-200 hover:text-white transition-colors ${FOCUS_RING}`}
+                  className={`sm:hidden inline-flex items-center gap-1.5 h-10 px-3 rounded-lg text-sm font-semibold border border-line-strong text-fg hover:text-fg transition-colors ${FOCUS_RING}`}
                 >
-                  {soundOn ? <Volume2 className="w-3.5 h-3.5 text-emerald-400" /> : <VolumeX className="w-3.5 h-3.5" />}
+                  {soundOn ? <Volume2 className="w-3.5 h-3.5 text-accent-fg" /> : <VolumeX className="w-3.5 h-3.5" />}
                   Sound {soundOn ? 'on' : 'off'}
                 </button>
                 <a

@@ -101,7 +101,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.clearRect(0, 0, width, height);
 
       // Cyber Grid perspective background
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.08)';
+      ctx.strokeStyle = 'rgba(242, 165, 65, 0.08)';
       ctx.lineWidth = 1;
       const horizonY = height * 0.45;
       const groundY = height * 0.78;
@@ -130,9 +130,9 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 
       // Moving path / runway
       const pathGrad = ctx.createLinearGradient(0, horizonY, 0, height);
-      pathGrad.addColorStop(0, 'rgba(16, 185, 129, 0.0)');
-      pathGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.08)');
-      pathGrad.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
+      pathGrad.addColorStop(0, 'rgba(242, 165, 65, 0.0)');
+      pathGrad.addColorStop(0.5, 'rgba(60, 192, 180, 0.08)');
+      pathGrad.addColorStop(1, 'rgba(242, 165, 65, 0.15)');
       ctx.fillStyle = pathGrad;
       ctx.beginPath();
       ctx.moveTo(vanishingX - 50, horizonY);
@@ -191,13 +191,13 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
           continue;
         }
 
-        ctx.fillStyle = `rgba(16, 185, 129, ${fp.alpha * 0.7})`;
+        ctx.fillStyle = `rgba(242, 165, 65, ${fp.alpha * 0.7})`;
         ctx.beginPath();
         ctx.ellipse(fp.x, fp.y, 5 * scale, 3 * scale, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Pulsing ripple ring
-        ctx.strokeStyle = `rgba(6, 182, 212, ${fp.alpha * 0.4})`;
+        ctx.strokeStyle = `rgba(60, 192, 180, ${fp.alpha * 0.4})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.ellipse(fp.x, fp.y, (1 - fp.alpha) * 14 * scale + 5, (1 - fp.alpha) * 7 * scale + 2, 0, 0, Math.PI * 2);
@@ -216,7 +216,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
           particles.splice(p, 1);
           continue;
         }
-        ctx.fillStyle = `rgba(52, 211, 153, ${pt.alpha})`;
+        ctx.fillStyle = `rgba(245, 180, 94, ${pt.alpha})`;
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
         ctx.fill();
@@ -243,7 +243,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       const foot1X = Math.sin(leg1Angle * 0.8) * legLength;
       const foot1Y = Math.cos(leg1Angle * 0.8) * legLength;
 
-      ctx.strokeStyle = '#059669'; // Emerald darker
+      ctx.strokeStyle = '#e0952f'; 
       ctx.lineWidth = 5 * scale;
       ctx.lineCap = 'round';
       ctx.beginPath();
@@ -261,7 +261,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 
       // Arm 1 (Back Arm - swings opposite to back leg)
       const arm1Angle = -swing * 0.6;
-      ctx.strokeStyle = '#0d9488';
+      ctx.strokeStyle = '#2a9d93';
       ctx.lineWidth = 4 * scale;
       ctx.beginPath();
       ctx.moveTo(0, -torsoHeight + 10);
@@ -269,7 +269,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.stroke();
 
       // Torso & Cyber Backpack (Engineer Equipment)
-      ctx.strokeStyle = '#10b981'; // Primary Emerald
+      ctx.strokeStyle = '#f2a541'; 
       ctx.lineWidth = 7 * scale;
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -277,8 +277,8 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.stroke();
 
       // High-tech backpack / laptop bag
-      ctx.fillStyle = '#065f46';
-      ctx.strokeStyle = '#34d399';
+      ctx.fillStyle = '#5c3d10';
+      ctx.strokeStyle = '#f5b45e';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       if (typeof ctx.roundRect === 'function') ctx.roundRect(-10 * scale, -torsoHeight + 6 * scale, 8 * scale, 22 * scale, 3);
@@ -293,7 +293,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       const foot2X = Math.sin(leg2Angle * 0.8) * legLength;
       const foot2Y = Math.cos(leg2Angle * 0.8) * legLength;
 
-      ctx.strokeStyle = '#34d399'; // Bright Emerald
+      ctx.strokeStyle = '#f5b45e'; 
       ctx.lineWidth = 6 * scale;
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -309,13 +309,13 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.stroke();
 
       // Head & Tech Headset
-      ctx.fillStyle = '#10b981';
+      ctx.fillStyle = '#f2a541';
       ctx.beginPath();
       ctx.arc(0, -torsoHeight - headRadius, headRadius, 0, Math.PI * 2);
       ctx.fill();
 
       // Visor / HUD glow
-      ctx.strokeStyle = '#38bdf8'; // Cyan visor
+      ctx.strokeStyle = '#6aaef2'; 
       ctx.lineWidth = 2.5 * scale;
       ctx.beginPath();
       ctx.arc(3 * scale, -torsoHeight - headRadius, headRadius * 0.65, -0.4, 0.4);
@@ -323,7 +323,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 
       // Arm 2 (Front Arm - swings opposite to front leg)
       const arm2Angle = swing * 0.6;
-      ctx.strokeStyle = '#34d399';
+      ctx.strokeStyle = '#f5b45e';
       ctx.lineWidth = 4.5 * scale;
       ctx.beginPath();
       ctx.moveTo(0, -torsoHeight + 10);
@@ -351,9 +351,9 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 
       // Draw trajectory beam
       const trajGrad = ctx.createLinearGradient(originX, originY, originX + 280, originY - 32);
-      trajGrad.addColorStop(0, '#10b981');
-      trajGrad.addColorStop(0.5, '#06b6d4');
-      trajGrad.addColorStop(1, 'rgba(56, 189, 248, 0.1)');
+      trajGrad.addColorStop(0, '#f2a541');
+      trajGrad.addColorStop(0.5, '#3cc0b4');
+      trajGrad.addColorStop(1, 'rgba(106, 174, 242, 0.1)');
 
       ctx.strokeStyle = trajGrad;
       ctx.lineWidth = 2.5;
@@ -368,7 +368,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.setLineDash([]);
 
       // Draw prediction confidence bounds (cone)
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.06)';
+      ctx.fillStyle = 'rgba(60, 192, 180, 0.06)';
       ctx.beginPath();
       ctx.moveTo(originX, originY);
       ctx.lineTo(originX + 280, originY - 32 - 18);
@@ -380,20 +380,20 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       waypoints.forEach((wp, idx) => {
         if (wp.x < width - 20) {
           // Node ring
-          ctx.strokeStyle = idx === 1 ? '#38bdf8' : '#10b981';
+          ctx.strokeStyle = idx === 1 ? '#6aaef2' : '#f2a541';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.arc(wp.x, wp.y, 4, 0, Math.PI * 2);
           ctx.stroke();
 
-          ctx.fillStyle = idx === 1 ? '#38bdf8' : '#059669';
+          ctx.fillStyle = idx === 1 ? '#6aaef2' : '#e0952f';
           ctx.beginPath();
           ctx.arc(wp.x, wp.y, 2, 0, Math.PI * 2);
           ctx.fill();
 
           // Timestamp label on higher screens
           if (!compact && idx % 2 === 0) {
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.8)';
+            ctx.fillStyle = 'rgba(163, 179, 195, 0.8)';
             ctx.font = '9px monospace';
             ctx.fillText(wp.label, wp.x - 14, wp.y - 8);
           }
@@ -403,7 +403,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       // Target Destination Marker ahead
       const targetX = Math.min(width - 55, originX + 280);
       const targetY = originY - 32;
-      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeStyle = '#6aaef2';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(targetX, targetY, 9, 0, Math.PI * 2);
@@ -419,7 +419,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       // Label the destination with the selected milestone
       const m = milestones[milestoneRef.current];
       if (m) {
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = '#e6edf3';
         ctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
         ctx.textAlign = 'right';
         ctx.fillText(language === 'de' ? m.titleDe : m.titleEn, Math.min(width - 8, targetX + 40), targetY - 18);
@@ -429,11 +429,11 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
       ctx.restore();
 
       // Top Header HUD Info
-      ctx.fillStyle = '#10b981';
+      ctx.fillStyle = '#f2a541';
       ctx.font = 'bold 11px "JetBrains Mono", monospace';
       ctx.fillText(language === 'de' ? 'Trajektorie' : 'Trajectory', 14, 22);
 
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = '#a3b3c3';
       ctx.font = '10px "JetBrains Mono", monospace';
       ctx.fillText(
         `${walkSpeed === 'fast' ? '1.9' : '1.3'} m/s · ${language === 'de' ? 'Schritte' : 'steps'} ${stepsRef.current}`,
@@ -453,7 +453,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
   }, [compact, language]);
 
   return (
-    <div ref={containerRef} className="relative rounded-2xl bg-slate-950/80 border border-slate-800 overflow-hidden">
+    <div ref={containerRef} className="jd-dark-panel relative rounded-2xl bg-bg/80 border border-line overflow-hidden">
       {/* Canvas */}
       <canvas
         ref={canvasRef}
@@ -468,7 +468,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
           type="button"
           onClick={() => setWalkSpeed(walkSpeed === 'normal' ? 'fast' : 'normal')}
           aria-pressed={walkSpeed === 'fast'}
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono font-bold text-emerald-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface/90 border border-line-strong/80 text-xs font-mono font-bold text-accent-fg hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
           title={language === 'de' ? 'Tempo umschalten' : 'Toggle pace'}
         >
           <Footprints className="w-3 h-3" aria-hidden="true" />
@@ -480,7 +480,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
           onClick={() => setIsRunning(!isRunning)}
           aria-label={isRunning ? 'Pause animation' : 'Resume animation'}
           title={isRunning ? 'Pause' : 'Play'}
-          className="p-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-emerald-400 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+          className="p-1.5 rounded-lg bg-surface/90 border border-line-strong/80 text-accent-fg hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
         >
           {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
         </button>
@@ -488,7 +488,7 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
 
       {/* Trajectory Milestones Footer */}
       {!compact && (
-        <div className="p-3 bg-slate-900/90 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="p-3 bg-surface/90 border-t border-line grid grid-cols-2 sm:grid-cols-4 gap-2">
           {milestones.map((m) => {
             const isCurrent = m.id === activeMilestone;
             const Icon = m.icon;
@@ -498,17 +498,17 @@ export const WalkingTrajectoryGraphic: React.FC<WalkingTrajectoryGraphicProps> =
                 type="button"
                 aria-pressed={isCurrent}
                 onClick={() => setActiveMilestone(m.id)}
-                className={`p-2 rounded-xl text-left border transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                className={`p-2 rounded-xl text-left border transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                   isCurrent
-                    ? 'bg-emerald-500/10 border-emerald-500/50'
-                    : 'bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/60'
+                    ? 'bg-accent/10 border-accent/50'
+                    : 'bg-bg/60 border-line/80 hover:bg-surface-2/60'
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-white">
-                  <Icon className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-xs font-bold text-fg">
+                  <Icon className="w-3.5 h-3.5 text-accent-fg shrink-0" aria-hidden="true" />
                   <span className="truncate">{language === 'de' ? m.titleDe : m.titleEn}</span>
                 </div>
-                <div className={`text-[10px] text-slate-400 mt-0.5 ${isCurrent ? 'line-clamp-2' : 'truncate'}`}>
+                <div className={`text-xs text-muted mt-0.5 ${isCurrent ? 'line-clamp-2' : 'truncate'}`}>
                   {language === 'de' ? m.detailDe : m.detailEn}
                 </div>
               </button>

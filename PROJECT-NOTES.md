@@ -9,6 +9,8 @@ finishes and deploys itself on every push.
 
 - **Content:** `src/data/portfolioData.ts`: profile, master thesis, projects, skills,
   certifications, education, experience; screenshots under `public/projects/`.
+- **Design:** the shared JD design system (`src/styles/jd.css`, copied from `project-notes/design/`):
+  navy ink, amber and teal; Plus Jakarta Sans, Source Serif 4, JetBrains Mono; light and dark themes.
 - **Stack:** React 19, TypeScript, Vite 6, Tailwind CSS 4, Recharts, Framer Motion;
   an Express server (`server.ts`) with a Gemini proxy for local/AI Studio use;
   GitHub Actions → GitHub Pages.
@@ -23,7 +25,20 @@ finishes and deploys itself on every push.
    `PROJECTS_DATA` entry, `npm run lint`, `npm run build`, push).
 6. **Bootcamp journey** (17 Nov): generated from `project-notes`; voice interviewer and video pitch removed;
    one panel lists every slide deck.
-7. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
+7. **JD design system redesign** (22-23 Nov): replaced the neon emerald/cyan-on-black look with the
+   shared JD tokens. Tailwind 4 theme colours map to `--jd-*` tokens (`bg-surface`, `text-muted`,
+   `bg-accent`, `text-accent-fg` ...), so components carry no palette colours or hex values and follow
+   the theme; the theme follows the OS and the sun/moon toggle sets `<html data-theme>`.
+   UX fixes from a desktop/phone audit: the hero is one message (name once, value line, location,
+   one primary CTA "Bootcamp projects & slides", Download CV / Get in touch, four headline facts with
+   count-up); the VLSI/LSTM/IoT visualisations and thesis facts moved to a new "From silicon to the
+   factory floor" section; the role filter moved directly above Projects and Skills; "My bootcamp
+   journey" has stage headers, three-column cards with readable titles, metric tiles, equal
+   Slides/Source buttons and a tool filter row. Accessibility: skip link to `#main`, one h1 and ordered
+   headings, visible focus, 40 px touch targets, no text under 12 px, no horizontal scroll at 390 px.
+   Motion kept and recoloured (aurora backdrop, mesh canvas, section reveals, card hover lift, filter
+   layout animations); everything calms down under `prefers-reduced-motion`.
+8. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
    and the build, then deploys `dist/` to GitHub Pages from `main`.
 
 ## Results
@@ -35,10 +50,11 @@ finishes and deploys itself on every push.
 | Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors) |
 | Security | production CSP meta tag; `server.js` no longer deployed; all new-tab links `rel=noopener` |
 | Certifications listed | 21 |
-| React components | 22 in `src/components/` |
+| React components | 25 in `src/components/` (+ `ui/CountUp`, `ui/Reveal`, `ui/SpotlightCard`) |
 | Screenshots | 1 project so far (Batch & Stream, 4 WebP images) |
 | CI "Build & Deploy" | last 4 runs passed (31 Oct–3 Nov); first 4 failed. The 31 Oct failure was "Get Pages site failed: Not Found" (Pages not yet enabled) |
 | Automated tests | none; CI checks security audit, type check and build only |
+| Redesign checks (23 Nov) | `npm run lint` and `npm run build` pass; Playwright at 1440x900, 390x844 and 360 px, light and dark: `scrollWidth == innerWidth`; showcase view:, 1 h1, no heading-level jumps, 0 images without alt, 0 visible text under 12 px, 0 buttons/links under 32 px (phone) |
 
 ## Future engineering
 - Screenshots for the generated bootcamp cards (the journey shows metrics and slides already).
@@ -49,6 +65,9 @@ finishes and deploys itself on every push.
 - Visitor numbers come from a committed file (`data/visitor-stats.json`), not live analytics; switch to a real analytics source.
 - Rename the package from `react-example`.
 - Lighthouse check for performance and accessibility in CI.
+- The Projects section is still a long grid of 28 cards with small details; give it the same treatment
+  as the journey (grouping, fewer chips) and finish moving older sections to `.jd-*` components.
+- The Classic and Pipeline views were recoloured with the tokens but not redesigned.
 
 ## Update log
 - 8 Oct 2026: repository created; project structure and base app.
@@ -61,3 +80,4 @@ finishes and deploys itself on every push.
 - 17 Nov 2026: removed the voice interviewer (VideoPortfolioSection and avatar components); added "My bootcamp journey" (5 stages, 18 projects, skills chart, filters, animations) generated automatically from project-notes; 9 new bootcamp cards; private-repo links removed; CSP for production builds; server.js kept off GitHub Pages.
 - 17 Nov 2026: web-service-deployment deck updated with the real GCP results; leftover video-pitch text and styles removed; "Slide decks" tile opens a list of all 18 decks; slide buttons labelled ".pptx"; hero button "Bootcamp projects & slides".
 - 18-22 Nov 2026: model-deployment-project deck updated three times (redesign, 'more time' answers, data-rule count fix; PRs #5-#7); new bootcamp project card and deck for github-actions-and-cicd (19 projects in the journey).
+- 22-23 Nov 2026: redesigned with the JD design system (navy/amber/teal, light + dark), decluttered hero, research visuals section, scannable bootcamp journey, accessibility fixes (skip link, focus, 40 px targets, min 12 px text, no 390 px overflow), recoloured animations that respect reduced motion.

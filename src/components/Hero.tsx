@@ -1,404 +1,222 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { TargetRole } from '../types';
+import React, { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
-import { NeuralNetworkCanvas } from './graphics/NeuralNetworkCanvas';
-import { IndustrialIoTMonitor } from './graphics/IndustrialIoTMonitor';
-import { VLSIIntegratedCircuitGraphic } from './graphics/VLSIIntegratedCircuitGraphic';
+import { JOURNEY } from '../data/journey';
 import { InteractiveMeshCanvas } from './graphics/InteractiveMeshCanvas';
-import { SpotlightCard } from './ui/SpotlightCard';
-import { playTactileClick, playHoverTick } from '../services/soundFx';
-import { 
-  Brain, 
-  Activity, 
-  Server, 
-  Database, 
-  ArrowDown, 
-  Mail, 
-  Copy, 
-  Check, 
-  ExternalLink,
-  ChevronRight,
-  ShieldAlert,
-  Sparkles,
-  Cpu,
-  GraduationCap,
-  Network,
-  Download
-} from 'lucide-react';
-
-const FOCUS_RING =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a12]';
-const BTN_PRIMARY = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition-colors ${FOCUS_RING}`;
-const BTN_SECONDARY = `inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 bg-slate-900/60 text-slate-200 hover:text-white text-sm font-semibold transition-colors ${FOCUS_RING}`;
-const BTN_TEXT = `inline-flex items-center gap-1.5 rounded-md text-slate-400 hover:text-emerald-400 transition-colors ${FOCUS_RING}`;
+import { CountUp } from './ui/CountUp';
+import { playTactileClick } from '../services/soundFx';
+import { ArrowRight, Download, GraduationCap, Mail, MapPin } from 'lucide-react';
 
 interface HeroProps {
-  activeRole: TargetRole;
-  setActiveRole: (role: TargetRole) => void;
   onOpenContact: () => void;
-  onOpenBrief: () => void;
   onOpenResume?: () => void;
   language?: 'en' | 'de';
 }
 
-export const Hero: React.FC<HeroProps> = ({
-  activeRole,
-  setActiveRole,
-  onOpenContact,
-  onOpenBrief,
-  onOpenResume,
-  language = 'en',
-}) => {
-  const [activeGraphic, setActiveGraphic] = useState<'neural' | 'iot' | 'vlsi'>('vlsi');
-  const [copiedEmail, setCopiedEmail] = useState(false);
+// Roles cycled under the name (typewriter); all from the CV
+const ROLES = {
+  en: ['IT Specialist & AI Engineer', 'Data & ML Engineer', 'Industrial IoT Observability', 'Cloud & DevOps Engineer'],
+  de: ['IT-Spezialist & KI-Ingenieur', 'Data- & ML-Engineer', 'Industrielle IoT-Observability', 'Cloud- & DevOps-Engineer'],
+};
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
+const rise = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.2, 0.7, 0.2, 1] as const } },
+};
+
+/** Smooth-scroll to a section, accounting for the sticky header height. */
+const scrollToSection = (e: React.MouseEvent, id: string) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  e.preventDefault();
+  playTactileClick();
+  const header = document.querySelector('header');
+  const offset = (header instanceof HTMLElement ? header.offsetHeight : 80) + 8;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+};
+
+export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, language = 'en' }) => {
+  const isDe = language === 'de';
   const t = TRANSLATIONS[language].hero;
+  const reduce = useReducedMotion();
+  const roles = ROLES[language];
+  const projectCount = JOURNEY.projects.length;
+  const deckCount = JOURNEY.projects.filter((p) => p.deckUrl).length;
 
-  // Typewriter effect cycling through signature roles
-  const roles = [
-    'IT Specialist & AI Engineer',
-    'MSc Informatics (TU Clausthal)',
-    'Industrial IoT Observability Architect',
-    'Full-Stack & Cloud Infrastructure Lead',
-    'Distributed Systems & Load Balancer Specialist'
-  ];
+  // Typewriter; under reduced motion the role simply changes every few seconds
   const [roleIdx, setRoleIdx] = useState(0);
-  const [typedRole, setTypedRole] = useState('');
-  const [isDeletingRole, setIsDeletingRole] = useState(false);
-
+  const [typed, setTyped] = useState(reduce ? roles[0] : '');
+  const [deleting, setDeleting] = useState(false);
   useEffect(() => {
-    const cur = roles[roleIdx];
-    const speed = isDeletingRole ? 35 : 75;
-    const timer = setTimeout(() => {
-      if (!isDeletingRole) {
-        setTypedRole(cur.substring(0, typedRole.length + 1));
-        if (typedRole.length + 1 === cur.length) {
-          setTimeout(() => setIsDeletingRole(true), 2200);
-        }
-      } else {
-        setTypedRole(cur.substring(0, typedRole.length - 1));
-        if (typedRole.length === 0) {
-          setIsDeletingRole(false);
-          setRoleIdx((prev) => (prev + 1) % roles.length);
-        }
-      }
-    }, speed);
-    return () => clearTimeout(timer);
-  }, [typedRole, isDeletingRole, roleIdx]);
-
-  const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(PERSONAL_INFO.email);
-      setCopiedEmail(true);
-      setTimeout(() => setCopiedEmail(false), 2000);
-    } catch {
-      // Clipboard unavailable (insecure context / permissions) — fall back to the mail client
-      window.location.href = `mailto:${PERSONAL_INFO.email}`;
+    const cur = roles[roleIdx % roles.length];
+    if (reduce) {
+      setTyped(cur);
+      const id = setTimeout(() => setRoleIdx((i) => (i + 1) % roles.length), 3500);
+      return () => clearTimeout(id);
     }
-  };
+    const id = setTimeout(
+      () => {
+        if (!deleting) {
+          setTyped(cur.substring(0, typed.length + 1));
+          if (typed.length + 1 === cur.length) setTimeout(() => setDeleting(true), 2200);
+        } else {
+          setTyped(cur.substring(0, typed.length - 1));
+          if (typed.length <= 1) {
+            setDeleting(false);
+            setRoleIdx((i) => (i + 1) % roles.length);
+          }
+        }
+      },
+      deleting ? 35 : 70,
+    );
+    return () => clearTimeout(id);
+  }, [typed, deleting, roleIdx, reduce, roles]);
 
-  /** Smooth-scroll to a section, accounting for the sticky header height. */
-  const scrollToSection = (e: React.MouseEvent, id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    e.preventDefault();
-    playTactileClick();
-    const header = document.querySelector('header');
-    const offset = (header instanceof HTMLElement ? header.offsetHeight : 80) + 8;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
-  };
+  const facts = [
+    {
+      value: <CountUp to={10} suffix="+" />,
+      label: isDe ? 'Jahre Praxis' : 'years hands-on',
+      note: isDe ? 'Datenanalyse & IT-Engineering' : 'data analysis & IT engineering',
+    },
+    {
+      value: <CountUp to={projectCount} />,
+      label: isDe ? 'Bootcamp-Projekte' : 'bootcamp projects',
+      note: isDe ? `${deckCount} mit Foliensatz` : `${deckCount} with slide decks`,
+    },
+    {
+      value: <CountUp to={60} suffix="%" />,
+      label: isDe ? 'schnellere Störungsbehebung' : 'faster incident response',
+      note: 'Grafana + InfluxDB alerting',
+    },
+    {
+      value: <span>MSc</span>,
+      label: isDe ? 'Informatik' : 'Informatics',
+      note: 'TU Clausthal',
+    },
+  ];
 
   return (
-    <section id="hero" className="relative pt-8 pb-16 overflow-hidden">
-      {/* Background ambient mesh network canvas */}
+    <section id="hero" aria-labelledby="hero-title" className="relative overflow-hidden pt-10 pb-14 sm:pt-16 sm:pb-20">
+      {/* Ambient network canvas (static under reduced motion) */}
       <InteractiveMeshCanvas />
 
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-emerald-600/10 via-cyan-500/15 to-blue-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Top Announcement Pill */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <div className="inline-flex items-start sm:items-center gap-2.5 px-4 py-1.5 rounded-2xl sm:rounded-full bg-slate-900/90 border border-emerald-500/40 text-xs text-slate-300 backdrop-blur-md max-w-full">
-            <span className="relative flex h-2 w-2 shrink-0 mt-1 sm:mt-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-emerald-300 font-medium">{t.statusValue}</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span>{t.locationLabel}</span>
-            <span className="text-slate-200 font-medium">{language === 'de' ? 'Hamburg, Deutschland (Vor-Ort / Hybrid / Remote)' : PERSONAL_INFO.location}</span>
-          </div>
-        </div>
-
-        {/* Hero Title, Executive Portrait & Pitch */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          <div className="lg:col-span-7 space-y-6">
-            
-            {/* Executive Portrait & Identity Header with Spotlight & 3D Tilt */}
-            <SpotlightCard
-              enableTilt={true}
-              spotlightColor="rgba(16, 185, 129, 0.22)"
-              className="p-5 shadow-2xl shadow-emerald-950/30 backdrop-blur-md"
-            >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="relative shrink-0">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden ring-2 ring-emerald-500/60 shadow-xl shadow-emerald-500/20 bg-slate-800">
-                    <img
-                      src="./jeevan-dutta.jpg"
-                      alt="Jeevan Dutta - MSc Informatics TU Clausthal"
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 ring-2 ring-slate-900"></span>
-                  </span>
-                </div>
-
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tight">
-                      {PERSONAL_INFO.name}
-                    </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium">
-                      {t.degreeBadge}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 min-h-[22px]">
-                    <p className="text-xs sm:text-sm text-cyan-300 font-mono font-semibold">
-                      {typedRole}
-                    </p>
-                    <span className="w-1.5 h-3.5 bg-emerald-400 animate-pulse inline-block" />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 font-mono">
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      {language === 'de' ? 'Sofortige Verfügbarkeit' : 'Immediate Availability'}
-                    </span>
-                    <span>·</span>
-                    <span>{language === 'de' ? 'Hamburg, Deutschland' : 'Hamburg, Germany'}</span>
-                    <span>·</span>
-                    <span className="text-purple-300">{t.supervisor}</span>
-                  </div>
-                </div>
-              </div>
-            </SpotlightCard>
-
-            <div className="space-y-2">
-              <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                {t.headlineStart} <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">{t.headlineData}</span> {t.headlineAnd} <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 bg-clip-text text-transparent">{t.headlineInfra}</span>
-              </h1>
-            </div>
-
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-light">
-              {t.bio}
-            </p>
-
-            {/* Recruiter Role Quick-Filter Bar */}
-            <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-md space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-                <span className="flex items-center gap-1.5 text-slate-200">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  {t.filterHeading}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] gap-10 lg:gap-14 items-center">
+          {/* Message */}
+          <motion.div variants={stagger} initial={reduce ? false : 'hidden'} animate="show" className="min-w-0">
+            <motion.div variants={rise} className="flex items-center gap-3 mb-5">
+              <span className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success-soft px-3 py-1 text-sm font-semibold text-success">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-60 motion-safe:animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
                 </span>
-                <span className="hidden sm:inline text-[11px] text-slate-500">{t.filterSub}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { id: 'all', label: t.allRoles, icon: Sparkles },
-                  { id: 'ai-ml', label: t.aiRole, icon: Brain },
-                  { id: 'it-devops', label: t.devopsRole, icon: Server },
-                  { id: 'observability', label: t.obsRole, icon: Activity },
-                  { id: 'data-eng', label: t.dataRole, icon: Database },
-                ].map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeRole === item.id;
-                  return (
-                    <motion.button
-                      key={item.id}
-                      id={`filter-role-${item.id}`}
-                      onClick={() => {
-                        playTactileClick();
-                        setActiveRole(item.id as TargetRole);
-                      }}
-                      aria-pressed={isActive}
-                      whileTap={{ scale: 0.96 }}
-                      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors z-10 ${FOCUS_RING} ${
-                        isActive
-                          ? 'text-slate-950'
-                          : 'bg-slate-800/70 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
-                      }`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeHeroRolePill"
-                          className="absolute inset-0 bg-emerald-500 rounded-lg -z-10"
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{item.label}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </div>
+                {isDe ? 'Ab sofort verfügbar' : 'Available now'}
+              </span>
+            </motion.div>
 
-            {/* CTAs */}
-            <div className="space-y-3 pt-2">
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href="#neuefische-journey"
-                  id="hero-journey-btn"
-                  onClick={(e) => scrollToSection(e, 'neuefische-journey')}
-                  className={`${BTN_PRIMARY} group`}
-                >
-                  <GraduationCap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span>{language === 'de' ? 'Bootcamp-Projekte & Folien' : 'Bootcamp projects & slides'}</span>
-                </a>
+            <motion.h1
+              variants={rise}
+              id="hero-title"
+              className="font-display font-bold text-fg tracking-tight leading-[1.05] text-[2.75rem] sm:text-6xl lg:text-7xl"
+            >
+              <span className="relative inline-block">
+                {PERSONAL_INFO.name}
+                <span aria-hidden="true" className="jd-sweep absolute left-0 right-0 -bottom-1 h-1.5 rounded-full bg-accent" />
+              </span>
+            </motion.h1>
 
-                <button id="hero-contact-btn" onClick={onOpenContact} className={BTN_SECONDARY}>
-                  <Mail className="w-4 h-4 text-emerald-400" />
-                  <span>{t.hireJeevan}</span>
+            <motion.p variants={rise} className="mt-5 font-mono text-base sm:text-lg text-teal min-h-[1.75rem]" aria-live="off">
+              <span className="jd-visually-hidden">{roles.join(', ')}</span>
+              <span aria-hidden="true">
+                {typed}
+                <span className="ml-0.5 inline-block w-2 h-5 align-[-3px] bg-accent motion-safe:animate-pulse" />
+              </span>
+            </motion.p>
+
+            <motion.p variants={rise} className="mt-4 text-lg sm:text-xl leading-relaxed text-muted max-w-2xl">
+              {isDe
+                ? 'Ich verbinde Datenintelligenz und IT-Engineering zu robusten Systemen: über zehn Jahre Praxis, M.Sc. Informatik, und jetzt ML- und MLOps-Projekte im neuefische Bootcamp.'
+                : 'I bridge data intelligence and IT engineering to build resilient systems: a decade of hands-on work, an MSc in Informatics, and now ML and MLOps projects in the neuefische bootcamp.'}
+            </motion.p>
+
+            <motion.p variants={rise} className="mt-3 flex items-center gap-2 text-base text-muted">
+              <MapPin className="w-4 h-4 text-accent-fg shrink-0" aria-hidden="true" />
+              <span>{isDe ? t.locationValue : PERSONAL_INFO.location}</span>
+            </motion.p>
+
+            <motion.div variants={rise} className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="#neuefische-journey"
+                id="hero-journey-btn"
+                onClick={(e) => scrollToSection(e, 'neuefische-journey')}
+                className="jd-btn jd-btn--primary jd-btn--lg group w-full sm:w-auto shadow-md hover:shadow-lg transition-shadow"
+              >
+                <GraduationCap className="w-5 h-5" aria-hidden="true" />
+                {isDe ? 'Bootcamp-Projekte & Folien' : 'Bootcamp projects & slides'}
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              </a>
+              {onOpenResume && (
+                <button type="button" id="hero-resume-btn" onClick={onOpenResume} className="jd-btn jd-btn--secondary jd-btn--lg flex-1 sm:flex-none">
+                  <Download className="w-4 h-4" aria-hidden="true" />
+                  {isDe ? 'Lebenslauf (PDF)' : 'Download CV'}
                 </button>
+              )}
+              <button type="button" id="hero-contact-btn" onClick={onOpenContact} className="jd-btn jd-btn--ghost jd-btn--lg flex-1 sm:flex-none">
+                <Mail className="w-4 h-4" aria-hidden="true" />
+                {isDe ? 'Kontakt' : 'Get in touch'}
+              </button>
+            </motion.div>
 
-                {onOpenResume && (
-                  <button
-                    id="hero-resume-btn"
-                    onClick={onOpenResume}
-                    className={BTN_SECONDARY}
-                    title={language === 'de' ? 'Lebenslauf als PDF exportieren' : 'Export and download CV as PDF'}
-                  >
-                    <Download className="w-4 h-4 text-emerald-400" />
-                    <span>{language === 'de' ? 'CV (PDF)' : 'Download CV'}</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-                <a
-                  href="#observability"
-                  id="hero-load-balancers-btn"
-                  onClick={(e) => scrollToSection(e, 'observability')}
-                  className={`${BTN_TEXT} group`}
-                >
-                  <Network className="w-4 h-4 text-emerald-400 group-hover:rotate-12 transition-transform" />
-                  <span>{language === 'de' ? 'Load Balancer & Studio' : 'Load Balancers & Studio'}</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </a>
-
-                <button
-                  id="hero-copy-email-btn"
-                  onClick={handleCopyEmail}
-                  className={`${BTN_TEXT} font-mono text-xs break-all`}
-                  aria-label={language === 'de' ? 'E-Mail-Adresse kopieren' : 'Copy email address'}
-                  title={language === 'de' ? 'E-Mail-Adresse kopieren' : 'Copy email address'}
-                >
-                  {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0" />}
-                  <span aria-live="polite">{copiedEmail ? t.copied : PERSONAL_INFO.email}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Quick KPI stats strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-800/80">
-              {[
-                { label: t.stats.academic, value: t.stats.academicVal, detail: t.stats.academicDetail },
-                { label: t.stats.thesis, value: t.stats.thesisVal, detail: t.stats.thesisDetail },
-                { label: t.stats.status, value: t.stats.statusVal, detail: t.stats.statusDetail },
-                { label: t.stats.ttr, value: t.stats.ttrVal, detail: t.stats.ttrDetail },
-              ].map((stat, idx) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/60">
-                  <div className="text-base sm:text-lg font-extrabold font-display text-white">
-                    {stat.value}
-                  </div>
-                  <div className="text-[11px] font-semibold text-emerald-400">
-                    {stat.label}
-                  </div>
-                  <div className="text-[11px] text-slate-400 truncate" title={stat.detail}>
-                    {stat.detail}
-                  </div>
+            {/* Headline facts */}
+            <motion.dl variants={rise} className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 border-t border-line pt-6">
+              {facts.map((f) => (
+                <div key={f.label} className="min-w-0">
+                  <dt className="sr-only">{f.label}</dt>
+                  <dd className="font-display font-bold text-3xl sm:text-4xl text-fg tabular-nums leading-none">{f.value}</dd>
+                  <dd className="mt-2 text-sm font-semibold text-fg">{f.label}</dd>
+                  <dd className="text-[13px] text-subtle leading-snug">{f.note}</dd>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.dl>
+          </motion.div>
 
-          {/* Right Column: High-End Live Interactive Graphics */}
-          <div className="lg:col-span-5 space-y-3">
-            {/* Graphic Switcher Header */}
-            <div className="flex items-center justify-between p-1.5 rounded-xl bg-slate-900/90 border border-slate-800 flex-wrap gap-2">
-              <span className="text-xs font-semibold text-slate-300 px-2 flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                {language === 'de' ? 'Visualisierung' : 'Visualization'}
-              </span>
-              <div className="flex items-center gap-1 text-xs">
-                {[
-                  { id: 'vlsi', label: 'VLSI Circuits', color: 'text-purple-300', activeBg: 'bg-purple-500/20 border-purple-500/40' },
-                  { id: 'neural', label: 'Deep Learning', color: 'text-emerald-300', activeBg: 'bg-emerald-500/20 border-emerald-500/40' },
-                  { id: 'iot', label: 'Industrial IoT', color: 'text-cyan-300', activeBg: 'bg-cyan-500/20 border-cyan-500/40' },
-                ].map((tab) => {
-                  const isActive = activeGraphic === tab.id;
-                  return (
-                    <motion.button
-                      key={tab.id}
-                      id={`tab-graphic-${tab.id}`}
-                      onClick={() => {
-                        playTactileClick();
-                        setActiveGraphic(tab.id as any);
-                      }}
-                      aria-pressed={isActive}
-                      className={`relative px-2.5 py-1 rounded-lg font-medium text-xs transition-colors ${FOCUS_RING} ${
-                        isActive ? `${tab.color} font-bold` : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeGraphicTabPill"
-                          className={`absolute inset-0 rounded-lg border ${tab.activeBg} -z-10`}
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        />
-                      )}
-                      <span>{tab.label}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
+          {/* Portrait (desktop) */}
+          <motion.div
+            className="hidden lg:block"
+            initial={reduce ? false : { opacity: 0, scale: 0.94, rotate: -2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, ease: [0.2, 0.7, 0.2, 1], delay: 0.15 }}
+          >
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_30%_20%,var(--jd-accent),transparent_60%),radial-gradient(circle_at_80%_90%,var(--jd-teal),transparent_55%)] opacity-30 blur-2xl motion-safe:animate-[auroraDrift_18s_ease-in-out_infinite_alternate]"
+              />
+              <motion.div
+                whileHover={reduce ? undefined : { y: -6, rotate: 0.6 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                className="relative rounded-[1.75rem] overflow-hidden border border-line bg-surface shadow-[var(--jd-shadow-3)]"
+              >
+                <img
+                  src="./jeevan-dutta.jpg"
+                  alt={`${PERSONAL_INFO.name}, portrait`}
+                  width={340}
+                  height={400}
+                  className="w-full aspect-[17/20] object-cover object-top"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[rgb(15_27_45/0.85)] to-transparent">
+                  <p className="text-sm font-semibold text-white">{isDe ? 'neuefische Bootcamp' : 'neuefische bootcamp'}</p>
+                  <p className="text-[13px] text-white/85">AI, ML, Data Science, Data Eng & SE</p>
+                </div>
+              </motion.div>
             </div>
-
-            {/* Display Active Graphic with AnimatePresence */}
-            <div className="relative min-h-[360px] overflow-hidden rounded-2xl">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeGraphic}
-                  initial={{ opacity: 0, y: 15, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -15, scale: 0.98 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
-                >
-                  {activeGraphic === 'vlsi' && <VLSIIntegratedCircuitGraphic />}
-                  {activeGraphic === 'neural' && <NeuralNetworkCanvas />}
-                  {activeGraphic === 'iot' && <IndustrialIoTMonitor />}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Key Engineering Rigor Card */}
-            <div className="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80 text-xs text-slate-300 flex items-start gap-2.5">
-              <ShieldAlert className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-semibold text-white">Full-Stack Rigor: </span>
-                From microelectronic VLSI circuit design under Prof. Dr. Christian Siemers (TU Clausthal) to production industrial IoT observability & automated alerting at WaDaCon GmbH.
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
-
       </div>
     </section>
   );

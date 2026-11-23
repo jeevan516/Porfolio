@@ -147,7 +147,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
 
       setStatus('success');
       try {
-        confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 }, colors: ['#10b981', '#34d399', '#a7f3d0'] });
+        confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 }, colors: ['#f2a541', '#f5b45e', '#fde3b8'] });
       } catch {
         // ignore
       }
@@ -191,11 +191,11 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
   };
 
   const fieldClass = (key: keyof FieldErrors) =>
-    `${ui.input} ${fieldErrors[key] ? '!border-rose-500/70 focus:!ring-rose-500/30' : ''}`;
+    `${ui.input} ${fieldErrors[key] ? '!border-danger/70 focus:!ring-danger/30' : ''}`;
 
   const FieldError = ({ id }: { id: keyof FieldErrors }) =>
     fieldErrors[id] ? (
-      <p id={`contact-${id}-error`} className="mt-1 text-xs text-rose-400">
+      <p id={`contact-${id}-error`} className="mt-1 text-xs text-danger">
         {fieldErrors[id]}
       </p>
     ) : null;
@@ -213,10 +213,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
         {/* Header */}
         <div className="px-5 sm:px-6 pt-5 pb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 id="contact-modal-title" className="font-display font-bold text-xl text-white">
+            <h3 id="contact-modal-title" className="font-display font-bold text-xl text-fg">
               Let&apos;s talk
             </h3>
-            <p className="text-sm text-slate-400 mt-1">Your message goes straight to Jeevan&apos;s inbox.</p>
+            <p className="text-sm text-muted mt-1">Your message goes straight to Jeevan&apos;s inbox.</p>
           </div>
           <button type="button" onClick={handleClose} className={ui.iconBtn} aria-label="Close contact form">
             <X className="w-5 h-5" />
@@ -226,14 +226,14 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
         <div className="px-5 sm:px-6 pb-5">
           {status === 'success' ? (
             <div className="text-center py-6 space-y-4" role="status">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-accent/15 text-accent-fg border border-accent/40 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <div className="space-y-1">
-                <h4 className="font-display font-bold text-xl text-white">Message sent</h4>
-                <p className="text-sm text-slate-400 max-w-sm mx-auto">
+                <h4 className="font-display font-bold text-xl text-fg">Message sent</h4>
+                <p className="text-sm text-muted max-w-sm mx-auto">
                   Thank you{name ? `, ${name}` : ''}. Jeevan will get back to you at{' '}
-                  <span className="text-emerald-400 font-mono">{email}</span>.
+                  <span className="text-accent-fg font-mono">{email}</span>.
                 </p>
               </div>
               <div className="pt-2 flex flex-col sm:flex-row justify-center gap-2">
@@ -251,12 +251,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
               {status === 'error' && errorMessage && (
                 <div
                   role="alert"
-                  className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs flex items-start gap-2"
+                  className="p-3 rounded-xl bg-danger-soft/60 border border-danger/40 text-danger text-xs flex items-start gap-2"
                 >
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
                   <div className="space-y-1.5">
                     <p>{errorMessage}</p>
-                    <a href={mailtoHref} className="inline-flex items-center gap-1 font-semibold text-rose-100 underline underline-offset-2">
+                    <a href={mailtoHref} className="inline-flex items-center gap-1 font-semibold text-danger underline underline-offset-2">
                       <Mail className="w-3 h-3" /> Open in email app instead
                     </a>
                   </div>
@@ -313,7 +313,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
                 </div>
                 <div>
                   <label htmlFor="contact-company" className={ui.label}>
-                    Company <span className="font-normal text-slate-500">(optional)</span>
+                    Company <span className="font-normal text-subtle">(optional)</span>
                   </label>
                   <input
                     id="contact-company"
@@ -348,7 +348,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
                 </div>
                 <div>
                   <label htmlFor="contact-phone" className={ui.label}>
-                    Phone <span className="font-normal text-slate-500">(optional)</span>
+                    Phone <span className="font-normal text-subtle">(optional)</span>
                   </label>
                   <input
                     id="contact-phone"
@@ -379,7 +379,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
                 />
                 <div className="flex items-start justify-between gap-3">
                   <FieldError id="message" />
-                  <span className="ml-auto mt-1 text-[11px] text-slate-500 tabular-nums">
+                  <span className="ml-auto mt-1 text-xs text-subtle tabular-nums">
                     {message.length}/{MAX_MESSAGE}
                   </span>
                 </div>
@@ -410,27 +410,27 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onO
         </div>
 
         {/* Direct contact */}
-        <div className="px-5 sm:px-6 py-3 border-t border-slate-800 bg-slate-950/40 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-slate-500 mr-1">Or reach me directly:</span>
+        <div className="px-5 sm:px-6 py-3 border-t border-line bg-bg/40 flex flex-wrap items-center gap-2">
+          <span className="text-xs text-subtle mr-1">Or reach me directly:</span>
           <button
             type="button"
             onClick={() => handleCopy(PERSONAL_INFO.email, 'email')}
-            className={`${ui.btnGhost} border border-slate-800 max-w-full`}
+            className={`${ui.btnGhost} border border-line max-w-full`}
             aria-label={`Copy email address ${PERSONAL_INFO.email}`}
           >
-            <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <Mail className="w-3.5 h-3.5 text-accent-fg shrink-0" />
             <span className="font-mono truncate">{PERSONAL_INFO.email}</span>
-            {copied === 'email' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copied === 'email' ? <Check className="w-3 h-3 text-accent-fg" /> : <Copy className="w-3 h-3" />}
           </button>
           <button
             type="button"
             onClick={() => handleCopy(PERSONAL_INFO.phone, 'phone')}
-            className={`${ui.btnGhost} border border-slate-800`}
+            className={`${ui.btnGhost} border border-line`}
             aria-label={`Copy phone number ${PERSONAL_INFO.phone}`}
           >
-            <Phone className="w-3.5 h-3.5 text-emerald-400" />
+            <Phone className="w-3.5 h-3.5 text-accent-fg" />
             <span className="font-mono">{PERSONAL_INFO.phone}</span>
-            {copied === 'phone' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copied === 'phone' ? <Check className="w-3 h-3 text-accent-fg" /> : <Copy className="w-3 h-3" />}
           </button>
         </div>
       </div>

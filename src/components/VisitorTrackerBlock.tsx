@@ -174,22 +174,22 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
       ];
 
   return (
-    <section id="visitor-tracker" className="py-20 sm:py-24 border-t border-slate-800/80 relative text-slate-100">
+    <section id="visitor-tracker" className="py-20 sm:py-24 border-t border-line/80 relative text-fg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-800 bg-slate-900/70 text-[11px] font-mono text-slate-400">
-              <span className={`h-1.5 w-1.5 rounded-full ${isServer ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-surface/70 text-xs font-mono text-muted">
+              <span className={`h-1.5 w-1.5 rounded-full ${isServer ? 'bg-accent' : 'bg-line-strong'}`} />
               {isServer
                 ? isDe ? 'Server-Statistik' : 'Server statistics'
                 : isDe ? 'Lokaler Zähler' : 'Local counter'}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-fg tracking-tight">
               {isDe ? 'Profil' : 'Profile '}
-              <span className="text-emerald-400">{isDe ? 'besuche' : 'visits'}</span>
+              <span className="text-accent-fg">{isDe ? 'besuche' : 'visits'}</span>
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-muted text-sm sm:text-base leading-relaxed">
               {isServer
                 ? isDe
                   ? 'Aufrufe dieses Portfolios, wie sie vom Portfolio-Server erfasst werden.'
@@ -202,7 +202,7 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
 
           {isServer && (
             <button type="button" onClick={handleRefresh} disabled={isRefreshing} className={ui.btnSecondary}>
-              <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-accent-fg ${isRefreshing ? 'animate-spin' : ''}`} />
               {isDe ? 'Aktualisieren' : 'Refresh'}
             </button>
           )}
@@ -219,14 +219,14 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.06 }}
-                className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-2"
+                className="p-6 rounded-2xl bg-surface/70 border border-line space-y-2"
               >
-                <div className="text-xs font-medium text-slate-400 flex items-center gap-2">
-                  <Icon className="w-4 h-4 text-emerald-400" />
+                <div className="text-xs font-medium text-muted flex items-center gap-2">
+                  <Icon className="w-4 h-4 text-accent-fg" />
                   {card.label}
                 </div>
-                <div className="text-3xl sm:text-4xl font-bold font-display text-white tracking-tight">{card.value}</div>
-                <p className="text-xs text-slate-500">{card.note}</p>
+                <div className="text-3xl sm:text-4xl font-bold font-display text-fg tracking-tight">{card.value}</div>
+                <p className="text-xs text-subtle">{card.note}</p>
               </motion.div>
             );
           })}
@@ -236,16 +236,16 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.12 }}
-            className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/30 space-y-2 sm:col-span-2 lg:col-span-1"
+            className="p-6 rounded-2xl bg-accent/5 border border-accent/30 space-y-2 sm:col-span-2 lg:col-span-1"
           >
-            <div className="text-xs font-medium text-emerald-400 flex items-center gap-2">
+            <div className="text-xs font-medium text-accent-fg flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4" />
               {isDe ? 'Verfügbarkeit' : 'Availability'}
             </div>
-            <div className="text-2xl font-bold font-display text-white tracking-tight">
+            <div className="text-2xl font-bold font-display text-fg tracking-tight">
               {isDe ? 'Sofort verfügbar' : 'Ready for work'}
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted">
               {isDe ? 'neuefische Bootcamp (KI, Data & SE) · Sofort verfügbar' : 'neuefische Bootcamp (AI, Data & SE) · Available immediately'}
             </p>
           </motion.div>
@@ -253,16 +253,16 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
 
         {/* Recent activity (server mode only) or honest note */}
         {isServer && serverStats.recentVisits && serverStats.recentVisits.length > 0 ? (
-          <div className="rounded-2xl p-5 sm:p-6 bg-slate-900/70 border border-slate-800">
-            <h3 className="text-sm font-semibold text-white mb-4">{isDe ? 'Letzte Aufrufe' : 'Recent views'}</h3>
-            <ul className="divide-y divide-slate-800">
+          <div className="rounded-2xl p-5 sm:p-6 bg-surface/70 border border-line">
+            <h3 className="text-sm font-semibold text-fg mb-4">{isDe ? 'Letzte Aufrufe' : 'Recent views'}</h3>
+            <ul className="divide-y divide-line">
               {serverStats.recentVisits.slice(0, 5).map((log, idx) => (
                 <li key={`${log.id}-${idx}`} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
-                  <div className="flex items-center gap-2 text-slate-200 min-w-0">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-fg min-w-0">
+                    <MapPin className="w-3.5 h-3.5 text-accent-fg shrink-0" />
                     <span className="truncate">{log.source}</span>
                   </div>
-                  <span className="flex items-center gap-1.5 text-slate-500 font-mono text-[11px] shrink-0">
+                  <span className="flex items-center gap-1.5 text-subtle font-mono text-xs shrink-0">
                     <Clock className="w-3 h-3" />
                     {log.timestamp}
                   </span>
@@ -271,8 +271,8 @@ export const VisitorTrackerBlock: React.FC<VisitorTrackerBlockProps> = ({ langua
             </ul>
           </div>
         ) : mode === 'local' ? (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 leading-relaxed">
-            <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-surface/60 border border-line text-xs text-muted leading-relaxed">
+            <Info className="w-4 h-4 text-subtle shrink-0 mt-0.5" />
             <p>
               {isDe
                 ? 'Kein Tracking, keine Cookies: Der Zähler wird ausschließlich im localStorage Ihres Browsers gespeichert und kann jederzeit über die Browser-Einstellungen gelöscht werden.'

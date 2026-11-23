@@ -18,16 +18,16 @@ interface Pulse {
 const CANVAS_HEIGHT = 320;
 
 const LAYERS = [
-  { name: 'Input', count: 5, color: '#00d4aa', sub: 'Spatial (x,y,t)' },
-  { name: 'LSTM 1', count: 7, color: '#0284c7', sub: 'Hidden Units' },
-  { name: 'LSTM 2', count: 6, color: '#38bdf8', sub: 'Temporal Cells' },
-  { name: 'Dense', count: 4, color: '#a855f7', sub: 'Dense Softmax' },
-  { name: 'Output', count: 3, color: '#10b981', sub: 'Trajectory (Δx,Δy)' },
+  { name: 'Input', count: 5, color: '#3cc0b4', sub: 'Spatial (x,y,t)' },
+  { name: 'LSTM 1', count: 7, color: '#3987e5', sub: 'Hidden Units' },
+  { name: 'LSTM 2', count: 6, color: '#6aaef2', sub: 'Temporal Cells' },
+  { name: 'Dense', count: 4, color: '#9085e9', sub: 'Dense Softmax' },
+  { name: 'Output', count: 3, color: '#f2a541', sub: 'Trajectory (Δx,Δy)' },
 ];
 
 const INITIAL = { epoch: 42, accuracy: 98.42, loss: 0.0418 };
 
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
+const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60';
 
 export const NeuralNetworkCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -105,7 +105,7 @@ export const NeuralNetworkCanvas: React.FC = () => {
             ctx.beginPath();
             ctx.moveTo(src.x, src.y);
             ctx.lineTo(dst.x, dst.y);
-            ctx.strokeStyle = `rgba(148, 163, 184, ${0.03 + w * 0.12})`;
+            ctx.strokeStyle = `rgba(163, 179, 195, ${0.03 + w * 0.12})`;
             ctx.stroke();
           });
         });
@@ -146,7 +146,7 @@ export const NeuralNetworkCanvas: React.FC = () => {
         ctx.font = `600 ${compact ? 10 : 11}px "JetBrains Mono", monospace`;
         ctx.fillText(config.name, nodes[0].x, 22);
         if (!compact) {
-          ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+          ctx.fillStyle = 'rgba(163, 179, 195, 0.6)';
           ctx.font = '400 9px "Plus Jakarta Sans", sans-serif';
           ctx.fillText(config.sub, nodes[0].x, 34);
         }
@@ -176,22 +176,22 @@ export const NeuralNetworkCanvas: React.FC = () => {
         const boxH = 45;
         const boxX = 16;
         const boxY = height - boxH - 12;
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
-        ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
+        ctx.fillStyle = 'rgba(17, 28, 46, 0.75)';
+        ctx.strokeStyle = 'rgba(42, 61, 85, 0.7)';
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (typeof ctx.roundRect === 'function') ctx.roundRect(boxX, boxY, boxW, boxH, 6);
         else ctx.rect(boxX, boxY, boxW, boxH);
         ctx.fill();
         ctx.stroke();
-        ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = '#a3b3c3';
         ctx.font = '9px "JetBrains Mono", monospace';
         ctx.textAlign = 'left';
         ctx.fillText(`loss: ${lossRef.current.toFixed(4)}`, boxX + 8, boxY + 14);
         ctx.beginPath();
         ctx.moveTo(boxX + 8, boxY + 22);
         ctx.bezierCurveTo(boxX + 30, boxY + 28, boxX + 70, boxY + 38, boxX + boxW - 8, boxY + 39);
-        ctx.strokeStyle = '#10b981';
+        ctx.strokeStyle = '#f2a541';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
@@ -228,16 +228,16 @@ export const NeuralNetworkCanvas: React.FC = () => {
     <div
       ref={containerRef}
       id="neural-network-visualizer"
-      className="relative w-full rounded-2xl bg-slate-950/70 border border-slate-800 overflow-hidden"
+      className="jd-dark-panel relative w-full rounded-2xl bg-bg/70 border border-line overflow-hidden"
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-line">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+          <div className="p-1.5 rounded-lg bg-accent/10 text-accent-fg border border-accent/20 shrink-0">
             <Cpu className="w-4 h-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <div className="text-xs font-semibold text-slate-200 truncate">Trajectory prediction model</div>
-            <p className="text-[11px] text-slate-500 truncate">LSTM sequence model · TU Clausthal research</p>
+            <div className="text-xs font-semibold text-fg truncate">Trajectory prediction model</div>
+            <p className="text-xs text-subtle truncate">LSTM sequence model · TU Clausthal research</p>
           </div>
         </div>
 
@@ -249,16 +249,16 @@ export const NeuralNetworkCanvas: React.FC = () => {
             aria-pressed={!isRunning}
             aria-label={isRunning ? 'Pause simulation' : 'Resume simulation'}
             title={isRunning ? 'Pause' : 'Play'}
-            className={`p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 ${focusRing}`}
+            className={`p-1.5 rounded-lg bg-surface-2 hover:bg-line-strong text-muted transition-colors border border-line-strong ${focusRing}`}
           >
-            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-emerald-400" />}
+            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 text-accent-fg" />}
           </button>
           <button
             type="button"
             onClick={handleReset}
             aria-label="Reset simulation"
             title="Reset"
-            className={`p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 ${focusRing}`}
+            className={`p-1.5 rounded-lg bg-surface-2 hover:bg-line-strong text-muted transition-colors border border-line-strong ${focusRing}`}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -274,17 +274,17 @@ export const NeuralNetworkCanvas: React.FC = () => {
         />
       </div>
 
-      <div className="px-4 py-2.5 border-t border-slate-800 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-400">
+      <div className="px-4 py-2.5 border-t border-line flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono text-muted">
         <span>
-          epoch <span className="text-slate-200">{epoch}/100</span>
+          epoch <span className="text-fg">{epoch}/100</span>
         </span>
         <span>
-          acc <span className="text-emerald-400">{accuracy.toFixed(2)}%</span>
+          acc <span className="text-accent-fg">{accuracy.toFixed(2)}%</span>
         </span>
         <span>
-          loss <span className="text-amber-300">{loss.toFixed(4)}</span>
+          loss <span className="text-warning">{loss.toFixed(4)}</span>
         </span>
-        <span className="ml-auto text-slate-500 hidden sm:inline">{isRunning ? 'running' : 'paused'}</span>
+        <span className="ml-auto text-subtle hidden sm:inline">{isRunning ? 'running' : 'paused'}</span>
       </div>
     </div>
   );
