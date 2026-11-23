@@ -8,6 +8,17 @@ import { playTactileClick } from '../services/soundFx';
 import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images } from 'lucide-react';
 import type { Project } from '../types';
 import { ProjectGallery, assetUrl } from './ProjectGallery';
+import { JOURNEY, CURATED_CARD_FOR_FOLDER } from '../data/journey';
+import { projectSwatch, stageSwatch, tint, type Swatch } from '../data/palette';
+
+/** Bootcamp cards take their stage colour; every other card its family colour. */
+const STAGE_BY_CARD_ID = new Map<string, string>(
+  JOURNEY.projects.map((j) => [CURATED_CARD_FOR_FOLDER[j.folder] ?? j.id, j.stage] as const),
+);
+const cardSwatch = (p: Project): Swatch => {
+  const stage = STAGE_BY_CARD_ID.get(p.id);
+  return stage ? stageSwatch(stage) : projectSwatch(p);
+};
 
 interface ProjectsSectionProps {
   activeRole: TargetRole;
@@ -22,14 +33,6 @@ const resolveLiveUrl = (url?: string): { href: string; internal: boolean } | nul
     return { href: url.slice(url.indexOf('#')), internal: true };
   }
   return { href: url, internal: false };
-};
-
-const statusStyle = (status: string) => {
-  if (status.startsWith('Production')) return 'bg-accent/10 text-accent-fg border-accent/30';
-  if (status === 'Open Source') return 'bg-teal/10 text-teal border-teal/30';
-  if (status === 'neuefische Course Project') return 'bg-accent/10 text-warning border-warning/30';
-  if (status === 'Personal Project') return 'bg-info/10 text-info border-info/30';
-  return 'bg-info/10 text-info border-info/30';
 };
 
 /** Shorter display labels for long status strings. */
@@ -121,6 +124,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project) => {
               const live = resolveLiveUrl(project.liveUrl);
+              const sw = cardSwatch(project);
               return (
                 <motion.div
                   key={project.id}
@@ -132,8 +136,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                 >
                   <SpotlightCard
                     id={`project-card-${project.id}`}
-                    spotlightColor="color-mix(in srgb, var(--jd-accent) 14%, transparent)"
-                    className="h-full p-6 hover:-translate-y-1"
+                    spotlightColor={tint(sw.fill, 16)}
+                    className="accent-card h-full p-6 hover:-translate-y-1"
+                    style={{ '--card-c': sw.fill } as React.CSSProperties}
                   >
                     <div className="space-y-4">
                       {project.images && project.images.length > 0 && (
@@ -160,7 +165,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                       )}
 
                       <div className="flex items-center justify-between gap-2">
-                        <span className={`text-xs font-mono px-2.5 py-0.5 rounded-full border ${statusStyle(project.status)}`}>
+                        <span
+                          className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-0.5 rounded-full border"
+                          style={{ color: sw.text, background: tint(sw.fill, 12), borderColor: tint(sw.fill, 40) }}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ background: sw.fill }} aria-hidden="true" />
                           {statusLabel(project.status, isDe)}
                         </span>
                         {project.githubUrl && (
@@ -184,8 +193,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
 
                       <p className="text-sm text-muted leading-relaxed">{project.description}</p>
 
-                      <div className="flex gap-2 p-3 rounded-xl bg-bg/60 border border-line text-xs text-muted leading-relaxed">
-                        <TrendingUp className="w-4 h-4 text-accent-fg shrink-0 mt-0.5" aria-hidden="true" />
+                      <div
+                        className="flex gap-2 p-3 rounded-xl border border-line border-l-[3px] text-xs text-fg leading-relaxed"
+                        style={{ borderLeftColor: sw.fill, background: tint(sw.fill, 7) }}
+                      >
+                        <TrendingUp className="w-4 h-4 shrink-0 mt-0.5" style={{ color: sw.text }} aria-hidden="true" />
                         <p>{project.impact}</p>
                       </div>
 
@@ -206,7 +218,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-0.5 rounded-md text-xs font-mono bg-surface-2/70 text-muted border border-line-strong/50"
+                            className="px-2 py-0.5 rounded-md text-xs font-mono bg-surface-2/70 text-muted border"
+                            style={{ borderColor: tint(sw.fill, 38) }}
                           >
                             {tag}
                           </span>

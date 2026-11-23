@@ -6,6 +6,7 @@
  */
 import journeyData from './journey.generated.json';
 import type { Project, ProjectLink } from '../types';
+import { projectBlurb } from './projectCopy';
 
 export interface JourneyProject {
   id: string;
@@ -45,7 +46,7 @@ const toCard = (j: JourneyProject): Project => ({
   id: j.id,
   title: j.title,
   tagline: `neuefische project · ${j.stage}`,
-  description: j.description,
+  description: projectBlurb(j.id, j.description),
   category: j.category,
   tags: j.stack,
   impact: j.headline,

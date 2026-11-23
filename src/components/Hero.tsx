@@ -40,6 +40,43 @@ const scrollToSection = (e: React.MouseEvent, id: string) => {
   window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
 };
 
+/** Decorative aurora ribbons behind the hero (CSS drift, static under reduced motion). */
+const HeroAurora: React.FC = () => (
+  <svg
+    className="hero-aurora pointer-events-none absolute inset-0 w-full h-full"
+    viewBox="0 0 1440 760"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="hero-aurora-a" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#f2a541" />
+        <stop offset="35%" stopColor="#fb7185" />
+        <stop offset="70%" stopColor="#a78bfa" />
+        <stop offset="100%" stopColor="#38bdf8" />
+      </linearGradient>
+      <linearGradient id="hero-aurora-b" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#38bdf8" />
+        <stop offset="50%" stopColor="#2dd4bf" />
+        <stop offset="100%" stopColor="#a78bfa" />
+      </linearGradient>
+      <filter id="hero-aurora-blur" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="28" />
+      </filter>
+    </defs>
+    <g filter="url(#hero-aurora-blur)" opacity="0.22">
+      <path className="ribbon-a" d="M760 -40 C 980 120, 1120 40, 1500 220 L 1500 380 C 1180 230, 1000 330, 760 150 Z" fill="url(#hero-aurora-a)" />
+      <path className="ribbon-b" d="M900 520 C 1080 420, 1260 520, 1500 430 L 1500 600 C 1270 690, 1080 580, 900 660 Z" fill="url(#hero-aurora-b)" />
+    </g>
+    <g fill="none" strokeLinecap="round" opacity="0.5">
+      <path className="ribbon-c" d="M640 60 C 860 160, 1040 40, 1240 140 S 1460 120, 1520 60" stroke="url(#hero-aurora-a)" strokeWidth="1.5" />
+      <path className="ribbon-a" d="M700 120 C 900 230, 1080 110, 1280 210 S 1480 190, 1540 130" stroke="url(#hero-aurora-a)" strokeWidth="1" opacity="0.7" />
+      <path className="ribbon-b" d="M-40 700 C 220 600, 420 720, 700 640" stroke="url(#hero-aurora-b)" strokeWidth="1.25" opacity="0.6" />
+    </g>
+  </svg>
+);
+
 export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, language = 'en' }) => {
   const isDe = language === 'de';
   const t = TRANSLATIONS[language].hero;
@@ -79,21 +116,25 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
 
   const facts = [
     {
+      color: 'var(--c-python)',
       value: <CountUp to={10} suffix="+" />,
       label: isDe ? 'Jahre Praxis' : 'years hands-on',
       note: isDe ? 'Datenanalyse & IT-Engineering' : 'data analysis & IT engineering',
     },
     {
+      color: 'var(--c-ml)',
       value: <CountUp to={projectCount} />,
       label: isDe ? 'Bootcamp-Projekte' : 'bootcamp projects',
       note: isDe ? `${deckCount} mit Foliensatz` : `${deckCount} with slide decks`,
     },
     {
+      color: 'var(--c-data)',
       value: <CountUp to={60} suffix="%" />,
       label: isDe ? 'schnellere Störungsbehebung' : 'faster incident response',
       note: 'Grafana + InfluxDB alerting',
     },
     {
+      color: 'var(--c-api)',
       value: <span>MSc</span>,
       label: isDe ? 'Informatik' : 'Informatics',
       note: 'TU Clausthal',
@@ -104,6 +145,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
     <section id="hero" aria-labelledby="hero-title" className="relative overflow-hidden pt-10 pb-14 sm:pt-16 sm:pb-20">
       {/* Ambient network canvas (static under reduced motion) */}
       <InteractiveMeshCanvas />
+      <HeroAurora />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] gap-10 lg:gap-14 items-center">
@@ -126,7 +168,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
             >
               <span className="relative inline-block">
                 {PERSONAL_INFO.name}
-                <span aria-hidden="true" className="jd-sweep absolute left-0 right-0 -bottom-1 h-1.5 rounded-full bg-accent" />
+                <span aria-hidden="true" className="jd-sweep absolute left-0 right-0 -bottom-1 h-1.5 rounded-full bg-aurora-x" />
               </span>
             </motion.h1>
 
@@ -140,8 +182,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
 
             <motion.p variants={rise} className="mt-4 text-lg sm:text-xl leading-relaxed text-muted max-w-2xl">
               {isDe
-                ? 'Ich verbinde Datenintelligenz und IT-Engineering zu robusten Systemen: über zehn Jahre Praxis, M.Sc. Informatik, und jetzt ML- und MLOps-Projekte im neuefische Bootcamp.'
-                : 'I bridge data intelligence and IT engineering to build resilient systems: a decade of hands-on work, an MSc in Informatics, and now ML and MLOps projects in the neuefische bootcamp.'}
+                ? `Ich baue Daten- und ML-Systeme, die im Betrieb zuverlässig laufen: über zehn Jahre Praxis in Datenanalyse und IT-Engineering, ein M.Sc. in Informatik der TU Clausthal und ${projectCount} neuefische-Projekte von pandas bis zu deployten ML-Modellen.`
+                : `I build data and ML systems that hold up in production: 10+ years of hands-on data analysis and IT engineering, an MSc in Informatics from TU Clausthal, and ${projectCount} neuefische projects from pandas to deployed ML models.`}
             </motion.p>
 
             <motion.p variants={rise} className="mt-3 flex items-center gap-2 text-base text-muted">
@@ -173,9 +215,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
             </motion.div>
 
             {/* Headline facts */}
-            <motion.dl variants={rise} className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 border-t border-line pt-6">
+            <motion.dl variants={rise} className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 pt-6">
               {facts.map((f) => (
                 <div key={f.label} className="min-w-0">
+                  <span aria-hidden="true" className="block h-1 w-10 rounded-full mb-3" style={{ background: f.color }} />
                   <dt className="sr-only">{f.label}</dt>
                   <dd className="font-display font-bold text-3xl sm:text-4xl text-fg tabular-nums leading-none">{f.value}</dd>
                   <dd className="mt-2 text-sm font-semibold text-fg">{f.label}</dd>
@@ -195,13 +238,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
             <div className="relative">
               <div
                 aria-hidden="true"
-                className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_30%_20%,var(--jd-accent),transparent_60%),radial-gradient(circle_at_80%_90%,var(--jd-teal),transparent_55%)] opacity-30 blur-2xl motion-safe:animate-[auroraDrift_18s_ease-in-out_infinite_alternate]"
+                className="absolute -inset-8 rounded-[2.25rem] bg-[radial-gradient(circle_at_25%_15%,var(--c-mlops),transparent_55%),radial-gradient(circle_at_85%_40%,var(--c-ml),transparent_55%),radial-gradient(circle_at_30%_95%,var(--c-api),transparent_55%),radial-gradient(circle_at_90%_95%,var(--c-python),transparent_50%)] opacity-35 blur-2xl motion-safe:animate-[auroraDrift_18s_ease-in-out_infinite_alternate]"
               />
               <motion.div
                 whileHover={reduce ? undefined : { y: -6, rotate: 0.6 }}
                 transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                className="relative rounded-[1.75rem] overflow-hidden border border-line bg-surface shadow-[var(--jd-shadow-3)]"
+                className="relative rounded-[1.75rem] p-[3px] aurora-ring shadow-[var(--jd-shadow-3)]"
               >
+                <div className="relative rounded-[calc(1.75rem-3px)] overflow-hidden bg-surface">
                 <img
                   src="./jeevan-dutta.jpg"
                   alt={`${PERSONAL_INFO.name}, portrait`}
@@ -212,6 +256,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenContact, onOpenResume, languag
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[rgb(15_27_45/0.85)] to-transparent">
                   <p className="text-sm font-semibold text-white">{isDe ? 'neuefische Bootcamp' : 'neuefische bootcamp'}</p>
                   <p className="text-[13px] text-white/85">AI, ML, Data Science, Data Eng & SE</p>
+                </div>
                 </div>
               </motion.div>
             </div>

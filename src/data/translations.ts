@@ -113,9 +113,9 @@ export const TRANSLATIONS = {
       supervisorBadge: 'Supervised by Prof. Dr. Christian Siemers (TU Clausthal)'
     },
     projects: {
-      tag: 'Production Systems & Research',
-      title: 'Featured Engineering Projects',
-      desc: 'Spanning high-availability load balancing, deep learning models, industrial edge IoT, automated observability, and cloud backend microservices.',
+      tag: 'Production, research & bootcamp',
+      title: 'Projects with real results',
+      desc: 'Production monitoring at WaDaCon, a VHDL master thesis at TU Clausthal, my own AI and DevOps tools, and every neuefische project. Each card names the stack, the result and where to see the code or slides.',
       filterAll: 'All Projects',
       filterAi: 'AI & Deep Learning',
       filterObs: 'Observability & SRE',
@@ -245,9 +245,9 @@ export const TRANSLATIONS = {
       supervisorBadge: 'Betreut durch Prof. Dr. Christian Siemers (TU Clausthal)'
     },
     projects: {
-      tag: 'Produktivsysteme & Forschung',
-      title: 'Ausgewählte Ingenieurprojekte',
-      desc: 'Von hochverfügbaren Load Balancern und Deep-Learning-Modellen über industrielles IoT bis hin zu Observability-Pipelines und Cloud-Microservices.',
+      tag: 'Produktion, Forschung & Bootcamp',
+      title: 'Projekte mit echten Ergebnissen',
+      desc: 'Produktives Monitoring bei WaDaCon, eine VHDL-Masterarbeit an der TU Clausthal, eigene KI- und DevOps-Werkzeuge und alle neuefische-Projekte. Jede Karte nennt Stack, Ergebnis und wo Code oder Folien zu finden sind.',
       filterAll: 'Alle Projekte',
       filterAi: 'KI & Deep Learning',
       filterObs: 'Observability & SRE',
