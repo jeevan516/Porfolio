@@ -5,13 +5,13 @@ import { PROJECTS_DATA, PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
 import { SpotlightCard } from './ui/SpotlightCard';
 import { playTactileClick } from '../services/soundFx';
-import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images, ChevronDown } from 'lucide-react';
+import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images } from 'lucide-react';
 import type { Project } from '../types';
 import { ProjectGallery, assetUrl } from './ProjectGallery';
 import { JOURNEY, CURATED_CARD_FOR_FOLDER } from '../data/journey';
 import { projectSwatch, stageSwatch, tint, type Swatch } from '../data/palette';
 import { caseForProject } from '../data/projectCases';
-import { CaseSteps } from './ui/CaseSteps';
+import { CaseReveal, onCaseTileClick } from './ui/CaseReveal';
 
 /** Bootcamp cards take their stage colour; every other card its family colour. */
 const STAGE_BY_CARD_ID = new Map<string, string>(
@@ -142,8 +142,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                   <SpotlightCard
                     id={`project-card-${project.id}`}
                     spotlightColor={tint(sw.fill, 16)}
-                    className="accent-card h-full p-6 hover:-translate-y-1"
+                    className={`accent-card tile-shine h-full p-6 hover:-translate-y-1 ${cs ? 'cursor-pointer' : ''}`}
                     style={{ '--card-c': sw.fill } as React.CSSProperties}
+                    onClick={cs ? onCaseTileClick : undefined}
                   >
                     <div className="space-y-4">
                       {project.images && project.images.length > 0 && (
@@ -197,16 +198,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                       </div>
 
                       {cs ? (
-                        <>
-                          <CaseSteps data={cs} fill={sw.fill} text={sw.text} isDe={isDe} compact />
-                          <details className="case-more group/more">
-                            <summary className="case-more__summary inline-flex items-center gap-1.5 min-h-10 text-sm font-semibold text-fg cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60">
-                              <ChevronDown className="w-4 h-4 transition-transform group-open/more:rotate-180" aria-hidden="true" />
-                              {isDe ? 'Mehr Details' : 'More detail'}
-                            </summary>
-                            <p className="mt-1 text-sm text-muted leading-relaxed">{project.description}</p>
-                          </details>
-                        </>
+                        <CaseReveal summary={project.description} data={cs} fill={sw.fill} text={sw.text} isDe={isDe} />
                       ) : (
                         <>
                           <p className="text-sm text-muted leading-relaxed">{project.description}</p>

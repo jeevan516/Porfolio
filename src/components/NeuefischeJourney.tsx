@@ -7,7 +7,7 @@ import { CountUp } from './ui/CountUp';
 import { stageSwatch, tint, type Swatch } from '../data/palette';
 import { projectBlurb } from '../data/projectCopy';
 import { caseForJourney } from '../data/projectCases';
-import { CaseSteps } from './ui/CaseSteps';
+import { CaseReveal, onCaseTileClick } from './ui/CaseReveal';
 
 interface NeuefischeJourneyProps {
   language?: 'en' | 'de';
@@ -391,8 +391,9 @@ const JourneyCard = React.forwardRef<
     viewport={{ once: true, amount: 0.15 }}
     transition={{ duration: 0.45, delay: reduce ? 0 : Math.min(index, 4) * 0.07, ease }}
     whileHover={reduce ? undefined : { y: -4 }}
-    className="accent-card group flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm"
+    className={`accent-card tile-shine group flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm ${caseForJourney(p) ? 'cursor-pointer' : ''}`}
     style={{ '--card-c': swatch.fill } as React.CSSProperties}
+    onClick={caseForJourney(p) ? onCaseTileClick : undefined}
   >
     <span
       aria-hidden="true"
@@ -418,8 +419,8 @@ const JourneyCard = React.forwardRef<
       {(() => {
         const c = caseForJourney(p);
         return c ? (
-          <div className="mt-3">
-            <CaseSteps data={c} fill={swatch.fill} text={swatch.text} isDe={isDe} compact />
+          <div className="mt-1.5">
+            <CaseReveal summary={projectBlurb(p.id, p.description)} data={c} fill={swatch.fill} text={swatch.text} isDe={isDe} />
           </div>
         ) : (
           <>
