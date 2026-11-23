@@ -133,20 +133,20 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
         className={`${ui.panel} max-w-2xl overflow-hidden`}
       >
         {/* Header */}
-        <div className="px-5 sm:px-6 py-4 border-b border-slate-800 flex items-start justify-between gap-3">
+        <div className="px-5 sm:px-6 py-4 border-b border-line flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-surface-2 border border-line-strong flex items-center justify-center text-fg shrink-0">
               <Github className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <h3 id="github-sync-title" className="text-base font-bold font-display text-white">
+              <h3 id="github-sync-title" className="text-base font-bold font-display text-fg">
                 {isDe ? 'Website mit GitHub synchronisieren' : 'Sync website to GitHub'}
               </h3>
               <a
                 href={websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-xs text-emerald-400 hover:underline font-mono truncate block rounded ${ui.focusRing}`}
+                className={`text-xs text-accent-fg hover:underline font-mono truncate block rounded ${ui.focusRing}`}
               >
                 {websiteUrl.replace('https://', '')}
               </a>
@@ -160,16 +160,16 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
         {/* Body */}
         <div className="p-5 sm:p-6 space-y-5 max-h-[70vh] overflow-y-auto">
           {!localDev && (
-            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-bg/70 border border-line text-xs text-muted flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-muted shrink-0 mt-0.5" />
               <p>{unavailableMessage}</p>
             </div>
           )}
 
           {pushStatus.type === 'success' && (
-            <div role="status" className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-xs text-emerald-100 space-y-2">
-              <div className="flex items-center gap-2 font-semibold text-sm text-white">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <div role="status" className="p-4 rounded-xl bg-accent-soft/60 border border-accent/50 text-xs text-accent-fg space-y-2">
+              <div className="flex items-center gap-2 font-semibold text-sm text-fg">
+                <CheckCircle2 className="w-4 h-4 text-accent-fg" />
                 {isDe ? 'Änderungen gepusht' : 'Changes pushed'}
               </div>
               <p>{pushStatus.message}</p>
@@ -187,22 +187,22 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
           )}
 
           {(pushStatus.type === 'error' || pushStatus.type === 'unavailable') && (
-            <div role="alert" className="p-3.5 rounded-xl bg-rose-950/50 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div role="alert" className="p-3.5 rounded-xl bg-danger-soft/50 border border-danger/40 text-xs text-danger flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-danger shrink-0 mt-0.5" />
               <p className="leading-relaxed">{pushStatus.message}</p>
             </div>
           )}
 
           {/* Direct push (local dev only) */}
-          <section className="p-4 rounded-xl border border-slate-800 bg-slate-950/50 space-y-3">
-            <h4 className="font-semibold text-sm text-white flex items-center gap-2">
-              <Send className="w-3.5 h-3.5 text-emerald-400" />
+          <section className="p-4 rounded-xl border border-line bg-bg/50 space-y-3">
+            <h4 className="font-semibold text-sm text-fg flex items-center gap-2">
+              <Send className="w-3.5 h-3.5 text-accent-fg" />
               {isDe ? 'Direkt-Push mit Token' : 'Direct push with token'}
-              <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+              <span className="text-xs font-mono font-normal px-1.5 py-0.5 rounded bg-surface-2 text-muted border border-line-strong">
                 {isDe ? 'nur lokal' : 'local dev only'}
               </span>
             </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-muted leading-relaxed">
               {isDe
                 ? 'Personal Access Token mit Schreibrechten eingeben. Der lokale Server pusht main und gh-pages; der Token wird nicht gespeichert.'
                 : 'Enter a Personal Access Token with repo write access. The local server pushes main and gh-pages; the token is not stored.'}
@@ -240,7 +240,7 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
                   href="https://github.com/settings/tokens/new?scopes=repo&description=Portfolio+Push"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${ui.btnGhost} text-emerald-400`}
+                  className={`${ui.btnGhost} text-accent-fg`}
                 >
                   <Key className="w-3.5 h-3.5" />
                   {isDe ? 'Token erstellen' : 'Create a token'}
@@ -265,14 +265,14 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
 
           {/* Terminal */}
           <section className="space-y-2">
-            <h4 className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+            <h4 className="text-xs font-semibold text-muted flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-accent-fg" />
               {isDe ? 'Alternative: Terminal' : 'Alternative: terminal'}
             </h4>
-            <div className="p-2 pl-3.5 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-emerald-300 flex items-center justify-between gap-3">
+            <div className="p-2 pl-3.5 rounded-xl bg-bg border border-line font-mono text-xs text-accent-fg flex items-center justify-between gap-3">
               <code className="truncate">{commandOneLiner}</code>
               <button type="button" onClick={() => handleCopy(commandOneLiner, 'oneliner')} className={`${ui.btnSecondary} !px-3 !py-1.5 shrink-0`}>
-                {copiedCmd === 'oneliner' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                {copiedCmd === 'oneliner' ? <Check className="w-3.5 h-3.5 text-accent-fg" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedCmd === 'oneliner' ? (isDe ? 'Kopiert' : 'Copied') : isDe ? 'Kopieren' : 'Copy'}
               </button>
             </div>
@@ -280,7 +280,7 @@ export const GitHubSyncModal: React.FC<GitHubSyncModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Footer */}
-        <div className="px-5 sm:px-6 py-3 border-t border-slate-800 flex justify-end">
+        <div className="px-5 sm:px-6 py-3 border-t border-line flex justify-end">
           <button type="button" onClick={handleClose} className={`${ui.btnSecondary} !py-2`}>
             {isDe ? 'Schließen' : 'Close'}
           </button>

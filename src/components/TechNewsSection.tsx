@@ -131,24 +131,24 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
   ];
 
   return (
-    <section id="tech-news" className="py-20 sm:py-24 border-t border-slate-800/80 relative overflow-hidden text-slate-100">
+    <section id="tech-news" className="py-20 sm:py-24 border-t border-line/80 relative overflow-hidden text-fg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-800 bg-slate-900/70 text-[11px] font-mono text-slate-400">
-              <span className={`h-1.5 w-1.5 rounded-full ${isLive ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-surface/70 text-xs font-mono text-muted">
+              <span className={`h-1.5 w-1.5 rounded-full ${isLive ? 'bg-accent' : 'bg-line-strong'}`} />
               {isLive
                 ? isDe ? 'Live · Google Search Grounding' : 'Live · Google Search grounded'
                 : isDe ? 'Kuratierte Auswahl' : 'Curated briefing'}
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-fg tracking-tight">
               {isDe ? 'Technologie-' : 'Technology '}
-              <span className="text-emerald-400">{isDe ? 'Nachrichten' : 'News'}</span>
+              <span className="text-accent-fg">{isDe ? 'Nachrichten' : 'News'}</span>
             </h2>
 
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-muted text-sm sm:text-base leading-relaxed">
               {isDe
                 ? 'Entwicklungen zu KI, Cloud-Infrastruktur, industriellem IoT, Halbleitern und Sicherheit – mit Einordnung aus Ingenieurssicht.'
                 : 'Developments across AI, cloud infrastructure, industrial IoT, semiconductors and security — with an engineering takeaway for each.'}
@@ -157,7 +157,7 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
 
           <div className="flex items-center gap-3">
             {lastUpdated && isLive && (
-              <span className="text-[11px] font-mono text-slate-500 hidden sm:inline">
+              <span className="text-xs font-mono text-subtle hidden sm:inline">
                 {isDe ? 'Aktualisiert' : 'Updated'} {lastUpdated}
               </span>
             )}
@@ -167,7 +167,7 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
               disabled={isLoading}
               className={ui.btnSecondary}
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-accent-fg ${isLoading ? 'animate-spin' : ''}`} />
               <span>{isLoading ? (isDe ? 'Lädt…' : 'Loading…') : isDe ? 'Aktualisieren' : 'Refresh'}</span>
             </button>
           </div>
@@ -202,7 +202,7 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
             <label htmlFor="tech-news-search" className="sr-only">
               {isDe ? 'Nachrichten durchsuchen' : 'Search news'}
             </label>
-            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-subtle absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               id="tech-news-search"
               type="search"
@@ -242,10 +242,10 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.3, delay: Math.min(aIdx, 6) * 0.04 }}
-                  className="group p-5 sm:p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 transition-colors flex flex-col"
+                  className="group p-5 sm:p-6 rounded-2xl bg-surface/70 border border-line hover:border-accent/40 transition-colors flex flex-col"
                 >
-                  <div className="flex items-center justify-between gap-3 text-[11px] font-mono text-slate-500 mb-3">
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                  <div className="flex items-center justify-between gap-3 text-xs font-mono text-subtle mb-3">
+                    <span className="px-2 py-0.5 rounded-md bg-accent/10 text-accent-fg border border-accent/20">
                       {art.categoryLabel}
                     </span>
                     <span className="flex items-center gap-1 shrink-0">
@@ -254,14 +254,14 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
                     </span>
                   </div>
 
-                  <h3 className="text-base font-semibold font-display text-white leading-snug mb-2">{art.title}</h3>
+                  <h3 className="text-base font-semibold font-display text-fg leading-snug mb-2">{art.title}</h3>
 
-                  <p className="text-sm text-slate-400 leading-relaxed line-clamp-3 mb-4">{art.summary}</p>
+                  <p className="text-sm text-muted leading-relaxed line-clamp-3 mb-4">{art.summary}</p>
 
-                  <div className="mt-auto pt-4 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
-                    <span className="text-slate-500 truncate font-mono text-[11px]">{art.source}</span>
+                  <div className="mt-auto pt-4 border-t border-line flex items-center justify-between gap-2 text-xs">
+                    <span className="text-subtle truncate font-mono text-xs">{art.source}</span>
                     <div className="flex items-center gap-1 shrink-0">
-                      <button type="button" onClick={() => setSelectedArticle(art)} className={`${ui.btnGhost} text-emerald-400`}>
+                      <button type="button" onClick={() => setSelectedArticle(art)} className={`${ui.btnGhost} text-accent-fg`}>
                         {isDe ? 'Details' : 'Read brief'}
                         <ArrowRight className="w-3 h-3" />
                       </button>
@@ -282,10 +282,10 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
             </AnimatePresence>
           </motion.div>
         ) : (
-          <div className="p-10 rounded-2xl bg-slate-900/60 border border-slate-800 text-center space-y-3">
-            <AlertCircle className="w-7 h-7 text-slate-500 mx-auto" />
-            <h3 className="text-base font-semibold text-white">{isDe ? 'Keine Artikel gefunden' : 'No articles match your search'}</h3>
-            <p className="text-sm text-slate-400 max-w-sm mx-auto">
+          <div className="p-10 rounded-2xl bg-surface/60 border border-line text-center space-y-3">
+            <AlertCircle className="w-7 h-7 text-subtle mx-auto" />
+            <h3 className="text-base font-semibold text-fg">{isDe ? 'Keine Artikel gefunden' : 'No articles match your search'}</h3>
+            <p className="text-sm text-muted max-w-sm mx-auto">
               {isDe ? 'Versuchen Sie einen anderen Begriff oder setzen Sie die Filter zurück.' : 'Try a different term or reset the filters.'}
             </p>
             <button type="button" onClick={resetFilters} className={ui.btnPrimary}>
@@ -320,13 +320,13 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-2 min-w-0">
-                  <span className="inline-block text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                  <span className="inline-block text-xs font-mono px-2 py-0.5 rounded-md bg-accent/10 text-accent-fg border border-accent/20">
                     {selectedArticle.categoryLabel}
                   </span>
-                  <h3 id="tech-news-modal-title" className="text-xl sm:text-2xl font-bold font-display text-white leading-tight">
+                  <h3 id="tech-news-modal-title" className="text-xl sm:text-2xl font-bold font-display text-fg leading-tight">
                     {selectedArticle.title}
                   </h3>
-                  <div className="text-xs font-mono text-slate-500">
+                  <div className="text-xs font-mono text-subtle">
                     {selectedArticle.source} · {selectedArticle.publishedAt} · {selectedArticle.readTime}
                   </div>
                 </div>
@@ -335,19 +335,19 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
                 </button>
               </div>
 
-              <p className="text-sm text-slate-300 leading-relaxed">{selectedArticle.summary}</p>
+              <p className="text-sm text-muted leading-relaxed">{selectedArticle.summary}</p>
 
-              <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/25 space-y-1.5">
-                <div className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              <div className="p-4 rounded-xl bg-accent/5 border border-accent/25 space-y-1.5">
+                <div className="text-xs font-mono uppercase tracking-wider text-accent-fg flex items-center gap-1.5">
                   <TrendingUp className="w-3.5 h-3.5" />
                   {isDe ? 'Einordnung für Ingenieure' : 'Engineering takeaway'}
                 </div>
-                <p className="text-sm text-slate-200 leading-relaxed">{selectedArticle.keyTakeaway}</p>
+                <p className="text-sm text-fg leading-relaxed">{selectedArticle.keyTakeaway}</p>
               </div>
 
               <div className="flex flex-wrap gap-1.5">
                 {selectedArticle.tags.map((t) => (
-                  <span key={t} className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                  <span key={t} className="text-xs font-mono px-2 py-0.5 rounded-full bg-surface-2 text-muted border border-line-strong">
                     #{t}
                   </span>
                 ))}
@@ -355,7 +355,7 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
 
               {selectedArticle.groundingSources && selectedArticle.groundingSources.length > 0 && (
                 <div className="space-y-2">
-                  <div className="text-xs font-mono text-slate-500 flex items-center gap-1.5">
+                  <div className="text-xs font-mono text-subtle flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5" />
                     {isDe ? 'Referenzen' : 'References'}
                   </div>
@@ -366,19 +366,19 @@ export const TechNewsSection: React.FC<TechNewsSectionProps> = ({ language = 'en
                         href={src.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`flex items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-950/60 border border-slate-800 text-xs text-slate-300 hover:text-emerald-300 hover:border-slate-700 transition-colors ${ui.focusRing}`}
+                        className={`flex items-center justify-between gap-2 p-2.5 rounded-lg bg-bg/60 border border-line text-xs text-muted hover:text-accent-fg hover:border-line-strong transition-colors ${ui.focusRing}`}
                       >
                         <span className="truncate">{src.title}</span>
-                        <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" />
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0 text-subtle" />
                       </a>
                     ))}
                   </div>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-slate-800 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="pt-4 border-t border-line flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
                 <button type="button" onClick={() => handleCopyShare(selectedArticle)} className={ui.btnSecondary}>
-                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-accent-fg" /> : <Share2 className="w-3.5 h-3.5" />}
                   <span>{copiedLink ? (isDe ? 'Link kopiert' : 'Link copied') : isDe ? 'Link kopieren' : 'Copy link'}</span>
                 </button>
                 <a href={selectedArticle.sourceUrl} target="_blank" rel="noopener noreferrer" className={ui.btnPrimary}>

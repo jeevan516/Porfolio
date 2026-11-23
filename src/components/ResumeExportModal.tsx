@@ -131,7 +131,7 @@ export const ResumeExportModal: React.FC<ResumeExportModalProps> = ({
         particleCount: 65,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#10b981', '#06b6d4', '#8b5cf6', '#f59e0b']
+        colors: ['#f2a541', '#3cc0b4', '#9085e9', '#d95926']
       });
     } catch (err) {
       console.error('Failed to generate PDF:', err);
@@ -239,14 +239,14 @@ CORE TECHNICAL COMPETENCIES
         className={`${ui.panel} max-w-5xl h-[92vh] flex flex-col overflow-hidden`}
       >
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 border-b border-line">
           <div className="flex items-center gap-2.5 min-w-0">
-            <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
+            <FileText className="w-4 h-4 text-accent-fg shrink-0" />
             <div className="min-w-0">
-              <h3 id="resume-modal-title" className="text-sm font-semibold text-white font-display truncate">
+              <h3 id="resume-modal-title" className="text-sm font-semibold text-fg font-display truncate">
                 {isDe ? 'Lebenslauf exportieren' : 'Export CV'}
               </h3>
-              <p className="text-[11px] text-slate-500 hidden sm:block">{isDe ? 'DIN A4 · ATS-freundlich' : 'A4 · ATS-friendly'}</p>
+              <p className="text-xs text-subtle hidden sm:block">{isDe ? 'DIN A4 · ATS-freundlich' : 'A4 · ATS-friendly'}</p>
             </div>
           </div>
 
@@ -255,7 +255,7 @@ CORE TECHNICAL COMPETENCIES
           </button>
 
           <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-            <div className="flex items-center rounded-xl border border-slate-700 p-0.5" role="group" aria-label={isDe ? 'Sprache' : 'Language'}>
+            <div className="flex items-center rounded-xl border border-line p-0.5" role="group" aria-label={isDe ? 'Sprache' : 'Language'}>
               {(['en', 'de'] as const).map((l) => (
                 <button
                   key={l}
@@ -263,7 +263,7 @@ CORE TECHNICAL COMPETENCIES
                   aria-pressed={lang === l}
                   onClick={() => setLang(l)}
                   className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${ui.focusRing} ${
-                    lang === l ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                    lang === l ? 'bg-accent text-fg' : 'text-subtle hover:text-fg'
                   }`}
                 >
                   {l.toUpperCase()}
@@ -272,7 +272,7 @@ CORE TECHNICAL COMPETENCIES
             </div>
 
             <button type="button" onClick={handleCopyAtsText} className={`${ui.btnSecondary} !px-3 !py-2`} title={isDe ? 'Klartext für Bewerbungsportale kopieren' : 'Copy plain text for ATS job boards'}>
-              {copiedText ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedText ? <Check className="w-3.5 h-3.5 text-accent-fg" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copiedText ? (isDe ? 'Kopiert' : 'Copied') : isDe ? 'Text' : 'ATS text'}</span>
             </button>
 
@@ -289,56 +289,56 @@ CORE TECHNICAL COMPETENCIES
         </div>
 
         {exportError && (
-          <div role="alert" className="px-4 sm:px-6 py-2.5 bg-rose-950/50 border-b border-rose-500/30 text-xs text-rose-200">
+          <div role="alert" className="px-4 sm:px-6 py-2.5 bg-danger-soft/50 border-b border-danger/30 text-xs text-danger">
             {exportError}
           </div>
         )}
 
         {/* Scrollable Preview Container */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-8 bg-slate-950/60 flex justify-center">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-8 bg-surface-2/60 flex justify-center">
 
           {/* Printable White A4 Document Canvas */}
           <div
             ref={resumeRef}
             id="printable-cv-document"
-            className="w-full max-w-[850px] h-fit bg-white text-slate-900 rounded-xl shadow-2xl p-5 sm:p-12 font-sans text-xs leading-normal border border-slate-200 select-text print:p-0 print:border-none print:shadow-none print:rounded-none"
+            className="jd-paper w-full max-w-[850px] h-fit bg-surface text-fg rounded-xl shadow-2xl p-5 sm:p-12 font-sans text-xs leading-normal border border-line select-text print:p-0 print:border-none print:shadow-none print:rounded-none"
           >
 
             {/* Header: Name, Title, Contact Info */}
-            <header className="border-b-2 border-slate-900 pb-5 mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <header className="border-b-2 border-line pb-5 mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 font-display">
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-fg font-display">
                   {PERSONAL_INFO.name}
                 </h1>
-                <div className="text-sm font-bold text-emerald-700 tracking-wide mt-0.5">
+                <div className="text-sm font-bold text-accent-fg tracking-wide mt-0.5">
                   {isDe ? 'IT-Spezialist & KI-Ingenieur · MSc Informatik (TU Clausthal)' : 'IT Specialist & AI Engineer · MSc Informatics (TU Clausthal)'}
                 </div>
-                <div className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-mono text-[10px] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                <div className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-0.5 rounded-md bg-accent-soft text-accent-fg font-mono text-xs font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                   <span>{isDe ? 'Im KI- & ML-Bootcamp · Sofort verfügbar & einsatzbereit' : 'AI & ML Bootcamp · Available Immediately & Ready for Work'}</span>
                 </div>
               </div>
 
               {/* Contact Information */}
-              <div className="text-[11px] font-mono text-slate-700 space-y-1 text-left sm:text-right shrink-0">
+              <div className="text-xs font-mono text-muted space-y-1 text-left sm:text-right shrink-0">
                 <div className="flex items-center sm:justify-end gap-1.5">
-                  <Mail className="w-3 h-3 text-slate-600" />
+                  <Mail className="w-3 h-3 text-subtle" />
                   <a href={`mailto:${PERSONAL_INFO.email}`} className="hover:underline">{PERSONAL_INFO.email}</a>
                 </div>
                 <div className="flex items-center sm:justify-end gap-1.5">
-                  <Phone className="w-3 h-3 text-slate-600" />
+                  <Phone className="w-3 h-3 text-subtle" />
                   <span>{PERSONAL_INFO.phone}</span>
                 </div>
                 <div className="flex items-center sm:justify-end gap-1.5">
-                  <MapPin className="w-3 h-3 text-slate-600" />
+                  <MapPin className="w-3 h-3 text-subtle" />
                   <span>{isDe ? 'Hamburg, Deutschland (Umzugsbereit)' : 'Hamburg, Germany (Open to Relocation)'}</span>
                 </div>
                 <div className="flex items-center sm:justify-end gap-1.5">
-                  <Linkedin className="w-3 h-3 text-slate-600" />
+                  <Linkedin className="w-3 h-3 text-subtle" />
                   <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline">linkedin.com/in/jeevan-dutta</a>
                 </div>
                 <div className="flex items-center sm:justify-end gap-1.5">
-                  <Github className="w-3 h-3 text-slate-600" />
+                  <Github className="w-3 h-3 text-subtle" />
                   <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className="hover:underline">github.com/jeevan516</a>
                 </div>
               </div>
@@ -346,11 +346,11 @@ CORE TECHNICAL COMPETENCIES
 
             {/* Executive Summary */}
             <section className="mb-5">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2 font-mono flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-emerald-600" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg border-b border-line pb-1 mb-2 font-mono flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3 text-accent-fg" />
                 <span>{isDe ? 'Kurzprofil & Fachliche Ausrichtung' : 'Executive Profile & Objective'}</span>
               </h2>
-              <p className="text-slate-700 text-[11px] leading-relaxed text-justify">
+              <p className="text-muted text-xs leading-relaxed text-justify">
                 {isDe
                   ? 'Ergebnisorientierter IT-Experte mit dualem Fundament in Datenanalyse und IT-Engineering. Master of Science in Informatik an der Technischen Universität Clausthal (Masterarbeit über synchrone 4-Knoten-SPS-Netzwerke unter Betreuung von Prof. Dr. Christian Siemers). Mehr als 10 Jahre Praxiserfahrung in industrieller Telemetrie (WaDaCon GmbH), System- und Netzwerkadministration (Cogent Networks), KI-Backend-Entwicklung (RadicalX), E-Commerce-Analytics (Netidentity) und skalierbarer Softwareentwicklung (Avast Technologies). Spezialisiert auf hochverfügbare Infrastruktur, InfluxDB/Prometheus-Pipelines, Docker CI/CD, HAProxy-Load-Balancing und KI-Anomalieerkennung. Absolviert derzeit ein professionelles Bootcamp bei der neuefische GmbH (Künstliche Intelligenz, Machine Learning, Data Science, Data Engineering und Software Engineering) und ist ab sofort einsatzbereit für neue Aufgaben in Deutschland.'
                   : 'Results-oriented IT professional with a dual foundation in Data Analysis and IT Engineering. Holds an MSc in Informatics from Technische Universität Clausthal with specialized Master’s Thesis research on deterministic 4-node PLC networks under Prof. Dr. Christian Siemers. Brings over a decade of hands-on experience spanning industrial observability pipelines (WaDaCon GmbH), enterprise systems & network engineering (Cogent Networks), cloud AI architectures (RadicalX), business intelligence (Netidentity), and scalable object-oriented software development (Avast Technologies). Currently attending an intensive professional engineering bootcamp at neuefische GmbH covering Artificial Intelligence, Machine Learning, Data Science, Data Engineering, and modern Software Engineering. Available immediately and ready for work across Germany.'}
@@ -359,35 +359,35 @@ CORE TECHNICAL COMPETENCIES
 
             {/* Education & Academic Rigor (TU Clausthal) */}
             <section className="mb-5">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2 font-mono flex items-center gap-1.5">
-                <GraduationCap className="w-3.5 h-3.5 text-purple-700" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg border-b border-line pb-1 mb-2 font-mono flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-info" />
                 <span>{isDe ? 'Ausbildung & Wissenschaftliche Forschung' : 'Education & Academic Research'}</span>
               </h2>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-baseline">
                   <div>
-                    <span className="font-bold text-slate-900 text-xs">
+                    <span className="font-bold text-fg text-xs">
                       Master of Science (MSc) — Informatics (Informatik)
                     </span>
-                    <span className="text-slate-600 font-medium"> · Technische Universität Clausthal</span>
+                    <span className="text-subtle font-medium"> · Technische Universität Clausthal</span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-600 shrink-0">
+                  <span className="text-xs font-mono text-subtle shrink-0">
                     {isDe ? 'Okt 2019 – Jun 2023 · Deutschland' : 'Oct 2019 – Jun 2023 · Germany'}
                   </span>
                 </div>
 
                 {/* Thesis Callout */}
-                <div className="p-3 bg-purple-50 rounded-xl border border-purple-200 text-[11px] space-y-1">
-                  <div className="font-bold text-purple-900">
+                <div className="p-3 bg-info-soft rounded-xl border border-info text-xs space-y-1">
+                  <div className="font-bold text-info">
                     {isDe ? 'Masterarbeit:' : 'Master’s Thesis:'} <em>"{MASTER_THESIS_DETAILS.title}"</em>
                   </div>
-                  <div className="text-slate-700 text-[10px] flex flex-wrap gap-x-4">
+                  <div className="text-muted text-xs flex flex-wrap gap-x-4">
                     <span><strong>{isDe ? 'Erstprüfer:' : 'Supervisor:'}</strong> Prof. Dr. Christian Siemers</span>
                     <span><strong>{isDe ? 'Zweitprüfer:' : 'Second Examiner:'}</strong> Prof. Dr. Sven Hartmann</span>
                     <span><strong>{isDe ? 'Matrikel-Nr.:' : 'Matriculation No.:'}</strong> 517360</span>
                   </div>
-                  <p className="text-slate-600 text-[10.5px] leading-relaxed pt-0.5">
+                  <p className="text-subtle text-xs leading-relaxed pt-0.5">
                     {isDe
                       ? 'Entwicklung und Simulation eines synchronen 4-Knoten-ZanderLink-Kommunikationsnetzwerks in VHDL mit Xilinx Vivado (2020.2) über EIA-485. Garantierte deterministische Reaktionszeiten unter 12 µs ohne Jitter sowie Hardware-CRC-8-Fehlerkorrektur.'
                       : 'Engineered and simulated a synchronous 4-node ZanderLink bus protocol in VHDL using Xilinx Vivado (2020.2) over EIA-485. Achieved guaranteed deterministic reaction times under 12 µs without jitter across distributed control nodes with hardware CRC-8 error detection.'}
@@ -398,8 +398,8 @@ CORE TECHNICAL COMPETENCIES
 
             {/* Professional Work Experience */}
             <section className="mb-5">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2.5 font-mono flex items-center gap-1.5">
-                <Briefcase className="w-3.5 h-3.5 text-emerald-600" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg border-b border-line pb-1 mb-2.5 font-mono flex items-center gap-1.5">
+                <Briefcase className="w-3.5 h-3.5 text-accent-fg" />
                 <span>{isDe ? 'Berufliche Erfahrung' : 'Professional Work Experience'}</span>
               </h2>
 
@@ -408,18 +408,18 @@ CORE TECHNICAL COMPETENCIES
                   <div key={exp.id} className="space-y-1">
                     <div className="flex justify-between items-baseline">
                       <div className="space-y-0.5">
-                        <span className="font-bold text-slate-900 text-xs">
+                        <span className="font-bold text-fg text-xs">
                           {exp.role}
                         </span>
-                        <span className="text-slate-700 font-semibold"> · {exp.company}</span>
-                        <span className="text-[10px] text-slate-500 font-mono"> ({exp.location})</span>
+                        <span className="text-muted font-semibold"> · {exp.company}</span>
+                        <span className="text-xs text-subtle font-mono"> ({exp.location})</span>
                       </div>
-                      <span className="text-[10px] font-mono text-emerald-800 font-bold shrink-0">
+                      <span className="text-xs font-mono text-accent-fg font-bold shrink-0">
                         {exp.period}
                       </span>
                     </div>
 
-                    <ul className="list-disc list-outside ml-4 space-y-1 text-slate-700 text-[10.5px] leading-relaxed">
+                    <ul className="list-disc list-outside ml-4 space-y-1 text-muted text-xs leading-relaxed">
                       {exp.achievements.slice(0, 4).map((ach, aIdx) => (
                         <li key={aIdx}>
                           {ach}
@@ -429,7 +429,7 @@ CORE TECHNICAL COMPETENCIES
 
                     <div className="flex flex-wrap gap-1 pt-1">
                       {exp.technologies.slice(0, 8).map((tech, tIdx) => (
-                        <span key={tIdx} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">
+                        <span key={tIdx} className="text-xs font-mono px-1.5 py-0.5 rounded bg-surface-2 border border-line text-muted">
                           {tech}
                         </span>
                       ))}
@@ -441,44 +441,44 @@ CORE TECHNICAL COMPETENCIES
 
             {/* Core Technical Competencies Grid */}
             <section className="mb-5">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2 font-mono flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-cyan-600" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg border-b border-line pb-1 mb-2 font-mono flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-teal" />
                 <span>{isDe ? 'Kernkompetenzen & Technologischer Stack' : 'Core Technical Competencies'}</span>
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px]">
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                  <strong className="text-slate-900 font-mono text-[10px] block mb-1 uppercase text-emerald-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div className="p-2 rounded-lg bg-surface-2 border border-line">
+                  <strong className="text-fg font-mono text-xs block mb-1 uppercase text-accent-fg">
                     Infrastructure & DevOps
                   </strong>
-                  <span className="text-slate-700">
+                  <span className="text-muted">
                     Docker, Portainer, CI/CD Pipelines, Teleport, Linux Sysadmin (Ubuntu/Debian), HAProxy, Keepalived VRRP, SSH Tunneling, Bash Scripting
                   </span>
                 </div>
 
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                  <strong className="text-slate-900 font-mono text-[10px] block mb-1 uppercase text-cyan-800">
+                <div className="p-2 rounded-lg bg-surface-2 border border-line">
+                  <strong className="text-fg font-mono text-xs block mb-1 uppercase text-teal">
                     Observability & Telemetry
                   </strong>
-                  <span className="text-slate-700">
+                  <span className="text-muted">
                     Grafana, Prometheus, InfluxDB, Custom Metric Exporters, MS Teams Webhooks, Time-Series Sensor Pipelines, Incident TTR Reduction
                   </span>
                 </div>
 
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                  <strong className="text-slate-900 font-mono text-[10px] block mb-1 uppercase text-purple-800">
+                <div className="p-2 rounded-lg bg-surface-2 border border-line">
+                  <strong className="text-fg font-mono text-xs block mb-1 uppercase text-info">
                     AI, Data & Backend APIs
                   </strong>
-                  <span className="text-slate-700">
+                  <span className="text-muted">
                     Python (FastAPI, Flask, Django), Vertex AI, Google Gemini API, PyTorch, Scikit-Learn, Power BI (DAX), SQLAlchemy, REST APIs
                   </span>
                 </div>
 
-                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                  <strong className="text-slate-900 font-mono text-[10px] block mb-1 uppercase text-blue-800">
+                <div className="p-2 rounded-lg bg-surface-2 border border-line">
+                  <strong className="text-fg font-mono text-xs block mb-1 uppercase text-info">
                     Hardware, Networking & Languages
                   </strong>
-                  <span className="text-slate-700">
+                  <span className="text-muted">
                     VHDL (Xilinx Vivado), EIA-485 / RS-485, TCP/IP, OSI 7-Layer, VoIP, English (Fluent / C1), German (BAMF Certified B1/B2)
                   </span>
                 </div>
@@ -487,18 +487,18 @@ CORE TECHNICAL COMPETENCIES
 
             {/* Verified Certifications (Top Accreditations) */}
             <section className="mb-2">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-300 pb-1 mb-2 font-mono flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-amber-600" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-fg border-b border-line pb-1 mb-2 font-mono flex items-center gap-1.5">
+                <Award className="w-3.5 h-3.5 text-warning" />
                 <span>{isDe ? 'Zertifizierungen & Verifizierte Nachweise' : 'Verified Industry Certifications'}</span>
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-[10px] text-slate-700">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-muted">
                 {CERTIFICATIONS.slice(0, 8).map((cert) => (
                   <div key={cert.id} className="flex items-start gap-1.5">
-                    <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                    <span className="text-accent-fg font-bold shrink-0">✓</span>
                     <div>
-                      <span className="font-semibold text-slate-900">{cert.title}</span>
-                      <span className="text-slate-500 font-mono"> — {cert.issuer} ({cert.date || cert.year})</span>
+                      <span className="font-semibold text-fg">{cert.title}</span>
+                      <span className="text-subtle font-mono"> — {cert.issuer} ({cert.date || cert.year})</span>
                     </div>
                   </div>
                 ))}
@@ -506,7 +506,7 @@ CORE TECHNICAL COMPETENCIES
             </section>
 
             {/* Document Footer */}
-            <footer className="mt-6 pt-3 border-t border-slate-200 flex justify-between items-center text-[9px] font-mono text-slate-500">
+            <footer className="mt-6 pt-3 border-t border-line flex justify-between items-center text-xs font-mono text-subtle">
               <span>Jeevan Dutta · Professional CV / Resume · Generated 2026</span>
               <span>Online Verification: jeevan516.github.io/jeevan-Dutta</span>
             </footer>

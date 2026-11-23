@@ -96,29 +96,29 @@ export const SystemArchitectureVisualizer: React.FC = () => {
   ];
 
   return (
-    <div className="rounded-2xl bg-slate-950/80 border border-slate-800 overflow-hidden">
+    <div className="rounded-2xl bg-bg/80 border border-line overflow-hidden">
       {/* Top Controller Header */}
-      <div className="px-4 sm:px-5 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+      <div className="px-4 sm:px-5 py-3 border-b border-line flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-1.5" aria-hidden="true">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+            <span className="w-2.5 h-2.5 rounded-full bg-danger/80" />
+            <span className="w-2.5 h-2.5 rounded-full bg-accent/80" />
+            <span className="w-2.5 h-2.5 rounded-full bg-accent/80" />
           </div>
-          <span className="text-xs font-semibold text-slate-200">WaDaCon MRF telemetry stack</span>
+          <span className="text-xs font-semibold text-fg">WaDaCon MRF telemetry stack</span>
         </div>
 
         {/* View Switcher */}
-        <div role="tablist" aria-label="Stack views" className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-[11px]">
+        <div role="tablist" aria-label="Stack views" className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-line text-xs">
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === 'architecture'}
             onClick={() => setActiveTab('architecture')}
-            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               activeTab === 'architecture'
-                ? 'bg-slate-800 text-white font-semibold border-slate-700'
-                : 'text-slate-400 hover:text-slate-200 border-transparent'
+                ? 'bg-surface-2 text-fg font-semibold border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             System Map
@@ -128,10 +128,10 @@ export const SystemArchitectureVisualizer: React.FC = () => {
             role="tab"
             aria-selected={activeTab === 'telemetry'}
             onClick={() => setActiveTab('telemetry')}
-            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               activeTab === 'telemetry'
-                ? 'bg-slate-800 text-white font-semibold border-slate-700'
-                : 'text-slate-400 hover:text-slate-200 border-transparent'
+                ? 'bg-surface-2 text-fg font-semibold border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             Live Vitals
@@ -141,10 +141,10 @@ export const SystemArchitectureVisualizer: React.FC = () => {
             role="tab"
             aria-selected={activeTab === 'terminal'}
             onClick={() => setActiveTab('terminal')}
-            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               activeTab === 'terminal'
-                ? 'bg-slate-800 text-white font-semibold border-slate-700'
-                : 'text-slate-400 hover:text-slate-200 border-transparent'
+                ? 'bg-surface-2 text-fg font-semibold border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             CLI Output
@@ -156,12 +156,12 @@ export const SystemArchitectureVisualizer: React.FC = () => {
       <div className="p-4 sm:p-5" role="tabpanel">
         {activeTab === 'architecture' && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between gap-2 text-xs text-slate-400">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+            <div className="flex items-center justify-between gap-2 text-xs text-muted">
+              <span className="flex items-center gap-1.5 text-accent-fg font-medium">
                 <Radio className="w-3.5 h-3.5" aria-hidden="true" />
                 Industrial topology
               </span>
-              <span className="text-slate-500">Select a node</span>
+              <span className="text-subtle">Select a node</span>
             </div>
 
             {/* Architecture Node Grid */}
@@ -174,21 +174,21 @@ export const SystemArchitectureVisualizer: React.FC = () => {
                     type="button"
                     aria-pressed={isSelected}
                     onClick={() => setSelectedNode(node.id)}
-                    className={`p-3 rounded-xl border text-left transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`p-3 rounded-xl border text-left transition-colors min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       isSelected
-                        ? 'bg-slate-900 border-emerald-500/60'
-                        : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/80'
+                        ? 'bg-surface border-accent/60'
+                        : 'bg-surface/50 border-line/80 hover:border-line-strong hover:bg-surface/80'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="font-bold text-slate-200 text-xs truncate">
+                      <span className="font-bold text-fg text-xs truncate">
                         {node.name}
                       </span>
-                      <span className="flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800/50 shrink-0">
+                      <span className="flex items-center gap-1 text-xs text-accent-fg bg-accent-soft/80 px-1.5 py-0.5 rounded border border-accent/50 shrink-0">
                         {node.metric}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed font-sans">
+                    <p className="text-xs text-muted line-clamp-2 leading-relaxed font-sans">
                       {node.detail}
                     </p>
                   </button>
@@ -198,9 +198,9 @@ export const SystemArchitectureVisualizer: React.FC = () => {
 
             {/* Selected Node Deep Inspector */}
             {selectedNode && (
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs" aria-live="polite">
-                <div className="text-sm font-semibold text-white mb-1">{nodes.find((n) => n.id === selectedNode)?.name}</div>
-                <p className="text-slate-300 text-xs leading-relaxed">
+              <div className="p-3.5 rounded-xl bg-surface/80 border border-line text-xs" aria-live="polite">
+                <div className="text-sm font-semibold text-fg mb-1">{nodes.find((n) => n.id === selectedNode)?.name}</div>
+                <p className="text-muted text-xs leading-relaxed">
                   {nodes.find((n) => n.id === selectedNode)?.detail} Designed with zero-downtime reliability, proactive Prometheus threshold monitors, and end-to-end ownership.
                 </p>
               </div>
@@ -211,58 +211,58 @@ export const SystemArchitectureVisualizer: React.FC = () => {
         {activeTab === 'telemetry' && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center">
-                <div className="text-2xl font-bold font-display text-emerald-400">99.98%</div>
-                <div className="text-[11px] font-mono text-slate-400 mt-0.5">Pipeline Uptime</div>
+              <div className="p-4 rounded-xl bg-surface/70 border border-line text-center">
+                <div className="text-2xl font-bold font-display text-accent-fg">99.98%</div>
+                <div className="text-xs font-mono text-muted mt-0.5">Pipeline Uptime</div>
               </div>
-              <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800 text-center">
-                <div className="text-2xl font-bold font-display text-cyan-400">&gt; 60%</div>
-                <div className="text-[11px] font-mono text-slate-400 mt-0.5">MTTR Incident Reduction</div>
+              <div className="p-4 rounded-xl bg-surface/70 border border-line text-center">
+                <div className="text-2xl font-bold font-display text-teal">&gt; 60%</div>
+                <div className="text-xs font-mono text-muted mt-0.5">MTTR Incident Reduction</div>
               </div>
             </div>
 
             <div className="space-y-2 font-mono text-xs">
-              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
-                <span className="text-slate-400">InfluxDB Ingestion Rate:</span>
-                <span className="text-emerald-400 font-bold">{streamCount} data points / sec</span>
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-surface/50 border border-line text-muted">
+                <span className="text-muted">InfluxDB Ingestion Rate:</span>
+                <span className="text-accent-fg font-bold">{streamCount} data points / sec</span>
               </div>
-              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
-                <span className="text-slate-400">Teleport Zero-Trust Proxy:</span>
-                <span className="text-cyan-400 font-bold">Encrypted mTLS (Active)</span>
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-surface/50 border border-line text-muted">
+                <span className="text-muted">Teleport Zero-Trust Proxy:</span>
+                <span className="text-teal font-bold">Encrypted mTLS (Active)</span>
               </div>
-              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
-                <span className="text-slate-400">HAProxy Load Balancer Cluster:</span>
-                <span className="text-emerald-400 font-bold">VIP 10.0.1.100 · 3 Nodes Active (0.4ms)</span>
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-surface/50 border border-line text-muted">
+                <span className="text-muted">HAProxy Load Balancer Cluster:</span>
+                <span className="text-accent-fg font-bold">VIP 10.0.1.100 · 3 Nodes Active (0.4ms)</span>
               </div>
-              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-slate-300">
-                <span className="text-slate-400">Grafana Incident Alerts:</span>
-                <span className="text-purple-300 font-bold">MS Teams Webhook (Configured)</span>
+              <div className="flex flex-wrap justify-between items-center gap-x-3 gap-y-0.5 p-2.5 rounded-xl bg-surface/50 border border-line text-muted">
+                <span className="text-muted">Grafana Incident Alerts:</span>
+                <span className="text-info font-bold">MS Teams Webhook (Configured)</span>
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'terminal' && (
-          <div className="p-4 rounded-xl bg-black/80 border border-slate-800 font-mono text-xs space-y-3 text-slate-300 break-words">
+          <div className="p-4 rounded-xl bg-black/80 border border-line font-mono text-xs space-y-3 text-muted break-words">
             <div>
-              <span className="text-emerald-400">jeevan@tu-clausthal:~$</span> whoami
-              <div className="text-slate-400 pl-3 mt-0.5">
+              <span className="text-accent-fg">jeevan@tu-clausthal:~$</span> whoami
+              <div className="text-muted pl-3 mt-0.5">
                 Jeevan Dutta · MSc Informatics (TU Clausthal) · IT & AI Engineer
               </div>
             </div>
 
             <div>
-              <span className="text-emerald-400">jeevan@tu-clausthal:~$</span> cat thesis.nfo
-              <div className="text-cyan-300 pl-3 mt-0.5 text-[11px] leading-relaxed">
+              <span className="text-accent-fg">jeevan@tu-clausthal:~$</span> cat thesis.nfo
+              <div className="text-teal pl-3 mt-0.5 text-xs leading-relaxed">
                 "Definition, Development and Simulation of a 4-Node Communication Network for Reliable Reaction Times Inside Distributed Networks"
                 Advisors: Prof. Dr. Christian Siemers & Prof. Dr. Sven Hartmann (Matr. 517360)
               </div>
             </div>
 
             <div>
-              <span className="text-emerald-400">jeevan@tu-clausthal:~$</span> systemctl status career-status
-              <div className="text-emerald-400 pl-3 mt-0.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" aria-hidden="true" />
+              <span className="text-accent-fg">jeevan@tu-clausthal:~$</span> systemctl status career-status
+              <div className="text-accent-fg pl-3 mt-0.5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-accent shrink-0" aria-hidden="true" />
                 <span>ACTIVE: Available for New Role (Immediate Availability Across Germany)</span>
               </div>
             </div>

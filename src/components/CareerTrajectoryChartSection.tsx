@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ResponsiveContainer, ComposedChart, Line, Area, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceDot } from 'recharts';
 import { TrendingUp, Activity, Zap, CheckCircle2, Cpu } from 'lucide-react';
+import { jdToken, useThemeTokens } from '../utils/tokens';
 
 
 interface CareerTrajectoryChartSectionProps {
@@ -123,15 +124,18 @@ const TRAJECTORY_DATA: MilestonePoint[] = [
 type MetricId = 'impact' | 'cycle' | 'throughput';
 
 const METRICS: Record<MetricId, { key: keyof MilestonePoint; color: string; gradient: string; unit: string; domain: [number, number] }> = {
-  impact: { key: 'impactScore', color: '#10b981', gradient: 'impactGradient', unit: '', domain: [30, 105] },
-  cycle: { key: 'cycleReduction', color: '#06b6d4', gradient: 'cycleGradient', unit: '%', domain: [0, 75] },
-  throughput: { key: 'throughputK', color: '#14b8a6', gradient: 'throughputGradient', unit: 'k', domain: [0, 65] },
+  impact: { key: 'impactScore', color: '--jd-accent', gradient: 'impactGradient', unit: '', domain: [30, 105] },
+  cycle: { key: 'cycleReduction', color: '--jd-teal', gradient: 'cycleGradient', unit: '%', domain: [0, 75] },
+  throughput: { key: 'throughputK', color: '--jd-series-1', gradient: 'throughputGradient', unit: 'k', domain: [0, 65] },
 };
 
 export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSectionProps> = ({ language = 'en' }) => {
   const isDe = language === 'de';
   const [activeMetric, setActiveMetric] = useState<MetricId>('impact');
   const metric = METRICS[activeMetric];
+  useThemeTokens(); // re-render chart colours when the theme changes
+  const c = (name: string) => jdToken(name);
+  const metricColor = c(metric.color);
 
   const thesisPoint = TRAJECTORY_DATA.find((d) => d.year === '2022-23')!;
   const wadaconPoint = TRAJECTORY_DATA.find((d) => d.year === '2025-26')!;
@@ -140,27 +144,27 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
     if (!active || !payload || !payload.length) return null;
     const data: MilestonePoint = payload[0].payload;
     return (
-      <div className="p-3.5 rounded-xl bg-slate-950/95 border border-slate-800 shadow-2xl max-w-[260px] text-xs space-y-2">
+      <div className="p-3.5 rounded-xl bg-bg/95 border border-line shadow-2xl max-w-[260px] text-xs space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono font-bold text-emerald-400">{data.displayYear}</span>
-          <span className="text-[10px] text-slate-400 truncate">{data.location}</span>
+          <span className="font-mono font-bold text-accent-fg">{data.displayYear}</span>
+          <span className="text-xs text-muted truncate">{data.location}</span>
         </div>
         <div>
-          <div className="font-bold text-white text-sm leading-snug">{isDe ? data.roleDe : data.role}</div>
-          <div className="text-slate-400">{data.company}</div>
+          <div className="font-bold text-fg text-sm leading-snug">{isDe ? data.roleDe : data.role}</div>
+          <div className="text-muted">{data.company}</div>
         </div>
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 font-mono text-[10px] text-slate-400">
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-line font-mono text-xs text-muted">
           <div>
-            Impact<strong className="text-emerald-400 block text-xs">{data.impactScore}</strong>
+            Impact<strong className="text-accent-fg block text-xs">{data.impactScore}</strong>
           </div>
           <div>
-            MTTR<strong className="text-cyan-400 block text-xs">+{data.cycleReduction}%</strong>
+            MTTR<strong className="text-teal block text-xs">+{data.cycleReduction}%</strong>
           </div>
           <div>
-            k/s<strong className="text-teal-400 block text-xs">{data.throughputK}k</strong>
+            k/s<strong className="text-teal block text-xs">{data.throughputK}k</strong>
           </div>
         </div>
-        <p className="text-[11px] text-slate-300 leading-relaxed pt-2 border-t border-slate-800">
+        <p className="text-xs text-muted leading-relaxed pt-2 border-t border-line">
           {isDe ? data.keyAchievementDe : data.keyAchievement}
         </p>
       </div>
@@ -188,7 +192,7 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
 
   const highlights = [
     {
-      accent: 'text-emerald-400',
+      accent: 'text-accent-fg',
       label: isDe ? 'Wichtigste Station' : 'Key milestone',
       title: 'WaDaCon GmbH',
       meta: 'Hamburg · 2025 – 2026',
@@ -197,7 +201,7 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
         : 'Grafana & InfluxDB sensor pipelines that cut incident mean time to response by >60%.',
     },
     {
-      accent: 'text-purple-400',
+      accent: 'text-info',
       label: isDe ? 'Forschung' : 'Research',
       title: 'TU Clausthal (MSc)',
       meta: '2022 – 2023',
@@ -206,7 +210,7 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
         : 'Simulated 4-node ZanderLink network in VHDL with guaranteed reaction times <12 µs under Prof. Dr. Siemers.',
     },
     {
-      accent: 'text-cyan-400',
+      accent: 'text-teal',
       label: isDe ? 'KI & APIs' : 'AI & APIs',
       title: 'RadicalX & Netidentity',
       meta: '2021 – 2024',
@@ -215,7 +219,7 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
         : 'FastAPI backends with Vertex AI & Google Gemini, plus Power BI e-commerce KPI analytics.',
     },
     {
-      accent: 'text-emerald-400',
+      accent: 'text-accent-fg',
       label: isDe ? 'Aktuell' : 'Now',
       title: isDe ? 'neuefische Bootcamp' : 'neuefische Bootcamp',
       meta: 'AI · ML · Data Science · Data Eng · SE',
@@ -227,19 +231,19 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
   ];
 
   return (
-    <section id="career-trajectory" className="py-16 sm:py-20 border-t border-slate-800/80 relative overflow-hidden">
+    <section id="career-trajectory" className="py-16 sm:py-20 border-t border-line/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-accent-fg font-semibold uppercase tracking-wider mb-3">
               <TrendingUp className="w-4 h-4" aria-hidden="true" />
               {isDe ? 'Karriereverlauf' : 'Career trajectory'} · 2015 – 2026
             </div>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-fg tracking-tight">
               {isDe ? 'Technisches Wachstum im Zeitverlauf' : 'Engineering Growth Over Time'}
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
+            <p className="text-muted text-sm sm:text-base mt-2 leading-relaxed">
               {isDe
                 ? 'Systemdurchsatz, Latenzreduktion und Architekturkompetenz – von der Softwareentwicklung bis zu industrieller Telemetrie und KI-Infrastruktur.'
                 : 'Throughput, incident MTTR and architectural scope – from early full-stack engineering to industrial telemetry and AI infrastructure.'}
@@ -249,7 +253,7 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
           <div
             role="tablist"
             aria-label={isDe ? 'Metrik wählen' : 'Choose metric'}
-            className="flex flex-wrap items-center gap-1 p-1 bg-slate-900/80 border border-slate-800 rounded-xl self-start lg:self-auto"
+            className="flex flex-wrap items-center gap-1 p-1 bg-surface/80 border border-line rounded-xl self-start lg:self-auto"
           >
             {metricTabs.map((tab) => {
               const Icon = tab.icon;
@@ -261,14 +265,14 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveMetric(tab.id)}
-                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
-                    isActive ? 'text-slate-950' : 'text-slate-400 hover:text-white'
+                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
+                    isActive ? 'text-on-accent' : 'text-muted hover:text-fg'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="activeTrajectoryMetricPill"
-                      className="absolute inset-0 bg-emerald-500 rounded-lg"
+                      className="absolute inset-0 bg-accent rounded-lg"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -281,16 +285,16 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
         </div>
 
         {/* Chart Card */}
-        <div className="rounded-2xl p-4 sm:p-8 bg-slate-900/70 border border-slate-800 space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800 text-xs">
-            <span className="text-slate-200 font-semibold">{metricDescription}</span>
-            <div className="flex items-center gap-4 text-slate-400">
+        <div className="rounded-2xl p-4 sm:p-8 bg-surface/70 border border-line space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-line text-xs">
+            <span className="text-fg font-semibold">{metricDescription}</span>
+            <div className="flex items-center gap-4 text-muted">
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-violet-500" aria-hidden="true" />
+                <span className="w-2.5 h-2.5 rounded-full bg-info" aria-hidden="true" />
                 MSc thesis
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-500" aria-hidden="true" />
+                <span className="w-2.5 h-2.5 rounded-full bg-teal" aria-hidden="true" />
                 WaDaCon
               </span>
             </div>
@@ -301,66 +305,66 @@ export const CareerTrajectoryChartSection: React.FC<CareerTrajectoryChartSection
               <ComposedChart data={TRAJECTORY_DATA} margin={{ top: 16, right: 12, bottom: 8, left: -8 }}>
                 <defs>
                   <linearGradient id="impactGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor={c('--jd-accent')} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={c('--jd-accent')} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="cycleGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                    <stop offset="5%" stopColor={c('--jd-teal')} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={c('--jd-teal')} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="throughputGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
+                    <stop offset="5%" stopColor={c('--jd-series-1')} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={c('--jd-series-1')} stopOpacity={0} />
                   </linearGradient>
                 </defs>
 
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={c('--jd-grid')} vertical={false} />
                 <XAxis
                   dataKey="year"
-                  stroke="#475569"
-                  tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+                  stroke={c('--jd-axis')}
+                  tick={{ fill: c('--jd-text-muted'), fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}
                   tickLine={false}
                   interval="preserveStartEnd"
                   minTickGap={8}
                 />
                 <YAxis
-                  stroke="#475569"
+                  stroke={c('--jd-axis')}
                   domain={metric.domain}
                   width={44}
-                  tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}
+                  tick={{ fill: c('--jd-text-muted'), fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}
                   tickLine={false}
                   unit={metric.unit}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#334155', strokeDasharray: '4 4' }} />
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: c('--jd-border-strong'), strokeDasharray: '4 4' }} />
 
                 <Area type="monotone" dataKey={metric.key as string} fill={`url(#${metric.gradient})`} stroke="none" />
                 <Line
                   type="monotone"
                   dataKey={metric.key as string}
-                  stroke={metric.color}
+                  stroke={metricColor}
                   strokeWidth={3}
-                  dot={{ r: 4, fill: '#0f172a', stroke: metric.color, strokeWidth: 2 }}
-                  activeDot={{ r: 7, fill: metric.color, stroke: '#ffffff', strokeWidth: 2 }}
+                  dot={{ r: 4, fill: c('--jd-surface'), stroke: metricColor, strokeWidth: 2 }}
+                  activeDot={{ r: 7, fill: metricColor, stroke: c('--jd-surface'), strokeWidth: 2 }}
                 />
-                <ReferenceDot x={thesisPoint.year} y={thesisPoint[metric.key] as number} r={6} fill="#8b5cf6" stroke="#ffffff" strokeWidth={2} />
-                <ReferenceDot x={wadaconPoint.year} y={wadaconPoint[metric.key] as number} r={6} fill="#06b6d4" stroke="#ffffff" strokeWidth={2} />
+                <ReferenceDot x={thesisPoint.year} y={thesisPoint[metric.key] as number} r={6} fill={c('--jd-info')} stroke={c('--jd-surface')} strokeWidth={2} />
+                <ReferenceDot x={wadaconPoint.year} y={wadaconPoint[metric.key] as number} r={6} fill={c('--jd-teal')} stroke={c('--jd-surface')} strokeWidth={2} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6 border-t border-line">
             {highlights.map((h) => (
               <div
                 key={h.title}
-                className={`p-4 rounded-2xl bg-slate-950/60 border space-y-1 ${h.featured ? 'border-emerald-500/30' : 'border-slate-800'}`}
+                className={`p-4 rounded-2xl bg-bg/60 border space-y-1 ${h.featured ? 'border-accent/30' : 'border-line'}`}
               >
                 <span className={`text-xs font-semibold ${h.accent} flex items-center gap-1`}>
                   {h.featured && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
                   {h.label}
                 </span>
-                <div className="text-base font-bold text-white font-display">{h.title}</div>
-                <div className="text-[11px] text-slate-500 font-mono">{h.meta}</div>
-                <p className="text-xs text-slate-300 leading-relaxed pt-1">{h.body}</p>
+                <div className="text-base font-bold text-fg font-display">{h.title}</div>
+                <div className="text-xs text-subtle font-mono">{h.meta}</div>
+                <p className="text-xs text-muted leading-relaxed pt-1">{h.body}</p>
               </div>
             ))}
           </div>

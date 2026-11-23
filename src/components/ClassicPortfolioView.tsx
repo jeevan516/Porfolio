@@ -38,18 +38,18 @@ const ROLES = [
   'Distributed Systems & Load Balancer Specialist',
 ];
 
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
-const btnPrimary = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm transition-colors ${focusRing}`;
-const btnSecondary = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-slate-200 hover:text-emerald-300 font-semibold text-sm transition-colors ${focusRing}`;
+const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60';
+const btnPrimary = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-on-accent font-semibold text-sm transition-colors ${focusRing}`;
+const btnSecondary = `inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-line-strong hover:border-accent/50 text-fg hover:text-accent-fg font-semibold text-sm transition-colors ${focusRing}`;
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const SectionHeader: React.FC<{ tag: string; title: string; desc?: string }> = ({ tag, title, desc }) => (
   <div className="max-w-2xl mb-10">
-    <div className="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">{tag}</div>
-    <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">{title}</h2>
-    {desc && <p className="text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">{desc}</p>}
+    <div className="text-xs font-mono text-accent-fg font-semibold uppercase tracking-wider mb-3">{tag}</div>
+    <h2 className="text-3xl sm:text-4xl font-display font-bold text-fg tracking-tight">{title}</h2>
+    {desc && <p className="text-muted text-sm sm:text-base mt-2 leading-relaxed">{desc}</p>}
   </div>
 );
 
@@ -109,18 +109,22 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
     window.addEventListener('resize', setup);
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(6, 10, 18, 0.15)';
+      // Fade old glyphs to transparent (works on light and dark pages)
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
       ctx.fillRect(0, 0, width, HEIGHT);
+      ctx.globalCompositeOperation = 'source-over';
       ctx.font = '12px "JetBrains Mono", monospace';
       for (let i = 0; i < drops.length; i++) {
         const y = drops[i] * COL;
-        ctx.fillStyle = Math.random() > 0.85 ? '#6ee7b7' : 'rgba(16, 185, 129, 0.4)';
+        ctx.fillStyle = Math.random() > 0.85 ? '#f5b45e' : 'rgba(242, 165, 65, 0.4)';
         ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * COL, y);
         if (y > HEIGHT && Math.random() > 0.975) drops[i] = 0;
         drops[i] += 0.55;
       }
-      animId = requestAnimationFrame(draw);
+      if (!reduceMotion) animId = requestAnimationFrame(draw);
     };
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     draw();
 
     return () => {
@@ -149,38 +153,38 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
   ];
 
   return (
-    <div className="w-full relative min-h-screen text-slate-100 selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div className="w-full relative min-h-screen text-fg selection:bg-accent/30 selection:text-accent-fg">
       {/* Hero */}
-      <section className="relative pt-12 pb-16 sm:pb-20 overflow-hidden border-b border-slate-800/80">
+      <section className="relative pt-12 pb-16 sm:pb-20 overflow-hidden border-b border-line/80">
         <div className="absolute inset-x-0 top-0 h-[420px] pointer-events-none opacity-30 -z-10 overflow-hidden" aria-hidden="true">
           <canvas ref={matrixCanvasRef} className="w-full h-full" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#070a12]/70 to-[#070a12]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg/70 to-bg" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-emerald-500/30 text-xs text-emerald-300 mb-6">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface/80 border border-accent/30 text-xs text-accent-fg mb-6">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true" />
             {isDe ? 'Sofort verfügbar · KI- & ML-Bootcamp' : 'Available immediately · AI & ML Bootcamp'}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7 space-y-6 min-w-0">
               <div className="space-y-2">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-display text-white tracking-tight">
-                  Jeevan <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Dutta</span>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-display text-fg tracking-tight">
+                  Jeevan <span className="text-accent-fg">Dutta</span>
                 </h1>
                 <div className="min-h-8 flex items-center" aria-live="off">
-                  <p className="text-base sm:text-xl font-mono text-emerald-300 font-medium">
+                  <p className="text-base sm:text-xl font-mono text-accent-fg font-medium">
                     <span className="sr-only">{ROLES.join(', ')}</span>
                     <span aria-hidden="true">
                       {subText}
-                      <span className="inline-block w-2 h-5 ml-1 align-middle bg-emerald-400 animate-pulse" />
+                      <span className="inline-block w-2 h-5 ml-1 align-middle bg-accent animate-pulse" />
                     </span>
                   </p>
                 </div>
               </div>
 
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+              <p className="text-muted text-sm sm:text-base leading-relaxed max-w-2xl">
                 {isDe
                   ? 'Verbindung von Datenintelligenz & IT-Engineering zur Optimierung industrieller Prozesse. Entwicklung von Observability-Pipelines, KI-gestützten Systemen und robuster IT-Infrastruktur mit Masterabschluss der TU Clausthal.'
                   : 'Bridging Data Intelligence & IT Engineering to revolutionize industrial operations. I build observability pipelines, AI-powered systems, and resilient infrastructure that transform how industries operate.'}
@@ -197,10 +201,10 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
                     {isDe ? 'Lebenslauf (PDF)' : 'Download CV'}
                   </button>
                 )}
-                <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" title="LinkedIn" className={`p-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-300 transition-colors ${focusRing}`}>
+                <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" title="LinkedIn" className={`p-2.5 rounded-xl border border-line-strong hover:border-accent/50 text-muted hover:text-accent-fg transition-colors ${focusRing}`}>
                   <Linkedin className="w-5 h-5" />
                 </a>
-                <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub" className={`p-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-300 transition-colors ${focusRing}`}>
+                <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub" className={`p-2.5 rounded-xl border border-line-strong hover:border-accent/50 text-muted hover:text-accent-fg transition-colors ${focusRing}`}>
                   <Github className="w-5 h-5" />
                 </a>
                 <button
@@ -208,33 +212,33 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
                   onClick={handleCopyEmail}
                   aria-label={copiedEmail ? 'Email copied' : 'Copy email address'}
                   title={copiedEmail ? 'Copied' : 'Copy email'}
-                  className={`p-2.5 rounded-xl border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-300 transition-colors ${focusRing}`}
+                  className={`p-2.5 rounded-xl border border-line-strong hover:border-accent/50 text-muted hover:text-accent-fg transition-colors ${focusRing}`}
                 >
-                  {copiedEmail ? <Check className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
+                  {copiedEmail ? <Check className="w-5 h-5 text-accent-fg" /> : <Copy className="w-5 h-5" />}
                 </button>
                 <span aria-live="polite" className="sr-only">
                   {copiedEmail ? 'Email copied to clipboard' : ''}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-slate-800/80">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-line/80">
                 {[
                   { value: '10+', label: isDe ? 'Jahre Erfahrung' : 'Years experience' },
                   { value: '5', label: isDe ? 'Unternehmen' : 'Companies' },
                   { value: '60%', label: isDe ? 'Schnellere Zyklen' : 'Cycle time reduction' },
                   { value: 'MSc', label: 'TU Clausthal' },
                 ].map((s) => (
-                  <div key={s.label} className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-                    <div className="text-xl sm:text-2xl font-bold font-display text-emerald-400">{s.value}</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5">{s.label}</div>
+                  <div key={s.label} className="p-3 rounded-xl bg-surface/60 border border-line text-center">
+                    <div className="text-xl sm:text-2xl font-bold font-display text-accent-fg">{s.value}</div>
+                    <div className="text-xs text-muted mt-0.5">{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="lg:col-span-5 min-w-0">
-              <div className="rounded-2xl bg-slate-950/80 p-4 border border-slate-800 space-y-3">
-                <div className="flex items-center gap-1.5 pb-2 border-b border-slate-800 text-xs font-semibold text-emerald-400">
+              <div className="rounded-2xl bg-bg/80 p-4 border border-line space-y-3">
+                <div className="flex items-center gap-1.5 pb-2 border-b border-line text-xs font-semibold text-accent-fg">
                   <Cpu className="w-4 h-4" aria-hidden="true" />
                   {isDe ? 'Sequenzmodell-Architektur' : 'Deep sequence model'}
                 </div>
@@ -257,11 +261,11 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
           {PROJECTS_DATA.map((proj) => (
             <article
               key={proj.id}
-              className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 hover:-translate-y-1 transition-[border-color,translate] duration-300 flex flex-col justify-between"
+              className="p-6 rounded-2xl bg-surface/70 border border-line hover:border-line-strong hover:-translate-y-1 transition-[border-color,translate] duration-300 flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/80 flex items-center justify-center text-emerald-400">
+                  <div className="w-10 h-10 rounded-xl bg-surface-2 border border-line-strong/80 flex items-center justify-center text-accent-fg">
                     {proj.category === 'ai-ml' ? <Cpu className="w-5 h-5" /> : proj.category === 'observability' ? <Activity className="w-5 h-5" /> : <Layers className="w-5 h-5" />}
                   </div>
                   {proj.githubUrl && (
@@ -271,7 +275,7 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
                       rel="noopener noreferrer"
                       aria-label={`${proj.title} on GitHub`}
                       title="GitHub"
-                      className={`p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${focusRing}`}
+                      className={`p-2 rounded-lg text-muted hover:text-fg hover:bg-surface-2 transition-colors ${focusRing}`}
                     >
                       <Github className="w-4 h-4" />
                     </a>
@@ -279,32 +283,32 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
                 </div>
 
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold font-display text-white leading-snug">{proj.title}</h3>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-1">{proj.tagline}</p>
+                  <h3 className="text-base sm:text-lg font-bold font-display text-fg leading-snug">{proj.title}</h3>
+                  <p className="text-xs text-muted mt-1 line-clamp-1">{proj.tagline}</p>
                 </div>
 
-                <p className="text-sm text-slate-300 leading-relaxed line-clamp-4">{proj.description}</p>
+                <p className="text-sm text-muted leading-relaxed line-clamp-4">{proj.description}</p>
 
                 <div className="flex flex-wrap gap-1.5">
                   {proj.tags.slice(0, 4).map((t) => (
-                    <span key={t} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800/70 border border-slate-700/50 text-slate-300">
+                    <span key={t} className="text-xs font-mono px-2 py-0.5 rounded-md bg-surface-2/70 border border-line-strong/50 text-muted">
                       {t}
                     </span>
                   ))}
                   {proj.tags.length > 4 && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-slate-800 text-slate-400">+{proj.tags.length - 4}</span>
+                    <span className="text-xs font-mono px-1.5 py-0.5 rounded-md bg-surface-2 text-muted">+{proj.tags.length - 4}</span>
                   )}
                 </div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between gap-2 text-xs">
-                <span className="text-emerald-400 truncate font-medium">{proj.metrics?.[0]?.value || proj.status}</span>
+              <div className="pt-4 mt-4 border-t border-line flex items-center justify-between gap-2 text-xs">
+                <span className="text-accent-fg truncate font-medium">{proj.metrics?.[0]?.value || proj.status}</span>
                 {proj.githubUrl && (
                   <a
                     href={proj.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`text-slate-300 hover:text-emerald-300 inline-flex items-center gap-1 shrink-0 rounded ${focusRing}`}
+                    className={`text-muted hover:text-accent-fg inline-flex items-center gap-1 shrink-0 rounded ${focusRing}`}
                   >
                     {isDe ? 'Repository' : 'View repo'}
                     <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -317,7 +321,7 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
       </section>
 
       {/* Skills */}
-      <section className="py-16 sm:py-20 border-t border-slate-800/80">
+      <section className="py-16 sm:py-20 border-t border-line/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             tag={isDe ? 'Kompetenzen' : 'Skills'}
@@ -326,19 +330,19 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {SKILL_CATEGORIES.map((cat) => (
-              <div key={cat.title} className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition-colors space-y-4">
-                <div className="flex items-center gap-2.5 pb-3 border-b border-slate-800">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <div key={cat.title} className="p-6 rounded-2xl bg-surface/70 border border-line hover:border-line-strong transition-colors space-y-4">
+                <div className="flex items-center gap-2.5 pb-3 border-b border-line">
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent-fg flex items-center justify-center">
                     <Zap className="w-4 h-4" aria-hidden="true" />
                   </div>
-                  <h3 className="font-bold text-sm text-white font-display">{cat.title}</h3>
+                  <h3 className="font-bold text-sm text-fg font-display">{cat.title}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {cat.skills.map((s) => (
                     <span
                       key={s.name}
                       className={`text-xs px-3 py-1 rounded-full border ${
-                        s.highlight ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold' : 'bg-slate-800/60 border-slate-700/50 text-slate-300'
+                        s.highlight ? 'bg-accent/10 border-accent/40 text-accent-fg font-semibold' : 'bg-surface-2/60 border-line-strong/50 text-muted'
                       }`}
                     >
                       {s.name}
@@ -352,44 +356,44 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
       </section>
 
       {/* Experience */}
-      <section className="py-16 sm:py-20 border-t border-slate-800/80">
+      <section className="py-16 sm:py-20 border-t border-line/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             tag={isDe ? 'Werdegang' : 'Career'}
             title={isDe ? 'Berufserfahrung' : 'Work Experience'}
             desc={isDe ? 'Observability, KI-Engineering, Datenanalyse und Full-Stack-Entwicklung.' : 'A track record across observability, AI engineering, data analysis, and full-stack development.'}
           />
-          <ol className="space-y-6 relative before:absolute before:top-0 before:bottom-0 before:left-[11px] before:w-0.5 before:bg-slate-800">
+          <ol className="space-y-6 relative before:absolute before:top-0 before:bottom-0 before:left-[11px] before:w-0.5 before:bg-surface-2">
             {EXPERIENCES.map((exp) => (
               <li key={exp.id} className="relative pl-10">
-                <div className="absolute left-0 top-6 w-6 h-6 rounded-full bg-slate-900 border-2 border-emerald-400 flex items-center justify-center" aria-hidden="true">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                <div className="absolute left-0 top-6 w-6 h-6 rounded-full bg-surface border-2 border-accent flex items-center justify-center" aria-hidden="true">
+                  <div className="w-2 h-2 rounded-full bg-accent" />
                 </div>
-                <article className="p-5 sm:p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition-colors space-y-3">
+                <article className="p-5 sm:p-6 rounded-2xl bg-surface/70 border border-line hover:border-line-strong transition-colors space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="text-lg font-bold text-white font-display">{exp.company}</h3>
-                      <div className="text-sm font-semibold text-emerald-300">{exp.role}</div>
+                      <h3 className="text-lg font-bold text-fg font-display">{exp.company}</h3>
+                      <div className="text-sm font-semibold text-accent-fg">{exp.role}</div>
                     </div>
-                    <span className="self-start text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 shrink-0">
+                    <span className="self-start text-xs font-mono px-2.5 py-1 rounded-full bg-accent/10 text-accent-fg border border-accent/30 shrink-0">
                       {exp.period}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                  <div className="flex items-center gap-1.5 text-xs text-muted">
                     <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
                     {exp.location}
                   </div>
-                  <ul className="space-y-1.5 pt-1 text-sm text-slate-300 leading-relaxed">
+                  <ul className="space-y-1.5 pt-1 text-sm text-muted leading-relaxed">
                     {exp.achievements.slice(0, 4).map((a, aIdx) => (
                       <li key={aIdx} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+                        <CheckCircle2 className="w-4 h-4 text-accent-fg shrink-0 mt-0.5" aria-hidden="true" />
                         <span>{a}</span>
                       </li>
                     ))}
                   </ul>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {exp.technologies.slice(0, 6).map((tech) => (
-                      <span key={tech} className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800 text-slate-300">
+                      <span key={tech} className="text-xs font-mono px-2 py-0.5 rounded-md bg-surface-2 text-muted">
                         {tech}
                       </span>
                     ))}
@@ -404,19 +408,19 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
       <CareerTrajectoryChartSection language={language} />
 
       {/* Education & Certifications */}
-      <section className="py-16 sm:py-20 border-t border-slate-800/80">
+      <section className="py-16 sm:py-20 border-t border-line/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-4">
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-emerald-400">
+          <div className="p-6 rounded-2xl bg-surface/70 border border-line space-y-4">
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-accent-fg">
               <GraduationCap className="w-4 h-4" aria-hidden="true" />
               {isDe ? 'Studium' : 'Education'}
             </h2>
             <div>
-              <h3 className="text-lg font-bold text-white font-display">Master of Science — Informatics</h3>
-              <div className="text-sm text-slate-200 mt-1 font-medium">Technische Universität Clausthal</div>
-              <div className="text-xs text-slate-400 font-mono mt-0.5">October 2019 — June 2023 · Germany</div>
+              <h3 className="text-lg font-bold text-fg font-display">Master of Science — Informatics</h3>
+              <div className="text-sm text-fg mt-1 font-medium">Technische Universität Clausthal</div>
+              <div className="text-xs text-muted font-mono mt-0.5">October 2019 — June 2023 · Germany</div>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-muted leading-relaxed">
               Master’s Thesis:{' '}
               <em>
                 “Definition, Development and Simulation of a 4-Node Communication Network for Reliable Reaction Times Inside Distributed
@@ -426,24 +430,24 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-4">
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-emerald-400">
+          <div className="p-6 rounded-2xl bg-surface/70 border border-line space-y-4">
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-accent-fg">
               <ShieldCheck className="w-4 h-4" aria-hidden="true" />
               {isDe ? 'Zertifizierungen' : 'Certifications'} ({CERTIFICATIONS.length})
             </h2>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-2 text-sm text-muted">
               {CERTIFICATIONS.slice(0, 5).map((c) => (
-                <li key={c.id} className="flex items-center justify-between gap-3 pb-2 border-b border-slate-800 last:border-0">
+                <li key={c.id} className="flex items-center justify-between gap-3 pb-2 border-b border-line last:border-0">
                   <span className="flex items-center gap-2 min-w-0">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" aria-hidden="true" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent-fg shrink-0" aria-hidden="true" />
                     <span className="truncate">{c.title}</span>
                   </span>
-                  <span className="text-[11px] text-slate-500 shrink-0">{c.issuer}</span>
+                  <span className="text-xs text-subtle shrink-0">{c.issuer}</span>
                 </li>
               ))}
             </ul>
             {CERTIFICATIONS.length > 5 && (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-subtle">
                 +{CERTIFICATIONS.length - 5} {isDe ? 'weitere' : 'more'}
               </p>
             )}
@@ -455,7 +459,7 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
       <VisitorTrackerBlock language={language} />
 
       {/* Contact */}
-      <section className="py-16 sm:py-20 border-t border-slate-800/80">
+      <section className="py-16 sm:py-20 border-t border-line/80">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             tag={isDe ? 'Kontakt' : 'Contact'}
@@ -471,18 +475,18 @@ export const ClassicPortfolioView: React.FC<ClassicPortfolioViewProps> = ({ onOp
                   key={c.label}
                   href={c.href}
                   {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  className={`p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/50 hover:-translate-y-0.5 transition-[border-color,translate] space-y-2 group min-w-0 ${focusRing}`}
+                  className={`p-5 rounded-2xl bg-surface/70 border border-line hover:border-accent/50 hover:-translate-y-0.5 transition-[border-color,translate] space-y-2 group min-w-0 ${focusRing}`}
                 >
-                  <Icon className="w-5 h-5 text-emerald-400" aria-hidden="true" />
-                  <div className="text-xs text-slate-400">{c.label}</div>
-                  <div className="text-sm text-white group-hover:text-emerald-300 truncate">{c.value}</div>
+                  <Icon className="w-5 h-5 text-accent-fg" aria-hidden="true" />
+                  <div className="text-xs text-muted">{c.label}</div>
+                  <div className="text-sm text-fg group-hover:text-accent-fg truncate">{c.value}</div>
                 </a>
               );
             })}
           </div>
 
-          <p className="mt-6 flex items-center gap-1.5 text-xs text-slate-400">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+          <p className="mt-6 flex items-center gap-1.5 text-xs text-muted">
+            <MapPin className="w-3.5 h-3.5 text-accent-fg" aria-hidden="true" />
             {PERSONAL_INFO.location}
           </p>
         </div>

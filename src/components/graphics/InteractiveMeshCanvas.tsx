@@ -7,6 +7,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
+import { jdColor } from '../../utils/tokens';
 
 export const InteractiveMeshCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,14 +37,15 @@ export const InteractiveMeshCanvas: React.FC = () => {
       vx: number;
       vy: number;
       radius: number;
-      color: string;
+      color: () => string;
     }> = [];
 
+    // Brand colours from the JD tokens (re-read each frame from a cache, so a theme switch applies at once)
     const colors = [
-      'rgba(16, 185, 129, 0.7)',  // Emerald
-      'rgba(6, 182, 212, 0.7)',   // Cyan
-      'rgba(59, 130, 246, 0.7)',  // Blue
-      'rgba(168, 85, 247, 0.6)',  // Purple
+      () => jdColor('--jd-accent', 0.75),
+      () => jdColor('--jd-teal', 0.7),
+      () => jdColor('--jd-accent', 0.55),
+      () => jdColor('--jd-info', 0.5),
     ];
 
     for (let i = 0; i < nodeCount; i++) {
@@ -102,9 +104,10 @@ export const InteractiveMeshCanvas: React.FC = () => {
         // Draw node
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
-        ctx.fillStyle = a.color;
+        const c = a.color();
+        ctx.fillStyle = c;
         ctx.shadowBlur = 8;
-        ctx.shadowColor = a.color;
+        ctx.shadowColor = c;
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -120,7 +123,7 @@ export const InteractiveMeshCanvas: React.FC = () => {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(16, 185, 129, ${alpha})`;
+            ctx.strokeStyle = jdColor('--jd-teal', alpha * 1.4);
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }

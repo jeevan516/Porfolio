@@ -4,9 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { TargetRole } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { ResearchVisualsSection } from './components/ResearchVisualsSection';
+import { RoleFilterBar } from './components/RoleFilterBar';
 import { NeuefischeJourney } from './components/NeuefischeJourney';
 import { AboutSection } from './components/AboutSection';
 import { EducationSection } from './components/EducationSection';
@@ -25,6 +28,7 @@ import { ResumeExportModal } from './components/ResumeExportModal';
 import { GitHubSyncModal } from './components/GitHubSyncModal';
 import { ClassicPortfolioView } from './components/ClassicPortfolioView';
 import { JeevanChatbot } from './components/JeevanChatbot';
+import { Reveal } from './components/ui/Reveal';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -56,43 +60,38 @@ export default function App() {
     });
   };
 
+  // Theme: follow the OS until the visitor picks one with the toggle; the choice is stored and
+  // written to <html data-theme>, which jd.css honours both ways.
+  const prefersDark = () =>
+    typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const stored = localStorage.getItem('jeevan_portfolio_theme');
-      return (stored as 'dark' | 'light') || 'dark';
+      if (stored === 'dark' || stored === 'light') return stored;
     } catch {
-      return 'dark';
+      /* storage blocked */
     }
+    return prefersDark() ? 'dark' : 'light';
   });
 
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light-theme');
-      document.documentElement.classList.remove('dark');
-      document.body.classList.add('light-theme');
-    } else {
-      document.documentElement.classList.remove('light-theme');
-      document.documentElement.classList.add('dark');
-      document.body.classList.remove('light-theme');
-    }
+    document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Drive the cursor spotlight via CSS variables, throttled to one update per frame
+  // While no choice is stored, keep following OS changes
   useEffect(() => {
-    let frame = 0;
-    const onMove = (e: PointerEvent) => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        document.documentElement.style.setProperty('--spot-x', `${e.clientX}px`);
-        document.documentElement.style.setProperty('--spot-y', `${e.clientY}px`);
-        frame = 0;
-      });
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (!mq) return;
+    const onChange = (e: MediaQueryListEvent) => {
+      try {
+        if (localStorage.getItem('jeevan_portfolio_theme')) return;
+      } catch {
+        /* storage blocked: follow the OS */
+      }
+      setTheme(e.matches ? 'dark' : 'light');
     };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      if (frame) cancelAnimationFrame(frame);
-    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
   }, []);
 
   const toggleTheme = () => {
@@ -138,9 +137,10 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${theme === 'dark' ? 'dark-theme bg-[#070a12] text-[#e2e8f0]' : 'light-theme bg-[#f8fafc] text-[#0f172a]'} selection:bg-emerald-500/30 selection:text-emerald-200`}>
+    <MotionConfig reducedMotion="user">
+    <div className="min-h-screen flex flex-col bg-bg text-fg">
 
-      {/* Ambient background layers */}
+      {/* Ambient background: slow amber/teal aurora + cursor spotlight (both stop under reduced motion) */}
       <div className="aurora-backdrop" aria-hidden="true">
         <div className="aurora-grid" />
       </div>
@@ -161,15 +161,12 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="relative z-[2] flex-1">
+      <main id="main" tabIndex={-1} className="relative z-[2] flex-1 focus:outline-none">
         {activeView === 'showcase' ? (
           <>
-            {/* High-Impact Hero with Live Graphics & Role Filter */}
+            {/* Hero: one message, primary CTA, headline facts */}
             <Hero
-              activeRole={activeRole}
-              setActiveRole={setActiveRole}
               onOpenContact={() => setIsContactOpen(true)}
-              onOpenBrief={() => setIsBriefOpen(true)}
               onOpenResume={() => setIsResumeOpen(true)}
               language={language}
             />
@@ -178,37 +175,63 @@ export default function App() {
             <NeuefischeJourney language={language} />
 
             {/* About & Dual Foundation Section */}
+            <Reveal>
             <AboutSection language={language} />
+            </Reveal>
+
+            {/* Interactive research visualisations (VLSI, LSTM, IoT), moved out of the hero */}
+            <ResearchVisualsSection language={language} />
 
             {/* University Education & Master's Thesis Research Project */}
+            <Reveal>
             <EducationSection language={language} />
+            </Reveal>
 
             {/* Master's Thesis Dedicated Deep-Dive Block (TU Clausthal & Prof. Dr. Christian Siemers) */}
+            <Reveal>
             <MasterThesisSection
               onOpenContact={() => setIsContactOpen(true)}
               onOpenChatbot={() => setChatbotOpenSignal((n) => n + 1)}
             />
+            </Reveal>
+
+            {/* Role filter: tailors the Projects and Skills sections below */}
+            <RoleFilterBar activeRole={activeRole} setActiveRole={setActiveRole} language={language} />
 
             {/* Projects with Real-World Industrial & AI Impact */}
+            <Reveal>
             <ProjectsSection activeRole={activeRole} language={language} />
+            </Reveal>
 
             {/* Comprehensive Skills & Verified Certifications */}
+            <Reveal>
             <SkillsSection activeRole={activeRole} language={language} />
+            </Reveal>
 
             {/* Experience & Academic Trajectory (WaDaCon & TU Clausthal) */}
+            <Reveal>
             <ExperienceTimeline />
+            </Reveal>
 
             {/* Career Progression Trajectory & Impact Growth Line Chart (Recharts) */}
+            <Reveal>
             <CareerTrajectoryChartSection language={language} />
+            </Reveal>
 
             {/* Academic Reference & Research Supervised by Prof. Dr. Christian Siemers */}
+            <Reveal>
             <AcademicReferenceSection />
+            </Reveal>
 
             {/* Interactive Industrial Observability & System Architecture Studio */}
+            <Reveal>
             <InteractiveArchitectureStudio language={language} />
+            </Reveal>
 
             {/* Dedicated Technology News & Google Search Grounding Block */}
+            <Reveal>
             <TechNewsSection language={language} />
+            </Reveal>
 
 
           </>
@@ -273,5 +296,6 @@ export default function App() {
 
 
     </div>
+    </MotionConfig>
   );
 }

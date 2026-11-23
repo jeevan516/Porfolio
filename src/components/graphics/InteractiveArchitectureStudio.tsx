@@ -169,7 +169,7 @@ export const InteractiveArchitectureStudio: React.FC<InteractiveArchitectureStud
       subtitle: isDe ? 'HAProxy / NGINX L4 & L7 Cluster mit Keepalived' : 'Dual HAProxy / NGINX L4 & L7 Cluster',
       tag: isDe ? 'Cloud & Infrastruktur · HA-Systeme' : 'Cloud & Infrastructure · HA Systems',
       latency: '< 0.4 ms Round-Robin',
-      badgeColor: 'from-blue-500 to-indigo-500',
+      badgeColor: 'from-info to-info',
       description: isDe
         ? 'Redundanter Load-Balancing-Cluster mit Keepalived VRRP Virtual-IP-Failover, aktiven HTTP Layer-7 Health-Checks und gewichteter Round-Robin-Verteilung zur Weiterleitung hochfrequenter industrieller Sensordaten ohne Paketverlust.'
         : 'Redundant Load Balancing cluster with Keepalived VRRP virtual IP failover, active HTTP Layer 7 health checks, and weighted round-robin distribution to route high-frequency industrial telemetry across backend clusters with zero packet drop.',
@@ -204,7 +204,7 @@ backend edge_ingestion_workers
       subtitle: isDe ? 'WaDaCon Next-Gen MRF Recyclinganlage' : 'WaDaCon Next-Gen MRF Recycling Facility',
       tag: isDe ? 'Industrieproduktion · WaDaCon GmbH' : 'Industry Production · WaDaCon GmbH',
       latency: isDe ? '10 ms Hochfrequenzabtastung' : '10 ms High-Frequency Sampling',
-      badgeColor: 'from-emerald-500 to-teal-500',
+      badgeColor: 'from-accent to-teal',
       description: isDe
         ? 'Gehärtete IoT-Edge-Knoten und optische Sortieranlagen, die Vibrations-, Temperatur- und Pneumatikdaten über isolierte Zero-Trust Teleport-Edge-Tunnel übertragen.'
         : 'Ruggedized IoT edge nodes and optical sorting machines transmitting vibration, temperature, and pneumatic pressure metrics via isolated zero-trust Teleport edge tunnels.',
@@ -229,7 +229,7 @@ prometheusGauge.set({ facility: 'hamburg_mrf' }, metric.isoVibRms);`,
       subtitle: isDe ? 'Prometheus, Grafana & Echtzeit-Alertmanager' : 'Prometheus, Grafana & Real-time Alertmanager',
       tag: isDe ? 'Cloud & Infrastruktur' : 'Cloud & Infrastructure',
       latency: isDe ? '50 ms Push-Aggregation' : '50 ms Push Aggregation',
-      badgeColor: 'from-cyan-500 to-blue-500',
+      badgeColor: 'from-teal to-info',
       description: isDe
         ? 'Echtzeit-Telemetrie-Pipelines zur Überwachung industrieller Anlagengesundheit. Automatische Prometheus-Alerting-Regeln für Schwingungsanomalien mit MS Teams & Webhook-Integration.'
         : 'Real-time telemetry ingestion pipelines aggregating industrial facility health. Implements automated Prometheus alert rules dispatching instant webhooks for bearing anomalies.',
@@ -254,7 +254,7 @@ annotations:
       subtitle: isDe ? 'Räumlich-zeitliche Sequenzprognosen' : 'Spatial-Temporal Sequence Forecasting',
       tag: isDe ? 'Deep Learning & ML Ops' : 'Deep Learning & ML Ops',
       latency: isDe ? '24-48 Std. Vorlauf' : '24-Hour Horizon Ahead',
-      badgeColor: 'from-amber-500 to-orange-500',
+      badgeColor: 'from-warning to-warning',
       description: isDe
         ? 'LSTM-Neuronale Modelle prognostizieren mechanische Verschleißmuster 24 bis 48 Stunden vor dem physischen Bauteilversagen, um Stillstände in Recyclinganlagen zu verhindern.'
         : 'LSTM neural models forecasting mechanical failure patterns 24-48 hours before physical degradation, eliminating catastrophic sorter downtime in recycling plants.',
@@ -279,7 +279,7 @@ annotations:
       subtitle: isDe ? 'Xilinx FPGA & VHDL-Zustandslogik' : 'Xilinx FPGA & VHDL State Logic',
       tag: isDe ? 'Forschung · TU Clausthal' : 'Academic Research · TU Clausthal',
       latency: isDe ? '< 12 µs (Jitterfrei)' : '< 12 µs (Zero Jitter)',
-      badgeColor: 'from-purple-500 to-indigo-500',
+      badgeColor: 'from-info to-info',
       description: isDe
         ? 'ZanderLink 4-Knoten deterministisches Busprotokoll, entwickelt unter Prof. Dr. Christian Siemers. Takt-synchronisierte Round-Robin-Übertragung und hardwarenahe CRC-5-Prüfsummen.'
         : 'ZanderLink 4-Node deterministic bus protocol created under Prof. Dr. Christian Siemers. Features clock-synchronized round-robin transmission and hardware-level CRC-5 verification.',
@@ -353,27 +353,27 @@ vrrp_instance VI_TELEMETRY {
 }`;
 
   return (
-    <section id="observability" className="py-16 sm:py-20 border-t border-slate-800/80 relative overflow-hidden">
+    <section id="observability" className="py-16 sm:py-20 border-t border-line/80 relative overflow-hidden">
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-accent-fg font-semibold uppercase tracking-wider mb-3">
               <Zap className="w-4 h-4" aria-hidden="true" />
               {t.tag}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-fg tracking-tight">
               {t.title}
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
+            <p className="text-muted text-sm sm:text-base mt-2 leading-relaxed">
               {t.desc}
             </p>
           </div>
 
           {/* Quick Simulation controls */}
-          <div className="flex flex-wrap items-center gap-3 p-2 bg-slate-900/80 border border-slate-800 rounded-xl self-start lg:self-auto">
+          <div className="flex flex-wrap items-center gap-3 p-2 bg-surface/80 border border-line rounded-xl self-start lg:self-auto">
             <button
               type="button"
               aria-pressed={!isSimulating}
@@ -381,17 +381,17 @@ vrrp_instance VI_TELEMETRY {
                 playTactileClick();
                 setIsSimulating(!isSimulating);
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                 isSimulating
-                  ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
-                  : 'bg-slate-800 text-slate-300 border-slate-700'
+                  ? 'bg-accent/15 text-accent-fg border-accent/40'
+                  : 'bg-surface-2 text-muted border-line-strong'
               }`}
             >
               {isSimulating ? <Pause className="w-3.5 h-3.5" aria-hidden="true" /> : <Play className="w-3.5 h-3.5" aria-hidden="true" />}
               <span>{isSimulating ? t.simActive : t.simPaused}</span>
             </button>
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-300 pr-2">
-              <span className={`w-2 h-2 rounded-full ${isSimulating ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} aria-hidden="true" />
+            <div className="flex items-center gap-1.5 text-xs font-mono text-muted pr-2">
+              <span className={`w-2 h-2 rounded-full ${isSimulating ? 'bg-accent animate-pulse' : 'bg-line-strong'}`} aria-hidden="true" />
               <span>{t.vipActive}</span>
             </div>
           </div>
@@ -412,33 +412,33 @@ vrrp_instance VI_TELEMETRY {
                   playTactileClick();
                   setSelectedLayer(layer.id as typeof selectedLayer);
                 }}
-                className={`text-left p-4 rounded-2xl border transition-[border-color,background-color,translate] duration-200 hover:-translate-y-0.5 relative min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                className={`text-left p-4 rounded-2xl border transition-[border-color,background-color,translate] duration-200 hover:-translate-y-0.5 relative min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                   isSelected
-                    ? 'bg-slate-900 border-emerald-400/70'
-                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-surface border-accent/70'
+                    : 'bg-surface/60 border-line hover:border-line-strong'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 text-xs mb-2">
-                  <span className="font-mono text-slate-500 font-bold">0{idx + 1}</span>
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold truncate ${
-                    isSelected ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-slate-800 text-slate-400'
+                  <span className="font-mono text-subtle font-bold">0{idx + 1}</span>
+                  <span className={`px-1.5 py-0.5 rounded text-xs font-mono font-bold truncate ${
+                    isSelected ? 'bg-accent-soft text-accent-fg border border-accent' : 'bg-surface-2 text-muted'
                   }`}>
                     {layer.latency}
                   </span>
                 </div>
 
-                <h3 className="font-display font-bold text-sm text-white line-clamp-1">
+                <h3 className="font-display font-bold text-sm text-fg line-clamp-1">
                   {layer.title}
                 </h3>
-                <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                <p className="text-xs text-muted mt-1 line-clamp-2">
                   {layer.subtitle}
                 </p>
 
-                <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                  <span className="text-[10px] font-mono text-emerald-400/90 font-medium truncate">
+                <div className="mt-3 pt-2.5 border-t border-line/80 flex items-center justify-between text-xs">
+                  <span className="text-xs font-mono text-accent-fg/90 font-medium truncate">
                     {layer.tag}
                   </span>
-                  <ArrowRight className={`w-3 h-3 shrink-0 transition-transform ${isSelected ? 'text-emerald-400 translate-x-1' : 'text-slate-600'}`} aria-hidden="true" />
+                  <ArrowRight className={`w-3 h-3 shrink-0 transition-transform ${isSelected ? 'text-accent-fg translate-x-1' : 'text-subtle'}`} aria-hidden="true" />
                 </div>
               </button>
             );
@@ -446,20 +446,20 @@ vrrp_instance VI_TELEMETRY {
         </div>
 
         {/* Detail Inspection Workbench */}
-        <div id="architecture-layer-detail" role="tabpanel" className="p-4 sm:p-8 rounded-2xl bg-slate-900/70 border border-slate-800 space-y-6">
+        <div id="architecture-layer-detail" role="tabpanel" className="p-4 sm:p-8 rounded-2xl bg-surface/70 border border-line space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
             {/* Left Specs & Context */}
             <div className="lg:col-span-6 space-y-6 min-w-0">
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 text-xs text-slate-400">
-                  <Layers className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                <div className="inline-flex items-center gap-2 text-xs text-muted">
+                  <Layers className="w-3.5 h-3.5 text-accent-fg" aria-hidden="true" />
                   <span>{current.tag}</span>
                 </div>
-                <h3 className="text-2xl font-bold font-display text-white">
+                <h3 className="text-2xl font-bold font-display text-fg">
                   {current.title}
                 </h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <p className="text-muted text-sm leading-relaxed">
                   {current.description}
                 </p>
               </div>
@@ -467,11 +467,11 @@ vrrp_instance VI_TELEMETRY {
               {/* Technical Specifications Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {current.specs.map((spec, i) => (
-                  <div key={i} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80">
-                    <div className="text-[11px] text-slate-400">
+                  <div key={i} className="p-3.5 rounded-xl bg-bg/80 border border-line/80">
+                    <div className="text-xs text-muted">
                       {spec.label}
                     </div>
-                    <div className="text-xs sm:text-sm font-bold text-slate-100 font-mono mt-1">
+                    <div className="text-xs sm:text-sm font-bold text-fg font-mono mt-1">
                       {spec.val}
                     </div>
                   </div>
@@ -479,10 +479,10 @@ vrrp_instance VI_TELEMETRY {
               </div>
 
               {/* Production Verification Pill */}
-              <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex items-start gap-3 text-xs text-emerald-200">
-                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-2xl bg-accent-soft/30 border border-accent/30 flex items-start gap-3 text-xs text-accent-fg">
+                <ShieldCheck className="w-5 h-5 text-accent-fg shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-white">{isDe ? 'Praxisverifizierte Zuverlässigkeit: ' : 'Engineering Provenance: '}</span>
+                  <span className="font-bold text-fg">{isDe ? 'Praxisverifizierte Zuverlässigkeit: ' : 'Engineering Provenance: '}</span>
                   {isDe
                     ? 'Ausgelegt auf maximale Verfügbarkeit (99,99%) mit Aktiv-Passiv-Redundanz und kontinuierlichen Layer-7 Health-Checks unter Echtzeit-Bedingungen.'
                     : 'Designed for high uptime (99.99%) and active-passive redundancy. Implemented under real industrial operations or verified academic research.'}
@@ -493,13 +493,13 @@ vrrp_instance VI_TELEMETRY {
             {/* Right Live Visual Code & Telemetry Terminal */}
             <div className="lg:col-span-6 space-y-4 min-w-0">
               {/* Code Snippet Terminal with Tab Selection for Load Balancers */}
-              <div className="rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-2xl">
-                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-xs text-slate-400 font-mono">
+              <div className="rounded-2xl bg-bg border border-line overflow-hidden shadow-2xl">
+                <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-surface border-b border-line text-xs text-muted font-mono">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" aria-hidden="true" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" aria-hidden="true" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" aria-hidden="true" />
-                    <span className="text-slate-300 ml-2 font-semibold">
+                    <span className="w-2.5 h-2.5 rounded-full bg-danger/80" aria-hidden="true" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent/80" aria-hidden="true" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent/80" aria-hidden="true" />
+                    <span className="text-muted ml-2 font-semibold">
                       {selectedLayer === 'load-balancer'
                         ? (activeConfigTab === 'haproxy' ? 'haproxy.cfg' : activeConfigTab === 'nginx' ? 'nginx.conf' : 'keepalived.conf')
                         : selectedLayer === 'vlsi'
@@ -514,12 +514,12 @@ vrrp_instance VI_TELEMETRY {
 
                   <div className="flex items-center gap-2">
                     {selectedLayer === 'load-balancer' && (
-                      <div className="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[10px]">
+                      <div className="flex items-center bg-bg p-0.5 rounded-lg border border-line text-xs">
                         <button
                           type="button"
                           aria-pressed={activeConfigTab === 'haproxy'}
                           onClick={() => setActiveConfigTab('haproxy')}
-                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'haproxy' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${activeConfigTab === 'haproxy' ? 'bg-accent text-on-accent font-bold' : 'text-muted hover:text-fg'}`}
                         >
                           HAProxy
                         </button>
@@ -527,7 +527,7 @@ vrrp_instance VI_TELEMETRY {
                           type="button"
                           aria-pressed={activeConfigTab === 'nginx'}
                           onClick={() => setActiveConfigTab('nginx')}
-                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'nginx' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${activeConfigTab === 'nginx' ? 'bg-accent text-on-accent font-bold' : 'text-muted hover:text-fg'}`}
                         >
                           NGINX
                         </button>
@@ -535,7 +535,7 @@ vrrp_instance VI_TELEMETRY {
                           type="button"
                           aria-pressed={activeConfigTab === 'keepalived'}
                           onClick={() => setActiveConfigTab('keepalived')}
-                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${activeConfigTab === 'keepalived' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                          className={`px-2 py-0.5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${activeConfigTab === 'keepalived' ? 'bg-accent text-on-accent font-bold' : 'text-muted hover:text-fg'}`}
                         >
                           VRRP
                         </button>
@@ -550,12 +550,12 @@ vrrp_instance VI_TELEMETRY {
                           : current.codeSnippet;
                         copyToClipboard(snippet, selectedLayer);
                       }}
-                      className="flex items-center gap-1 text-[10px] text-slate-200 hover:text-emerald-300 bg-slate-800 px-2 py-1 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+                      className="flex items-center gap-1 text-xs text-fg hover:text-accent-fg bg-surface-2 px-2 py-1 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
                       title={t.copyConfig}
                     >
                       {copiedConfig === selectedLayer ? (
                         <>
-                          <Check className="w-3 h-3 text-emerald-400" />
+                          <Check className="w-3 h-3 text-accent-fg" />
                           <span>{t.copied}</span>
                         </>
                       ) : (
@@ -568,7 +568,7 @@ vrrp_instance VI_TELEMETRY {
                   </div>
                 </div>
 
-                <div className="p-4 overflow-auto text-xs font-mono text-emerald-200/90 leading-relaxed bg-[#050811] max-h-72">
+                <div className="p-4 overflow-auto text-xs font-mono text-accent-fg/90 leading-relaxed jd-dark-panel bg-bg max-h-72">
                   <pre>
                     {selectedLayer === 'load-balancer'
                       ? (activeConfigTab === 'haproxy' ? current.codeSnippet : activeConfigTab === 'nginx' ? nginxConfigCode : keepalivedConfigCode)
@@ -578,25 +578,25 @@ vrrp_instance VI_TELEMETRY {
               </div>
 
               {/* Live Signal Status */}
-              <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div className="p-4 rounded-2xl bg-bg/90 border border-line flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-3">
                   <div className="relative flex h-3 w-3">
-                    {isSimulating && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />}
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+                    {isSimulating && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />}
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent" />
                   </div>
                   <div className="space-y-0.5">
-                    <div className="text-slate-300 font-bold text-[11px]">
+                    <div className="text-muted font-bold text-xs">
                       {isDe ? 'LOAD-BALANCER TELEMETRIE-BUS' : 'LOAD-BALANCER SIGNAL BUS'}
                     </div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-xs text-muted">
                       {isDe ? 'VRRP VIP aktiv · HTTP /healthz Heartbeat 1500ms' : 'VRRP VIP active · HTTP /healthz heartbeat 1500ms'}
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-emerald-400 font-bold">STATUS: 200 OK</div>
-                  <div className="text-[10px] text-slate-400">0 PACKET LOSS (100% HA)</div>
+                  <div className="text-accent-fg font-bold">STATUS: 200 OK</div>
+                  <div className="text-xs text-muted">0 PACKET LOSS (100% HA)</div>
                 </div>
               </div>
             </div>
@@ -604,16 +604,16 @@ vrrp_instance VI_TELEMETRY {
           </div>
 
           {/* Interactive Load Balancer Simulator Panel */}
-          <div className="mt-8 pt-6 border-t border-slate-800 space-y-6">
+          <div className="mt-8 pt-6 border-t border-line space-y-6">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Network className="w-5 h-5 text-emerald-400" />
-                  <h4 className="text-base sm:text-lg font-bold text-white font-display">
+                  <Network className="w-5 h-5 text-accent-fg" />
+                  <h4 className="text-base sm:text-lg font-bold text-fg font-display">
                     {t.lbDemoTitle}
                   </h4>
                 </div>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-muted">
                   {t.lbDemoDesc}
                 </p>
               </div>
@@ -621,19 +621,19 @@ vrrp_instance VI_TELEMETRY {
               {/* Algorithm & Traffic Rate Controls */}
               <div className="flex flex-wrap items-center gap-3">
                 {/* Traffic Rate */}
-                <div role="group" aria-label={t.trafficRate} className="flex flex-wrap items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
-                  <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
-                    <Gauge className="w-3.5 h-3.5 text-cyan-400" />
+                <div role="group" aria-label={t.trafficRate} className="flex flex-wrap items-center bg-bg p-1 rounded-xl border border-line text-xs font-mono">
+                  <span className="text-xs text-muted px-2 flex items-center gap-1">
+                    <Gauge className="w-3.5 h-3.5 text-teal" />
                     {t.trafficRate}
                   </span>
                   <button
                     type="button"
                     aria-pressed={trafficRate === 'normal'}
                     onClick={() => setTrafficRate('normal')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       trafficRate === 'normal'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     100 r/s
@@ -642,10 +642,10 @@ vrrp_instance VI_TELEMETRY {
                     type="button"
                     aria-pressed={trafficRate === 'high'}
                     onClick={() => setTrafficRate('high')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       trafficRate === 'high'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     500 r/s
@@ -654,31 +654,31 @@ vrrp_instance VI_TELEMETRY {
                     type="button"
                     aria-pressed={trafficRate === 'surge'}
                     onClick={() => setTrafficRate('surge')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 flex items-center gap-1 ${
                       trafficRate === 'surge'
-                        ? 'bg-amber-400 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-amber-300'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-warning'
                     }`}
                   >
-                    <Flame className="w-3 h-3 text-red-500" aria-hidden="true" />
+                    <Flame className="w-3 h-3 text-danger" aria-hidden="true" />
                     1.5k r/s
                   </button>
                 </div>
 
                 {/* Algorithm Switcher */}
-                <div role="group" aria-label={t.algorithm} className="flex flex-wrap items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
-                  <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
-                    <Sliders className="w-3.5 h-3.5 text-emerald-400" />
+                <div role="group" aria-label={t.algorithm} className="flex flex-wrap items-center bg-bg p-1 rounded-xl border border-line text-xs font-mono">
+                  <span className="text-xs text-muted px-2 flex items-center gap-1">
+                    <Sliders className="w-3.5 h-3.5 text-accent-fg" />
                     {t.algorithm}
                   </span>
                   <button
                     type="button"
                     aria-pressed={lbAlgorithm === 'roundrobin'}
                     onClick={() => setLbAlgorithm('roundrobin')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       lbAlgorithm === 'roundrobin'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     Round Robin
@@ -687,10 +687,10 @@ vrrp_instance VI_TELEMETRY {
                     type="button"
                     aria-pressed={lbAlgorithm === 'leastconn'}
                     onClick={() => setLbAlgorithm('leastconn')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       lbAlgorithm === 'leastconn'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     Least Conn
@@ -699,10 +699,10 @@ vrrp_instance VI_TELEMETRY {
                     type="button"
                     aria-pressed={lbAlgorithm === 'weighted'}
                     onClick={() => setLbAlgorithm('weighted')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       lbAlgorithm === 'weighted'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     Weighted
@@ -711,10 +711,10 @@ vrrp_instance VI_TELEMETRY {
                     type="button"
                     aria-pressed={lbAlgorithm === 'iphash'}
                     onClick={() => setLbAlgorithm('iphash')}
-                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                    className={`px-2.5 py-1 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                       lbAlgorithm === 'iphash'
-                        ? 'bg-emerald-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-accent text-on-accent font-bold'
+                        : 'text-muted hover:text-fg'
                     }`}
                   >
                     IP Hash
@@ -724,13 +724,13 @@ vrrp_instance VI_TELEMETRY {
             </div>
 
             {/* Visual Load Balancer Flow Diagram */}
-            <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 relative overflow-hidden">
-              <div className="text-[11px] font-mono text-slate-400 mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div className="p-4 rounded-2xl bg-bg/90 border border-line relative overflow-hidden">
+              <div className="text-xs font-mono text-muted mb-3 flex flex-wrap items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5">
-                  <RadioTower className="w-3.5 h-3.5 text-emerald-400" />
+                  <RadioTower className="w-3.5 h-3.5 text-accent-fg" />
                   {isDe ? 'Echtzeit-Traffic-Routen & Paketfluss' : 'Live Traffic Routing & Ingress Flow'}
                 </span>
-                <span className="text-cyan-400 font-mono font-bold">
+                <span className="text-teal font-mono font-bold">
                   {rateLabel} · {simulatedRequests.toLocaleString()} {t.reqsRouted}
                 </span>
               </div>
@@ -739,60 +739,60 @@ vrrp_instance VI_TELEMETRY {
               <div className="relative py-2 flex flex-col md:flex-row items-center justify-between gap-4">
 
                 {/* 1. Client Ingress Stream */}
-                <div className="w-full md:w-1/4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-center">
-                  <div className="text-[10px] font-mono text-slate-400 uppercase">
+                <div className="w-full md:w-1/4 p-3 rounded-xl bg-surface border border-line text-center">
+                  <div className="text-xs font-mono text-muted uppercase">
                     {isDe ? 'Clients & Edge-Geräte' : 'Client Ingress'}
                   </div>
-                  <div className="text-xs font-bold text-slate-200 mt-1 font-mono">
+                  <div className="text-xs font-bold text-fg mt-1 font-mono">
                     HTTPS / WebSocket
                   </div>
-                  <div className="mt-2 flex justify-center items-center gap-1 text-[10px] text-cyan-300 font-mono">
-                    <span className={`w-1.5 h-1.5 rounded-full bg-cyan-400 ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
+                  <div className="mt-2 flex justify-center items-center gap-1 text-xs text-teal font-mono">
+                    <span className={`w-1.5 h-1.5 rounded-full bg-teal ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
                     <span>{rateLabel}</span>
                   </div>
                 </div>
 
                 {/* Arrow / Packet Pipe 1 */}
-                <div className="hidden md:flex flex-col items-center justify-center text-emerald-400">
+                <div className="hidden md:flex flex-col items-center justify-center text-accent-fg">
                   <ArrowRight className="w-5 h-5 animate-pulse" />
-                  <span className="text-[9px] font-mono text-slate-500">TLS 1.3</span>
+                  <span className="text-xs font-mono text-subtle">TLS 1.3</span>
                 </div>
 
                 {/* 2. Virtual IP (VIP) Load Balancer */}
-                <div className="w-full md:w-1/3 p-4 rounded-2xl bg-slate-900 border border-emerald-500/50 text-center space-y-1.5">
-                  <div className="flex items-center justify-center gap-1 text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                <div className="w-full md:w-1/3 p-4 rounded-2xl bg-surface border border-accent/50 text-center space-y-1.5">
+                  <div className="flex items-center justify-center gap-1 text-xs font-mono text-accent-fg font-bold uppercase tracking-wider">
                     <Shield className="w-3.5 h-3.5" />
                     {t.virtualIp}
                   </div>
-                  <div className="text-base font-bold font-mono text-white">
+                  <div className="text-base font-bold font-mono text-fg">
                     10.0.1.100:443
                   </div>
-                  <div className="text-[11px] text-cyan-300 font-mono">
+                  <div className="text-xs text-teal font-mono">
                     HAProxy L4/L7 · {t.vrrpMaster}
                   </div>
-                  <div className="pt-2 border-t border-slate-800 text-[10px] font-mono text-slate-400">
-                    Routing: <span className="text-emerald-300 font-bold uppercase">{lbAlgorithm}</span>
+                  <div className="pt-2 border-t border-line text-xs font-mono text-muted">
+                    Routing: <span className="text-accent-fg font-bold uppercase">{lbAlgorithm}</span>
                   </div>
                 </div>
 
                 {/* Arrow / Packet Pipe 2 */}
-                <div className="hidden md:flex flex-col items-center justify-center text-emerald-400">
+                <div className="hidden md:flex flex-col items-center justify-center text-accent-fg">
                   <ArrowRight className="w-5 h-5 animate-pulse" />
-                  <span className="text-[9px] font-mono text-slate-500">L7 Probes</span>
+                  <span className="text-xs font-mono text-subtle">L7 Probes</span>
                 </div>
 
                 {/* 3. Dispatch Target Indicators */}
-                <div className="w-full md:w-1/3 p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs font-mono">
+                <div className="w-full md:w-1/3 p-3 rounded-xl bg-surface/90 border border-line flex items-center justify-between text-xs font-mono">
                   <div className="space-y-1">
-                    <div className="text-[10px] text-slate-400">{isDe ? 'Aktiver Zielknoten:' : 'Active Target Node:'}</div>
-                    <div className="text-emerald-400 font-bold flex items-center gap-1.5">
-                      <span className={`w-2.5 h-2.5 rounded-full bg-emerald-400 ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
+                    <div className="text-xs text-muted">{isDe ? 'Aktiver Zielknoten:' : 'Active Target Node:'}</div>
+                    <div className="text-accent-fg font-bold flex items-center gap-1.5">
+                      <span className={`w-2.5 h-2.5 rounded-full bg-accent ${isSimulating ? 'animate-ping' : ''}`} aria-hidden="true" />
                       <span>WORKER 0{activeRoutingNode}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[10px] text-slate-400">{isDe ? 'Failover-Schutz' : 'Failover Ready'}</div>
-                    <div className="text-cyan-300 font-bold">0 Drop SLA</div>
+                    <div className="text-xs text-muted">{isDe ? 'Failover-Schutz' : 'Failover Ready'}</div>
+                    <div className="text-teal font-bold">0 Drop SLA</div>
                   </div>
                 </div>
 
@@ -806,35 +806,35 @@ vrrp_instance VI_TELEMETRY {
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 nodesHealth.node1
                   ? activeRoutingNode === 1
-                    ? 'bg-emerald-950/40 border-emerald-400/80'
-                    : 'bg-slate-950/80 border-slate-800'
-                  : 'bg-red-950/20 border-red-500/50'
+                    ? 'bg-accent-soft/40 border-accent/80'
+                    : 'bg-bg/80 border-line'
+                  : 'bg-danger-soft/20 border-danger/50'
               }`}>
                 <div>
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className="font-bold text-white flex items-center gap-1.5">
-                      <Server className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-bold text-fg flex items-center gap-1.5">
+                      <Server className="w-3.5 h-3.5 text-accent-fg" />
                       WORKER 01 (PRIMARY)
                     </span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      nodesHealth.node1 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                    <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${
+                      nodesHealth.node1 ? 'bg-accent/20 text-accent-fg border border-accent/40' : 'bg-danger/20 text-danger border border-danger/40'
                     }`}>
                       {nodesHealth.node1 ? '200 OK' : 'FAILED'}
                     </span>
                   </div>
-                  <div className="text-xs font-mono text-slate-300">10.0.1.11:8080</div>
-                  <div className="text-[11px] text-slate-400 mt-1 font-mono">
+                  <div className="text-xs font-mono text-muted">10.0.1.11:8080</div>
+                  <div className="text-xs text-muted mt-1 font-mono">
                     Weight: {nodeWeights.node1} · HTTP /healthz
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                  <div className="mt-3 pt-2.5 border-t border-line grid grid-cols-2 gap-2 text-xs font-mono">
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
-                      <span className="text-emerald-300 font-bold">{nodeConns.node1}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
+                      <span className="text-accent-fg font-bold">{nodeConns.node1}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
-                      <span className="text-slate-200 font-bold">{nodesHealth.node1 ? '0.3 ms' : '∞ ms'}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Latenz' : 'Latency'}</span>
+                      <span className="text-fg font-bold">{nodesHealth.node1 ? '0.3 ms' : '∞ ms'}</span>
                     </div>
                   </div>
                 </div>
@@ -842,10 +842,10 @@ vrrp_instance VI_TELEMETRY {
                 <button
                   type="button"
                   onClick={() => toggleNodeHealth('node1')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                     nodesHealth.node1
-                      ? 'bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-500/50'
-                      : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50'
+                      ? 'bg-surface-2 hover:bg-danger-soft/80 text-muted hover:text-danger border border-line-strong hover:border-danger/50'
+                      : 'bg-accent/20 hover:bg-accent/30 text-accent-fg border border-accent/50'
                   }`}
                 >
                   {nodesHealth.node1 ? t.simulateFailure : t.recoverNode}
@@ -856,35 +856,35 @@ vrrp_instance VI_TELEMETRY {
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 nodesHealth.node2
                   ? activeRoutingNode === 2
-                    ? 'bg-emerald-950/40 border-emerald-400/80'
-                    : 'bg-slate-950/80 border-slate-800'
-                  : 'bg-red-950/20 border-red-500/50'
+                    ? 'bg-accent-soft/40 border-accent/80'
+                    : 'bg-bg/80 border-line'
+                  : 'bg-danger-soft/20 border-danger/50'
               }`}>
                 <div>
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className="font-bold text-white flex items-center gap-1.5">
-                      <Server className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="font-bold text-fg flex items-center gap-1.5">
+                      <Server className="w-3.5 h-3.5 text-accent-fg" />
                       WORKER 02 (PRIMARY)
                     </span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      nodesHealth.node2 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                    <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${
+                      nodesHealth.node2 ? 'bg-accent/20 text-accent-fg border border-accent/40' : 'bg-danger/20 text-danger border border-danger/40'
                     }`}>
                       {nodesHealth.node2 ? '200 OK' : 'FAILED'}
                     </span>
                   </div>
-                  <div className="text-xs font-mono text-slate-300">10.0.1.12:8080</div>
-                  <div className="text-[11px] text-slate-400 mt-1 font-mono">
+                  <div className="text-xs font-mono text-muted">10.0.1.12:8080</div>
+                  <div className="text-xs text-muted mt-1 font-mono">
                     Weight: {nodeWeights.node2} · HTTP /healthz
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                  <div className="mt-3 pt-2.5 border-t border-line grid grid-cols-2 gap-2 text-xs font-mono">
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
-                      <span className="text-emerald-300 font-bold">{nodeConns.node2}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
+                      <span className="text-accent-fg font-bold">{nodeConns.node2}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
-                      <span className="text-slate-200 font-bold">{nodesHealth.node2 ? '0.4 ms' : '∞ ms'}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Latenz' : 'Latency'}</span>
+                      <span className="text-fg font-bold">{nodesHealth.node2 ? '0.4 ms' : '∞ ms'}</span>
                     </div>
                   </div>
                 </div>
@@ -892,10 +892,10 @@ vrrp_instance VI_TELEMETRY {
                 <button
                   type="button"
                   onClick={() => toggleNodeHealth('node2')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                     nodesHealth.node2
-                      ? 'bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-500/50'
-                      : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50'
+                      ? 'bg-surface-2 hover:bg-danger-soft/80 text-muted hover:text-danger border border-line-strong hover:border-danger/50'
+                      : 'bg-accent/20 hover:bg-accent/30 text-accent-fg border border-accent/50'
                   }`}
                 >
                   {nodesHealth.node2 ? t.simulateFailure : t.recoverNode}
@@ -906,35 +906,35 @@ vrrp_instance VI_TELEMETRY {
               <div className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
                 nodesHealth.node3
                   ? activeRoutingNode === 3
-                    ? 'bg-cyan-950/40 border-cyan-400/80'
-                    : 'bg-slate-950/80 border-slate-800'
-                  : 'bg-slate-950/40 border-slate-800/60'
+                    ? 'bg-teal-soft/40 border-teal/80'
+                    : 'bg-bg/80 border-line'
+                  : 'bg-bg/40 border-line/60'
               }`}>
                 <div>
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className="font-bold text-white flex items-center gap-1.5">
-                      <Server className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="font-bold text-fg flex items-center gap-1.5">
+                      <Server className="w-3.5 h-3.5 text-teal" />
                       WORKER 03 ({isDe ? 'HOT-STANDBY' : 'HOT STANDBY'})
                     </span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      nodesHealth.node3 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-slate-800 text-slate-400'
+                    <span className={`px-1.5 py-0.5 rounded text-xs font-bold ${
+                      nodesHealth.node3 ? 'bg-teal/20 text-teal border border-teal/40' : 'bg-surface-2 text-muted'
                     }`}>
                       {nodesHealth.node3 ? 'ONLINE' : 'HOT STANDBY'}
                     </span>
                   </div>
-                  <div className="text-xs font-mono text-slate-300">10.0.1.13:8080</div>
-                  <div className="text-[11px] text-slate-400 mt-1 font-mono">
+                  <div className="text-xs font-mono text-muted">10.0.1.13:8080</div>
+                  <div className="text-xs text-muted mt-1 font-mono">
                     {isDe ? 'Automatisches Failover-Ziel' : 'Hot Standby Failover Target'}
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-800 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                  <div className="mt-3 pt-2.5 border-t border-line grid grid-cols-2 gap-2 text-xs font-mono">
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
-                      <span className="text-cyan-300 font-bold">{nodeConns.node3}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Aktive Verbindungen' : 'Active Conns'}</span>
+                      <span className="text-teal font-bold">{nodeConns.node3}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[10px]">{isDe ? 'Latenz' : 'Latency'}</span>
-                      <span className="text-slate-200 font-bold">{nodesHealth.node3 ? '0.4 ms' : 'Standby'}</span>
+                      <span className="text-subtle block text-xs">{isDe ? 'Latenz' : 'Latency'}</span>
+                      <span className="text-fg font-bold">{nodesHealth.node3 ? '0.4 ms' : 'Standby'}</span>
                     </div>
                   </div>
                 </div>
@@ -942,10 +942,10 @@ vrrp_instance VI_TELEMETRY {
                 <button
                   type="button"
                   onClick={() => toggleNodeHealth('node3')}
-                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+                  className={`w-full mt-4 py-1.5 rounded-xl text-xs font-mono font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
                     nodesHealth.node3
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                      : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50'
+                      ? 'bg-surface-2 hover:bg-line-strong text-muted border border-line-strong'
+                      : 'bg-teal/20 hover:bg-teal/30 text-teal border border-teal/50'
                   }`}
                 >
                   {nodesHealth.node3 ? t.setStandby : t.activateBackup}
@@ -955,12 +955,12 @@ vrrp_instance VI_TELEMETRY {
             </div>
 
             {/* Live Failover Guarantee Status */}
-            <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-wrap items-center justify-between text-xs font-mono text-slate-300 gap-3">
+            <div className="p-3.5 rounded-xl bg-bg/90 border border-line flex flex-wrap items-center justify-between text-xs font-mono text-muted gap-3">
               <div className="flex items-center gap-2">
                 {(!nodesHealth.node1 || !nodesHealth.node2) ? (
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+                  <AlertTriangle className="w-4 h-4 text-warning shrink-0" aria-hidden="true" />
                 ) : (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-fg shrink-0" aria-hidden="true" />
                 )}
                 <span aria-live="polite">
                   {(!nodesHealth.node1 || !nodesHealth.node2)
@@ -968,7 +968,7 @@ vrrp_instance VI_TELEMETRY {
                     : t.allHealthy}
                 </span>
               </div>
-              <span className="text-[11px] text-cyan-400 font-medium">
+              <span className="text-xs text-teal font-medium">
                 {t.healthProbes}
               </span>
             </div>
