@@ -92,7 +92,7 @@ export const PROJECT_CASES: Record<string, ProjectCase> = {
   },
   'nf-model-deployment-project': {
     problem: 'Predict how long a NYC yellow-taxi trip will take, and serve the model as an API.',
-    solution: 'Cleaned January 2025 trips with 9 checked rules, compared six approaches tracked in MLflow, tuned with Optuna and served the winner with FastAPI.',
+    solution: 'Cleaned January 2025 trips with 9 checked rules, compared six approaches tracked in MLflow, tuned with Optuna and served a HistGradientBoosting model with FastAPI.',
   },
   'nf-github-actions-and-cicd': {
     problem: 'Code tests alone cannot show whether a model change is safe to merge.',
@@ -102,6 +102,7 @@ export const PROJECT_CASES: Record<string, ProjectCase> = {
   'nf-notebook-to-python': {
     problem: 'Feature engineering written in notebook cells is hard to reuse and can leak information from new data into training.',
     solution: 'Moved it into custom scikit-learn transformers and pipelines fitted on training data only, then into importable modules and scripts (Titanic dataset).',
+    result: null,
   },
 
   // ---- Work, research and personal projects (facts from the cards in portfolioData.ts) ------------
@@ -116,6 +117,7 @@ export const PROJECT_CASES: Record<string, ProjectCase> = {
   'bae-assistant': {
     problem: 'An assistant that handles documents, email, calendar and trading data must not misuse or leak them.',
     solution: 'Specialist agents get only the permissions they need, every action is audited, and a deterministic engine, never the LLM, trades a demo account through a risk manager.',
+    result: null,
   },
   'job-search-portal': {
     problem: 'Checking dozens of career pages by hand for AI, cloud, DevOps, data and IT roles is slow.',
@@ -125,10 +127,12 @@ export const PROJECT_CASES: Record<string, ProjectCase> = {
   'docker-portal': {
     problem: 'A web page that controls Docker usually needs access to the Docker socket.',
     solution: 'Only a separate guard service touches the socket and allows just list, inspect, start, stop and restart; the token-protected portal listens on 127.0.0.1 only.',
+    result: null,
   },
   'project-deck-generator': {
     problem: 'Every finished project needs a short slide deck with its real results.',
     solution: 'One Python script generates every deck from the project notes, so the layout stays consistent and the numbers come straight from the projects.',
+    result: null,
   },
   'industrial-iot-pipeline': {
     problem: 'Recycling machinery across Material Recovery Facilities needed monitoring and fast incident alerts.',

@@ -23,7 +23,11 @@ export const CaseSteps: React.FC<{
     ...(data.result ? [{ key: 'result', label: isDe ? 'Ergebnis' : 'Result', body: data.result }] : []),
   ];
   return (
-    <ol className="case-steps relative" style={{ '--case-c': fill } as React.CSSProperties}>
+    <ol
+      className="case-steps relative"
+      // Case copy is English only; tell screen readers so under the German UI.
+      lang={isDe ? 'en' : undefined}
+      style={{ '--case-c': fill } as React.CSSProperties}>
       {steps.map((s, i) => {
         const isResult = s.key === 'result';
         return (
@@ -40,7 +44,11 @@ export const CaseSteps: React.FC<{
               className="case-step__dot absolute left-0 top-[0.3rem] w-3 h-3 rounded-full border-2"
               style={isResult ? { background: fill, borderColor: fill } : { borderColor: fill, background: 'var(--jd-surface)' }}
             />
-            <p className="text-xs font-bold uppercase tracking-[0.08em] leading-none" style={{ color: text }}>
+            <p
+              lang={isDe ? 'de' : undefined}
+              className="text-xs font-bold uppercase tracking-[0.08em] leading-none"
+              style={{ color: text }}
+            >
               {s.label}
             </p>
             <p

@@ -79,7 +79,8 @@ finishes and deploys itself on every push.
 - Lighthouse check for performance and accessibility in CI.
 - The Projects section is still one long grid; group it (work, research, personal, bootcamp) and finish moving
   older sections to `.jd-*` components.
-- German versions of the problem/solution lines (they are English only, like the card descriptions).
+- German versions of the problem/solution lines (they are English only, like the card descriptions; under the German UI they carry `lang="en"` so screen readers pronounce them correctly).
+- Confirm the WaDaCon result figures shown on three cards (-60% response time, 99.99% availability at 50k+ req/s, wear predicted up to 72 h ahead); no project notes cover them.
 - The Classic and Pipeline views were recoloured with the tokens but not redesigned.
 
 ## Update log
@@ -96,3 +97,4 @@ finishes and deploys itself on every push.
 - 22 Nov 2026: github-actions-and-cicd card now links its GitHub repo (repo made public) and serves the updated deck (5517f83).
 - 22-23 Nov 2026: redesigned with the JD design system (navy/amber/teal, light + dark), decluttered hero, research visuals section, scannable bootcamp journey, accessibility fixes (skip link, focus, 40 px targets, min 12 px text, no 390 px overflow), recoloured animations that respect reduced motion.
 - 23 Nov 2026: problem -> solution -> result on every project card; scroll-spy section nav, reading progress, heading rhythm and staggered reveals; fixed the Projects section staying invisible on phones.
+- 23 Nov 2026: review fixes: model-deployment solution names the served HistGradientBoosting model instead of calling it the winner; four cards whose impact is not a measurement no longer show a Result line; case rail marked lang="en" in German mode.
