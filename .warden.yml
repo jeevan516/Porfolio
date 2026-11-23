@@ -1,0 +1,2 @@
+# warden: no test runner in this project; the type check and the build are the checks
+test_cmd: npm run lint && npm run build
