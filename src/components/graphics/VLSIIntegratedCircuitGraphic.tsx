@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Cpu, Play, Pause } from 'lucide-react';
+import { prefersReducedMotion } from '../../utils/tokens';
 
 export const VLSIIntegratedCircuitGraphic: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -43,11 +44,11 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
     // Circuit layout blocks
     const blocks = [
-      { id: 'ALU', name: 'Arithmetic Logic Unit', x: 0.12, y: 0.16, w: 0.32, h: 0.34, color: '#06b6d4' },
-      { id: 'REG', name: 'Register Bank (32-Bit)', x: 0.52, y: 0.16, w: 0.36, h: 0.22, color: '#10b981' },
-      { id: 'CLK_TREE', name: 'H-Tree Clock Distribution', x: 0.52, y: 0.44, w: 0.36, h: 0.26, color: '#8b5cf6' },
-      { id: 'IO_BUS', name: 'High-Density Routing Bus', x: 0.12, y: 0.56, w: 0.32, h: 0.28, color: '#f59e0b' },
-      { id: 'SRAM', name: 'L1 Cache / Memory Arrays', x: 0.12, y: 0.88, w: 0.76, h: 0.08, color: '#3b82f6' }
+      { id: 'ALU', name: 'Arithmetic Logic Unit', x: 0.12, y: 0.16, w: 0.32, h: 0.34, color: '#3cc0b4' },
+      { id: 'REG', name: 'Register Bank (32-Bit)', x: 0.52, y: 0.16, w: 0.36, h: 0.22, color: '#f2a541' },
+      { id: 'CLK_TREE', name: 'H-Tree Clock Distribution', x: 0.52, y: 0.44, w: 0.36, h: 0.26, color: '#9085e9' },
+      { id: 'IO_BUS', name: 'High-Density Routing Bus', x: 0.12, y: 0.56, w: 0.32, h: 0.28, color: '#d95926' },
+      { id: 'SRAM', name: 'L1 Cache / Memory Arrays', x: 0.12, y: 0.88, w: 0.76, h: 0.08, color: '#3987e5' }
     ];
 
     const render = () => {
@@ -69,13 +70,13 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
       if (circuitMode === 'layout') {
         // Render Silicon Die Background
         const grad = ctx.createLinearGradient(0, 0, width, height);
-        grad.addColorStop(0, '#040b17');
-        grad.addColorStop(1, '#020617');
+        grad.addColorStop(0, '#0b1320');
+        grad.addColorStop(1, '#0b1320');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, width, height);
 
         // Render Silicon Micro-Grid / Substrate Mesh
-        ctx.strokeStyle = 'rgba(30, 58, 138, 0.18)';
+        ctx.strokeStyle = 'rgba(42, 61, 85, 0.18)';
         ctx.lineWidth = 1;
         const gridSize = Math.max(16, Math.floor(width / 32));
         for (let x = 0; x < width; x += gridSize) {
@@ -94,7 +95,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
         // Draw Interconnect Buses / Signal Traces
         const busY1 = height * 0.38;
         const busY2 = height * 0.72;
-        ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+        ctx.strokeStyle = 'rgba(60, 192, 180, 0.4)';
         ctx.lineWidth = 1.5;
 
         // Dynamic Bus Traces with traveling electron pulses
@@ -107,7 +108,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
           // Flowing data packets
           const pX = ((tick * 1.5 + i * 80) % (width * 0.8)) + width * 0.1;
-          ctx.fillStyle = '#38bdf8';
+          ctx.fillStyle = '#6aaef2';
           ctx.beginPath();
           ctx.arc(pX, yOff, 2.5, 0, Math.PI * 2);
           ctx.fill();
@@ -117,7 +118,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
         const centerX = width * 0.5;
         const centerY = height * 0.45;
         const clkPulse = Math.sin(tick * 0.25);
-        ctx.strokeStyle = clkPulse > 0 ? 'rgba(168, 85, 247, 0.7)' : 'rgba(168, 85, 247, 0.25)';
+        ctx.strokeStyle = clkPulse > 0 ? 'rgba(144, 133, 233, 0.7)' : 'rgba(144, 133, 233, 0.25)';
         ctx.lineWidth = 2;
 
         // Root clock trunk
@@ -142,7 +143,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
           const bh = block.h * height;
 
           // Block Fill
-          ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          ctx.fillStyle = 'rgba(17, 28, 46, 0.85)';
           ctx.fillRect(bx, by, bw, bh);
 
           // Border with subtle glow
@@ -162,19 +163,28 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
             }
           }
 
-          // Block Header Label
+          // Labels: id at the top and name at the bottom; a block too short for two lines gets
+          // both on one centred line, so they never overlap.
+          const oneLine = bh < 34;
+          const labelY = oneLine ? by + bh / 2 + 4 : by + 14;
           ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 10px monospace';
-          ctx.fillText(block.id, bx + 8, by + 14);
+          ctx.fillText(block.id, bx + 8, labelY);
 
-          // Secondary text
-          ctx.fillStyle = '#94a3b8';
+          ctx.fillStyle = '#a3b3c3';
           ctx.font = '9px sans-serif';
-          ctx.fillText(block.name, bx + 8, by + bh - 6);
+          if (oneLine) {
+            ctx.font = 'bold 10px monospace';
+            const idWidth = ctx.measureText(block.id).width;
+            ctx.font = '9px sans-serif';
+            ctx.fillText(`· ${block.name}`, bx + 14 + idWidth, labelY);
+          } else {
+            ctx.fillText(block.name, bx + 8, by + bh - 6);
+          }
         });
 
         // Corner Pin Pads (VLSI Package Leads)
-        ctx.fillStyle = '#64748b';
+        ctx.fillStyle = '#8394a6';
         const padSize = 5;
         for (let x = 12; x < width - 12; x += 18) {
           ctx.fillRect(x, 2, padSize, 5);
@@ -187,11 +197,11 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
       } else if (circuitMode === 'waveform') {
         // Digital Waveform Oscilloscope Mode
-        ctx.fillStyle = '#020617';
+        ctx.fillStyle = '#0b1320';
         ctx.fillRect(0, 0, width, height);
 
         // Oscilloscope Grid Lines
-        ctx.strokeStyle = 'rgba(30, 41, 59, 0.8)';
+        ctx.strokeStyle = 'rgba(31, 47, 69, 0.8)';
         ctx.lineWidth = 1;
         for (let y = 0; y < height; y += 30) {
           ctx.beginPath();
@@ -201,10 +211,10 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
         }
 
         const signals = [
-          { name: `CLK (${frequencyMhz} MHz)`, color: '#a855f7', y: height * 0.22, freq: 0.08, digital: true },
-          { name: 'BUS_DATA[31:0]', color: '#06b6d4', y: height * 0.45, freq: 0.04, digital: true },
-          { name: 'PROPAGATION_DELAY (τ)', color: '#10b981', y: height * 0.68, freq: 0.02, digital: false },
-          { name: 'VLSI_ALU_OUT', color: '#f59e0b', y: height * 0.88, freq: 0.06, digital: true }
+          { name: `CLK (${frequencyMhz} MHz)`, color: '#9085e9', y: height * 0.22, freq: 0.08, digital: true },
+          { name: 'BUS_DATA[31:0]', color: '#3cc0b4', y: height * 0.45, freq: 0.04, digital: true },
+          { name: 'PROPAGATION_DELAY (τ)', color: '#f2a541', y: height * 0.68, freq: 0.02, digital: false },
+          { name: 'VLSI_ALU_OUT', color: '#d95926', y: height * 0.88, freq: 0.06, digital: true }
         ];
 
         signals.forEach((sig) => {
@@ -234,10 +244,10 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
       } else {
         // Logic Gate Schematic Mode
-        ctx.fillStyle = '#030712';
+        ctx.fillStyle = '#0b1320';
         ctx.fillRect(0, 0, width, height);
 
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = '#6aaef2';
         ctx.font = 'bold 12px monospace';
         ctx.fillText(width < 420 ? 'FULL-ADDER CELL (0.18µm CMOS)' : 'VLSI FULL-ADDER & LOGIC REGISTER CELL (0.18µm CMOS)', 16, 24);
 
@@ -250,8 +260,8 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
         ];
 
         gates.forEach((g) => {
-          ctx.fillStyle = '#1e293b';
-          ctx.strokeStyle = '#06b6d4';
+          ctx.fillStyle = '#1f2f45';
+          ctx.strokeStyle = '#3cc0b4';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           if (typeof ctx.roundRect === 'function') ctx.roundRect(g.x - 55, g.y - 22, 110, 44, 8);
@@ -267,7 +277,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
         });
 
         // Interconnect Wires
-        ctx.strokeStyle = '#10b981';
+        ctx.strokeStyle = '#f2a541';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(width * 0.25 + 55, height * 0.35);
@@ -281,19 +291,21 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
         // Pulsing data packet on wire
         const wirePos = ((tick * 2) % (width * 0.4 - 110)) + (width * 0.25 + 55);
-        ctx.fillStyle = '#f59e0b';
+        ctx.fillStyle = '#d95926';
         ctx.beginPath();
         ctx.arc(wirePos, height * 0.35, 3.5, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = '#a3b3c3';
         ctx.font = '10px monospace';
         ctx.fillText(width < 420 ? 'A=1, B=0, CIN=1 → S=0, COUT=1' : 'Inputs: A=1, B=0, CIN=1  →  Sum=0, COUT=1 (Clock Synchronized)', 16, height - 16);
       }
 
-      animId = requestAnimationFrame(render);
+      // Reduced motion: draw a still frame instead of animating
+      if (!reduceMotion) animId = requestAnimationFrame(render);
     };
 
+    const reduceMotion = prefersReducedMotion();
     animId = requestAnimationFrame(render);
 
     return () => {
@@ -304,30 +316,30 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
   }, [isRunning, frequencyMhz, circuitMode]);
 
   return (
-    <div className="rounded-2xl bg-slate-950/70 border border-slate-800 overflow-hidden">
+    <div className="jd-dark-panel rounded-2xl bg-bg/70 border border-line overflow-hidden">
       {/* Top Banner */}
-      <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between flex-wrap gap-2">
+      <div className="px-4 py-3 bg-bg/80 border-b border-line flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400">
+          <div className="p-1.5 rounded-lg bg-info/10 border border-info/30 text-info">
             <Cpu className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs font-semibold text-white">VLSI circuit simulator</h4>
-            <p className="text-[11px] text-slate-500">TU Clausthal · Very Large Scale Integrated Circuits</p>
+            <h3 className="text-sm font-semibold text-fg">VLSI circuit simulator</h3>
+            <p className="text-xs text-subtle">TU Clausthal · Very Large Scale Integrated Circuits</p>
           </div>
         </div>
 
         {/* Mode Selector */}
-        <div role="tablist" aria-label="Simulator view" className="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+        <div role="tablist" aria-label="Simulator view" className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-line text-xs">
           <button
             type="button"
             role="tab"
             aria-selected={circuitMode === 'layout'}
             onClick={() => setCircuitMode('layout')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-xs border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               circuitMode === 'layout'
-                ? 'bg-slate-800 text-white border-slate-700'
-                : 'text-slate-400 hover:text-white border-transparent'
+                ? 'bg-surface-2 text-fg border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             Silicon Die
@@ -337,10 +349,10 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
             role="tab"
             aria-selected={circuitMode === 'waveform'}
             onClick={() => setCircuitMode('waveform')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-xs border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               circuitMode === 'waveform'
-                ? 'bg-slate-800 text-white border-slate-700'
-                : 'text-slate-400 hover:text-white border-transparent'
+                ? 'bg-surface-2 text-fg border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             Waveforms
@@ -350,10 +362,10 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
             role="tab"
             aria-selected={circuitMode === 'logic'}
             onClick={() => setCircuitMode('logic')}
-            className={`px-2.5 py-1 rounded-lg font-medium text-[11px] border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
+            className={`px-2.5 py-1 rounded-lg font-medium text-xs border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
               circuitMode === 'logic'
-                ? 'bg-slate-800 text-white border-slate-700'
-                : 'text-slate-400 hover:text-white border-transparent'
+                ? 'bg-surface-2 text-fg border-line-strong'
+                : 'text-muted hover:text-fg border-transparent'
             }`}
           >
             Logic Gates
@@ -362,7 +374,7 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
       </div>
 
       {/* Canvas Area */}
-      <div className="relative w-full h-[320px] overflow-hidden bg-slate-950">
+      <div className="relative w-full h-[320px] overflow-hidden bg-bg">
         <canvas
           ref={canvasRef}
           className="w-full h-full block"
@@ -372,38 +384,38 @@ export const VLSIIntegratedCircuitGraphic: React.FC = () => {
 
         {/* Live Status Overlay */}
         <div className="absolute top-2.5 left-2.5 flex items-center gap-2 pointer-events-none">
-          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono text-emerald-400 backdrop-blur-sm">
-            <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface/90 border border-line-strong/80 text-xs font-mono text-accent-fg backdrop-blur-sm">
+            <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-accent animate-pulse' : 'bg-line-strong'}`} />
             CLK: {frequencyMhz} MHz
           </span>
-          <span className="px-2 py-0.5 rounded-full bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono text-slate-300 backdrop-blur-sm">
+          <span className="px-2 py-0.5 rounded-full bg-surface/90 border border-line-strong/80 text-xs font-mono text-muted backdrop-blur-sm">
             Node: {transistorDensity}
           </span>
         </div>
       </div>
 
       {/* Bottom Telemetry & Interaction Strip */}
-      <div className="px-4 py-2.5 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between flex-wrap gap-2 text-xs">
+      <div className="px-4 py-2.5 bg-bg/90 border-t border-line flex items-center justify-between flex-wrap gap-2 text-xs">
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsRunning(!isRunning)}
             aria-pressed={!isRunning}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-2 hover:bg-line-strong text-fg border border-line-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
           >
-            {isRunning ? <Pause className="w-3 h-3 text-amber-400" aria-hidden="true" /> : <Play className="w-3 h-3 text-emerald-400" aria-hidden="true" />}
+            {isRunning ? <Pause className="w-3 h-3 text-warning" aria-hidden="true" /> : <Play className="w-3 h-3 text-accent-fg" aria-hidden="true" />}
             <span>{isRunning ? 'Pause' : 'Play'}</span>
           </button>
 
-          <div className="flex items-center gap-1 text-[11px] font-mono text-slate-400" role="group" aria-label="Clock frequency">
+          <div className="flex items-center gap-1 text-xs font-mono text-muted" role="group" aria-label="Clock frequency">
             {[200, 400, 800].map((f) => (
               <button
                 key={f}
                 type="button"
                 aria-pressed={frequencyMhz === f}
                 onClick={() => setFrequencyMhz(f)}
-                className={`px-1.5 py-0.5 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
-                  frequencyMhz === f ? 'bg-emerald-500/15 text-emerald-300 font-bold border-emerald-500/40' : 'border-transparent hover:text-white'
+                className={`px-1.5 py-0.5 rounded border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
+                  frequencyMhz === f ? 'bg-accent/15 text-accent-fg font-bold border-accent/40' : 'border-transparent hover:text-fg'
                 }`}
               >
                 {f} MHz

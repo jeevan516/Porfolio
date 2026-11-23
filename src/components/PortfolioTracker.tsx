@@ -212,24 +212,24 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
   // Pipeline stages configuration
   const STAGES: { id: PipelineStage; label: string; color: string }[] = [
-    { id: 'inquiry', label: '1. New Outreach', color: 'border-blue-500/40 text-blue-400 bg-blue-500/10' },
-    { id: 'screening', label: '2. Screening', color: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10' },
-    { id: 'technical', label: '3. Technical Round', color: 'border-amber-500/40 text-amber-400 bg-amber-500/10' },
-    { id: 'offer', label: '4. Offer / Decision', color: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10' },
+    { id: 'inquiry', label: '1. New Outreach', color: 'border-info/40 text-info bg-info/10' },
+    { id: 'screening', label: '2. Screening', color: 'border-teal/40 text-teal bg-teal/10' },
+    { id: 'technical', label: '3. Technical Round', color: 'border-warning/40 text-warning bg-accent/10' },
+    { id: 'offer', label: '4. Offer / Decision', color: 'border-accent/40 text-accent-fg bg-accent/10' },
   ];
 
   return (
-    <section id="tracker" className="py-16 sm:py-20 border-t border-slate-800 relative">
+    <section id="tracker" className="py-16 sm:py-20 border-t border-line relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-slate-800/80 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-line/80 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-accent-fg uppercase tracking-wider mb-2">
               <BarChart3 className="w-4 h-4" />
               Recruiter hub
             </div>
-            <h2 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">Role match & opportunity board</h2>
-            <p className="text-slate-400 text-sm sm:text-base max-w-2xl mt-2">
+            <h2 className="text-2xl sm:text-4xl font-display font-bold text-fg tracking-tight">Role match & opportunity board</h2>
+            <p className="text-muted text-sm sm:text-base max-w-2xl mt-2">
               Check how Jeevan's experience maps to your vacancy, grab a tailored brief, or keep track of conversations on a private board stored in your browser.
             </p>
           </div>
@@ -248,7 +248,7 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
         {/* Tabs */}
         <div
-          className="flex items-center gap-1.5 p-1 bg-slate-900/70 border border-slate-800 rounded-xl mb-8 overflow-x-auto no-scrollbar"
+          className="flex items-center gap-1.5 p-1 bg-surface/70 border border-line rounded-xl mb-8 overflow-x-auto no-scrollbar"
           role="tablist"
           aria-label="Recruiter hub views"
         >
@@ -268,7 +268,7 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                 aria-selected={isActive}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${ui.focusRing} ${
-                  isActive ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  isActive ? 'bg-accent/15 text-accent-fg border border-accent/40' : 'text-muted hover:text-fg border border-transparent'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -281,9 +281,9 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
         {/* TAB 1: Recruiter & Client Pipeline CRM */}
         {activeTab === 'pipeline' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-surface/60 border border-line text-xs text-muted">
               <div className="flex items-start gap-2">
-                <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                <Info className="w-4 h-4 text-subtle shrink-0 mt-0.5" />
                 <span>
                   Demo board — entries marked <em>Sample</em> are illustrative. Anything you add or move is saved only in your browser.
                 </span>
@@ -308,14 +308,14 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                 return (
                   <div
                     key={stage.id}
-                    className="flex flex-col rounded-2xl bg-slate-900/40 border border-slate-800/80 p-4 space-y-3 md:min-h-[320px]"
+                    className="flex flex-col rounded-2xl bg-surface/40 border border-line/80 p-4 space-y-3 md:min-h-[320px]"
                   >
                     {/* Stage Header */}
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${stage.color}`}>
+                    <div className="flex items-center justify-between pb-2 border-b border-line">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${stage.color}`}>
                         {stage.label}
                       </span>
-                      <span className="text-xs font-mono text-slate-500 font-bold">
+                      <span className="text-xs font-mono text-subtle font-bold">
                         {stageItems.length}
                       </span>
                     </div>
@@ -325,26 +325,26 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                       {stageItems.map((item, idx) => (
                         <div
                           key={`${item.id}-${idx}`}
-                          className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-colors space-y-2.5 text-xs"
+                          className="p-3.5 rounded-xl bg-surface/90 border border-line hover:border-line-strong transition-colors space-y-2.5 text-xs"
                         >
                           <div className="flex items-start justify-between gap-1">
                             <div>
-                              <h4 className="font-bold text-white text-sm flex items-center gap-1.5 flex-wrap">
+                              <h4 className="font-bold text-fg text-sm flex items-center gap-1.5 flex-wrap">
                                 {item.companyName}
                                 {SAMPLE_IDS.has(item.id) && (
-                                  <span className="text-[9px] font-mono font-normal uppercase tracking-wide px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                                  <span className="text-xs font-mono font-normal uppercase tracking-wide px-1.5 py-0.5 rounded bg-surface-2 text-muted border border-line-strong">
                                     Sample
                                   </span>
                                 )}
                               </h4>
-                              <p className="text-emerald-400 font-medium text-[11px]">
+                              <p className="text-accent-fg font-medium text-xs">
                                 {item.roleTitle}
                               </p>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleDeleteLead(item.id)}
-                              className={`${ui.iconBtn} !h-7 !w-7 hover:!text-rose-400`}
+                              className={`${ui.iconBtn} !h-7 !w-7 hover:!text-danger`}
                               title="Remove"
                               aria-label={`Remove ${item.companyName}`}
                             >
@@ -352,36 +352,36 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                             </button>
                           </div>
 
-                          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+                          <div className="flex items-center gap-2 text-xs font-mono text-muted">
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-slate-500" />
+                              <MapPin className="w-3 h-3 text-subtle" />
                               {item.locationType}
                             </span>
                             {item.salaryOrBudget && (
-                              <span className="text-slate-300 font-semibold">
+                              <span className="text-muted font-semibold">
                                 {item.salaryOrBudget}
                               </span>
                             )}
                           </div>
 
-                          <p className="text-slate-300 text-[11px] leading-relaxed bg-slate-950/60 p-2 rounded border border-slate-800/60">
+                          <p className="text-muted text-xs leading-relaxed bg-bg/60 p-2 rounded border border-line/60">
                             "{item.message}"
                           </p>
 
                           {item.notes && (
-                            <div className="text-[10px] text-slate-400 italic">
+                            <div className="text-xs text-muted italic">
                               Note: {item.notes}
                             </div>
                           )}
 
                           {/* Move stage control */}
-                          <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-                            <label htmlFor={`stage-${item.id}`} className="text-[10px] text-slate-500">Stage</label>
+                          <div className="pt-2 border-t border-line flex items-center justify-between">
+                            <label htmlFor={`stage-${item.id}`} className="text-xs text-subtle">Stage</label>
                             <select
                               id={`stage-${item.id}`}
                               value={item.stage}
                               onChange={(e) => handleStageChange(item.id, e.target.value as PipelineStage)}
-                              className="bg-slate-950 text-slate-200 text-[10px] px-2 py-1 rounded border border-slate-700 cursor-pointer focus:outline-none focus:border-emerald-400"
+                              className="bg-bg text-fg text-xs px-2 py-1 rounded border border-line-strong cursor-pointer focus:outline-none focus:border-accent"
                             >
                               <option value="inquiry">1. Outreach</option>
                               <option value="screening">2. Screening</option>
@@ -393,7 +393,7 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                       ))}
 
                       {stageItems.length === 0 && (
-                        <div className="h-28 border border-dashed border-slate-800 rounded-xl flex items-center justify-center text-slate-600 text-[11px]">
+                        <div className="h-28 border border-dashed border-line rounded-xl flex items-center justify-center text-subtle text-xs">
                           No active cards
                         </div>
                       )}
@@ -410,13 +410,13 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             {/* Left Controls */}
-            <div className="lg:col-span-5 space-y-4 p-5 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+            <div className="lg:col-span-5 space-y-4 p-5 sm:p-6 rounded-2xl bg-surface/60 border border-line">
               <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-lg font-bold text-fg flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-accent-fg" />
                   Select Your Open Vacancy
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-muted mt-1">
                   Choose your team's domain to calculate Jeevan's exact qualification match and generate an instant executive summary.
                 </p>
               </div>
@@ -435,14 +435,14 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
                     onClick={() => setSelectedRoleType(item.id as typeof selectedRoleType)}
                     className={`w-full text-left p-3.5 rounded-xl border transition-colors ${ui.focusRing} ${
                       selectedRoleType === item.id
-                        ? 'bg-emerald-500/10 border-emerald-500/50'
-                        : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 text-slate-400'
+                        ? 'bg-accent/10 border-accent/50'
+                        : 'bg-surface/80 border-line hover:border-line-strong text-muted'
                     }`}
                   >
-                    <div className={`font-semibold text-sm ${selectedRoleType === item.id ? 'text-white' : 'text-slate-200'}`}>
+                    <div className={`font-semibold text-sm ${selectedRoleType === item.id ? 'text-fg' : 'text-fg'}`}>
                       {item.label}
                     </div>
-                    <div className="text-[11px] font-mono text-slate-400 mt-0.5 truncate">
+                    <div className="text-xs font-mono text-muted mt-0.5 truncate">
                       {item.sub}
                     </div>
                   </button>
@@ -450,40 +450,40 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
               </div>
 
               {/* Status Badge */}
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs space-y-2 font-mono">
-                <div className="flex items-center justify-between text-slate-300">
+              <div className="p-4 rounded-xl bg-bg/80 border border-line/80 text-xs space-y-2 font-mono">
+                <div className="flex items-center justify-between text-muted">
                   <span>Work Authorization:</span>
-                  <span className="text-emerald-400 font-semibold">Eligible (Germany)</span>
+                  <span className="text-accent-fg font-semibold">Eligible (Germany)</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-300">
+                <div className="flex items-center justify-between text-muted">
                   <span>Location / Base:</span>
-                  <span className="text-white font-semibold">Hamburg, Germany</span>
+                  <span className="text-fg font-semibold">Hamburg, Germany</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-300">
+                <div className="flex items-center justify-between text-muted">
                   <span>Earliest Start Date:</span>
-                  <span className="text-emerald-400 font-semibold">Immediately</span>
+                  <span className="text-accent-fg font-semibold">Immediately</span>
                 </div>
               </div>
             </div>
 
             {/* Right Output: Score & Recruiter Summary */}
-            <div className="lg:col-span-7 space-y-4 p-5 sm:p-6 rounded-2xl bg-slate-900/70 border border-slate-800">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+            <div className="lg:col-span-7 space-y-4 p-5 sm:p-6 rounded-2xl bg-surface/70 border border-line">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-line">
                 <div>
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-semibold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-accent-fg font-semibold">
                     Candidate Qualification Analysis
                   </span>
-                  <h3 className="text-xl font-bold font-display text-white mt-0.5">
+                  <h3 className="text-xl font-bold font-display text-fg mt-0.5">
                     {matchData.title}
                   </h3>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <span className="text-2xl font-black font-display text-emerald-400">
+                    <span className="text-2xl font-black font-display text-accent-fg">
                       {matchData.score}%
                     </span>
-                    <span className="text-[10px] block font-mono text-slate-400">Role Match</span>
+                    <span className="text-xs block font-mono text-muted">Role Match</span>
                   </div>
                   <button type="button" onClick={handleCopyTailoredSummary} className={`${ui.btnPrimary} !py-2`}>
                     {copiedSummary ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -494,13 +494,13 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
               {/* Matching Highlights */}
               <div className="space-y-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-300 font-mono">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted font-mono">
                   Why Jeevan is an exceptional fit:
                 </span>
                 <div className="space-y-2">
                   {matchData.highlights.map((point, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-2.5 text-xs text-slate-200">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div key={idx} className="p-3 rounded-xl bg-bg/60 border border-line/80 flex items-start gap-2.5 text-xs text-fg">
+                      <CheckCircle2 className="w-4 h-4 text-accent-fg shrink-0 mt-0.5" />
                       <span>{point}</span>
                     </div>
                   ))}
@@ -509,12 +509,12 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
               {/* Matched Projects */}
               <div className="pt-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-300 font-mono block mb-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted font-mono block mb-2">
                   Key Supporting Projects:
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {matchData.matchedProjects.map((p, idx) => (
-                    <span key={idx} className="px-3 py-1 rounded-lg text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                    <span key={idx} className="px-3 py-1 rounded-lg text-xs font-mono bg-surface-2 text-muted border border-line-strong">
                       {p}
                     </span>
                   ))}
@@ -522,8 +522,8 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
               </div>
 
               {/* Fast Outreach CTA */}
-              <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs text-slate-400">
+              <div className="pt-4 border-t border-line flex flex-wrap items-center justify-between gap-3">
+                <div className="text-xs text-muted">
                   Ready to schedule a preliminary screening?
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -548,33 +548,33 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {PROJECTS_DATA.map((p) => (
-                <div key={p.id} className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+                <div key={p.id} className="p-4 rounded-xl bg-surface/80 border border-line space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-bold text-white text-sm">
+                    <h4 className="font-bold text-fg text-sm">
                       {p.title}
                     </h4>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300 border border-slate-700">
+                    <span className="px-2 py-0.5 rounded text-xs font-mono bg-surface-2 text-muted border border-line-strong">
                       {p.status}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-400 line-clamp-2">
+                  <p className="text-xs text-muted line-clamp-2">
                     {p.description}
                   </p>
 
-                  <div className="pt-2 border-t border-slate-800/70 flex items-center justify-between text-xs">
+                  <div className="pt-2 border-t border-line/70 flex items-center justify-between text-xs">
                     {p.githubUrl ? (
                       <a
                         href={p.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono text-[11px] rounded ${ui.focusRing}`}
+                        className={`text-accent-fg hover:text-accent-fg flex items-center gap-1 font-mono text-xs rounded ${ui.focusRing}`}
                       >
                         View on GitHub
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     ) : (
-                      <span className="text-slate-500 font-mono text-[11px]">Internal / not public</span>
+                      <span className="text-subtle font-mono text-xs">Internal / not public</span>
                     )}
                   </div>
                 </div>
@@ -594,9 +594,9 @@ ${matchData.matchedProjects.map((p) => `- ${p}`).join('\n')}`;
               tabIndex={-1}
               className={`${ui.panel} max-w-md p-5 sm:p-6 space-y-4`}
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 id="add-lead-title" className="font-display font-bold text-base text-white flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-emerald-400" />
+              <div className="flex items-center justify-between pb-3 border-b border-line">
+                <h3 id="add-lead-title" className="font-display font-bold text-base text-fg flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-accent-fg" />
                   Add opportunity
                 </h3>
                 <button type="button" onClick={closeAddLead} className={ui.iconBtn} aria-label="Close add opportunity dialog">

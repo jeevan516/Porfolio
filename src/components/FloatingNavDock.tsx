@@ -10,7 +10,7 @@ interface FloatingNavDockProps {
 }
 
 const FOCUS_RING =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60';
 
 const scrollToId = (id: string) => {
   const el = document.getElementById(id);
@@ -80,7 +80,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
     <>
       {/* Scroll progress bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-[3px] bg-emerald-400 origin-left z-[100]"
+        className="fixed top-0 left-0 right-0 h-[3px] bg-accent origin-left z-[100]"
         style={{ scaleX }}
       />
 
@@ -92,7 +92,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 hidden sm:flex items-center gap-1 p-1.5 rounded-full bg-slate-950/90 backdrop-blur-xl border border-slate-800 shadow-2xl shadow-black/60 max-w-[calc(100vw-2rem)]"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 hidden sm:flex items-center gap-1 p-1.5 rounded-full bg-bg/90 backdrop-blur-xl border border-line shadow-2xl shadow-black/60 max-w-[calc(100vw-2rem)]"
           >
             {visibleItems.map((item) => {
               const Icon = item.icon;
@@ -105,13 +105,13 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
                   aria-current={isActive ? 'true' : undefined}
                   title={item.label}
                   className={`relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${FOCUS_RING} ${
-                    isActive ? 'text-emerald-300' : 'text-slate-400 hover:text-slate-200'
+                    isActive ? 'text-accent-fg' : 'text-muted hover:text-fg'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeDockPill"
-                      className="absolute inset-0 bg-emerald-500/15 border border-emerald-500/30 rounded-full -z-10"
+                      className="absolute inset-0 bg-accent/15 border border-accent/30 rounded-full -z-10"
                       transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                     />
                   )}
@@ -121,7 +121,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
               );
             })}
 
-            {visibleItems.length > 0 && <div className="w-px h-4 bg-slate-800 mx-1" />}
+            {visibleItems.length > 0 && <div className="w-px h-4 bg-surface-2 mx-1" />}
 
             {onOpenContact && (
               <button
@@ -129,7 +129,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
                   playTactileClick();
                   onOpenContact();
                 }}
-                className={`p-2 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`}
+                className={`p-2 rounded-full text-muted hover:text-fg hover:bg-surface-2 transition-colors ${FOCUS_RING}`}
                 aria-label={isDe ? 'Kontakt aufnehmen' : 'Get in touch'}
                 title={isDe ? 'Kontakt aufnehmen' : 'Get in touch'}
               >
@@ -143,7 +143,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
                   playTactileClick();
                   onOpenResume();
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition-colors ${FOCUS_RING}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent hover:bg-accent-hover text-on-accent text-xs font-bold transition-colors ${FOCUS_RING}`}
                 aria-label={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
                 title={isDe ? 'Lebenslauf als PDF herunterladen' : 'Download CV as PDF'}
               >
@@ -154,7 +154,7 @@ export const FloatingNavDock: React.FC<FloatingNavDockProps> = ({
 
             <button
               onClick={scrollToTop}
-              className={`p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ${FOCUS_RING}`}
+              className={`p-2 rounded-full text-muted hover:text-fg hover:bg-surface-2 transition-colors ${FOCUS_RING}`}
               aria-label={isDe ? 'Nach oben scrollen' : 'Scroll to top'}
               title={isDe ? 'Nach oben scrollen' : 'Scroll to top'}
             >

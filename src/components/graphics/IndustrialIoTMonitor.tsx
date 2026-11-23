@@ -66,17 +66,17 @@ export const IndustrialIoTMonitor: React.FC = () => {
   return (
     <div
       id="industrial-iot-monitor"
-      className="relative w-full rounded-2xl bg-slate-950/70 border border-slate-800 overflow-hidden"
+      className="jd-dark-panel relative w-full rounded-2xl bg-bg/70 border border-line overflow-hidden"
     >
       {/* Top Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-slate-800/80 bg-slate-950/50">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-line/80 bg-bg/50">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+          <div className="p-2 rounded-lg bg-accent/10 text-accent-fg border border-accent/20 shrink-0">
             <Activity className="w-4 h-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <div className="text-xs font-semibold text-slate-200">MRF recycling telemetry · WaDaCon</div>
-            <p className="text-[11px] text-slate-500">InfluxDB + Prometheus + Grafana alerting (simulated)</p>
+            <div className="text-xs font-semibold text-fg">MRF recycling telemetry · WaDaCon</div>
+            <p className="text-xs text-subtle">InfluxDB + Prometheus + Grafana alerting (simulated)</p>
           </div>
         </div>
 
@@ -86,13 +86,13 @@ export const IndustrialIoTMonitor: React.FC = () => {
           onClick={handleSimulateFault}
           disabled={simulatingFault}
           type="button"
-          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 disabled:cursor-not-allowed ${
+          className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 disabled:cursor-not-allowed ${
             simulatingFault
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 hover:border-emerald-500/50'
+              ? 'bg-accent/20 text-warning border-warning/40'
+              : 'bg-surface-2 hover:bg-line-strong text-fg border-line-strong hover:border-accent/50'
           }`}
         >
-          <Zap className={`w-3.5 h-3.5 ${simulatingFault ? 'text-amber-400' : 'text-emerald-400'}`} aria-hidden="true" />
+          <Zap className={`w-3.5 h-3.5 ${simulatingFault ? 'text-warning' : 'text-accent-fg'}`} aria-hidden="true" />
           {simulatingFault ? 'Anomaly in progress…' : 'Simulate anomaly'}
         </button>
       </div>
@@ -100,16 +100,16 @@ export const IndustrialIoTMonitor: React.FC = () => {
       {/* Grid of Telemetry Sensors */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 sm:p-5">
         {/* Sensor 1: Optical Sorter */}
-        <div className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+        <div className="p-3.5 rounded-xl bg-bg/50 border border-line/80">
+          <div className="flex items-center justify-between text-muted text-xs mb-1">
             <span>Optical Sorter Velocity</span>
-            <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+            <Cpu className="w-3.5 h-3.5 text-teal" />
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-slate-100">{opticalSorterRpm}</span>
-            <span className="text-[11px] text-slate-400 font-mono">RPM</span>
+            <span className="text-xl font-bold font-mono text-fg">{opticalSorterRpm}</span>
+            <span className="text-xs text-muted font-mono">RPM</span>
           </div>
-          <div className="mt-2 text-[11px] text-emerald-400 flex items-center gap-1 font-mono">
+          <div className="mt-2 text-xs text-accent-fg flex items-center gap-1 font-mono">
             <CheckCircle2 className="w-3 h-3" /> Nominal throughput
           </div>
         </div>
@@ -117,63 +117,63 @@ export const IndustrialIoTMonitor: React.FC = () => {
         {/* Sensor 2: Vibration Spectrum */}
         <div className={`p-3.5 rounded-xl border transition-all ${
           vibrationSpectrum > 3.0
-            ? 'bg-amber-950/30 border-amber-500/50 text-amber-200'
-            : 'bg-slate-950/50 border-slate-800/80'
+            ? 'bg-warning-soft/30 border-warning/50 text-warning'
+            : 'bg-bg/50 border-line/80'
         }`}>
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <div className="flex items-center justify-between text-muted text-xs mb-1">
             <span>Bearing Vibration</span>
-            <Activity className={`w-3.5 h-3.5 ${vibrationSpectrum > 3.0 ? 'text-amber-400' : 'text-slate-400'}`} />
+            <Activity className={`w-3.5 h-3.5 ${vibrationSpectrum > 3.0 ? 'text-warning' : 'text-muted'}`} />
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className={`text-xl font-bold font-mono ${vibrationSpectrum > 3.0 ? 'text-amber-400' : 'text-slate-100'}`}>
+            <span className={`text-xl font-bold font-mono ${vibrationSpectrum > 3.0 ? 'text-warning' : 'text-fg'}`}>
               {vibrationSpectrum}
             </span>
-            <span className="text-[11px] text-slate-400 font-mono">mm/s RMS</span>
+            <span className="text-xs text-muted font-mono">mm/s RMS</span>
           </div>
-          <div className="mt-2 text-[11px] font-mono">
+          <div className="mt-2 text-xs font-mono">
             {vibrationSpectrum > 3.0 ? (
-              <span className="text-amber-400 flex items-center gap-1 font-semibold">
+              <span className="text-warning flex items-center gap-1 font-semibold">
                 <AlertTriangle className="w-3 h-3" /> ISO Limit Exceeded!
               </span>
             ) : (
-              <span className="text-slate-400">ISO 10816-3 Zone A</span>
+              <span className="text-muted">ISO 10816-3 Zone A</span>
             )}
           </div>
         </div>
 
         {/* Sensor 3: Recovery Purity */}
-        <div className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+        <div className="p-3.5 rounded-xl bg-bg/50 border border-line/80">
+          <div className="flex items-center justify-between text-muted text-xs mb-1">
             <span>Material Yield Purity</span>
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-accent-fg" />
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xl font-bold font-mono text-emerald-400">{purityPercentage}%</span>
-            <span className="text-[11px] text-slate-400 font-mono">Target &gt;95%</span>
+            <span className="text-xl font-bold font-mono text-accent-fg">{purityPercentage}%</span>
+            <span className="text-xs text-muted font-mono">Target &gt;95%</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 font-mono">
+          <div className="mt-2 text-xs text-muted font-mono">
             High-grade polymer stream
           </div>
         </div>
 
         {/* Sensor 4: AI Anomaly Gauge */}
         <div className={`p-3.5 rounded-xl border transition-all ${
-          isAlerting ? 'bg-rose-950/30 border-rose-500/60' : 'bg-slate-950/50 border-slate-800/80'
+          isAlerting ? 'bg-danger-soft/30 border-danger/60' : 'bg-bg/50 border-line/80'
         }`}>
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+          <div className="flex items-center justify-between text-muted text-xs mb-1">
             <span>AI Anomaly Score</span>
-            <Bell className={`w-3.5 h-3.5 ${isAlerting ? 'text-rose-400 animate-bounce' : 'text-slate-400'}`} />
+            <Bell className={`w-3.5 h-3.5 ${isAlerting ? 'text-danger animate-bounce' : 'text-muted'}`} />
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className={`text-xl font-bold font-mono ${isAlerting ? 'text-rose-400' : 'text-slate-100'}`}>
+            <span className={`text-xl font-bold font-mono ${isAlerting ? 'text-danger' : 'text-fg'}`}>
               {anomalyScore}
             </span>
-            <span className="text-[11px] text-slate-400 font-mono">/ 1.00</span>
+            <span className="text-xs text-muted font-mono">/ 1.00</span>
           </div>
           <div className="mt-2">
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-surface-2 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-500 rounded-full ${isAlerting ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                className={`h-full transition-all duration-500 rounded-full ${isAlerting ? 'bg-danger' : 'bg-accent'}`}
                 style={{ width: `${Math.round(Math.min(1, Math.max(0, anomalyScore)) * 100)}%` }}
               />
             </div>
@@ -183,23 +183,23 @@ export const IndustrialIoTMonitor: React.FC = () => {
 
       {/* Live Pipeline Log Feed */}
       <div className="px-4 sm:px-5 pb-4">
-        <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800/70 font-mono text-[11px]">
-          <div className="flex items-center justify-between text-slate-400 mb-2 border-b border-slate-800 pb-1.5">
-            <span className="flex items-center gap-1.5 text-xs text-slate-300 font-semibold">
-              <Zap className="w-3 h-3 text-emerald-400" aria-hidden="true" /> Pipeline log
+        <div className="p-3 rounded-xl bg-bg/80 border border-line/70 font-mono text-xs">
+          <div className="flex items-center justify-between text-muted mb-2 border-b border-line pb-1.5">
+            <span className="flex items-center gap-1.5 text-xs text-muted font-semibold">
+              <Zap className="w-3 h-3 text-accent-fg" aria-hidden="true" /> Pipeline log
             </span>
           </div>
           <div className="space-y-1" aria-live="polite">
             {logMessages.map((log, idx) => (
               <div key={`${log.time}-${idx}`} className="flex items-start gap-2 min-w-0">
-                <span className="text-slate-500 shrink-0">[{log.time}]</span>
+                <span className="text-subtle shrink-0">[{log.time}]</span>
                 <span
                   className={'break-words min-w-0 ' + (
                     log.type === 'warn'
-                      ? 'text-amber-300 font-medium'
+                      ? 'text-warning font-medium'
                       : log.type === 'success'
-                      ? 'text-emerald-400'
-                      : 'text-slate-300')
+                      ? 'text-accent-fg'
+                      : 'text-muted')
                   }
                 >
                   {log.text}

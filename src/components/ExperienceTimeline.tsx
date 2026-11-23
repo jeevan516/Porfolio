@@ -46,7 +46,7 @@ const STAGES = [
   },
 ];
 
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
+const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60';
 
 export const ExperienceTimeline: React.FC = () => {
   const [filter, setFilter] = useState<Filter>('work');
@@ -78,38 +78,38 @@ export const ExperienceTimeline: React.FC = () => {
   ];
 
   return (
-    <section id="experience" className="py-16 sm:py-20 border-t border-slate-800/80 relative overflow-hidden">
+    <section id="experience" className="py-16 sm:py-20 border-t border-line/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 text-xs font-mono text-accent-fg font-semibold uppercase tracking-wider mb-3">
               <Briefcase className="w-4 h-4" aria-hidden="true" />
               Experience
             </div>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white tracking-tight">Work Experience & Education</h2>
-            <p className="text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-fg tracking-tight">Work Experience & Education</h2>
+            <p className="text-muted text-sm sm:text-base mt-2 leading-relaxed">
               Enterprise IT infrastructure, automated observability, AI/ML APIs, and graduate computer science research in Germany.
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-2 self-start lg:self-auto px-3.5 py-2 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-xs font-semibold text-emerald-300">
+          <div className="inline-flex items-center gap-2 self-start lg:self-auto px-3.5 py-2 rounded-xl bg-surface/80 border border-accent/30 text-xs font-semibold text-accent-fg">
             <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
             Ready for work · Bootcamp @ neuefische
           </div>
         </div>
 
         {/* Career progression overview */}
-        <div className="mb-12 p-5 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+        <div className="mb-12 p-5 sm:p-6 rounded-2xl bg-surface/60 border border-line">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
-            <h3 className="flex items-center gap-2 text-base font-bold text-white font-display">
-              <TrendingUp className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+            <h3 className="flex items-center gap-2 text-base font-bold text-fg font-display">
+              <TrendingUp className="w-4 h-4 text-accent-fg" aria-hidden="true" />
               Career progression
             </h3>
-            <span className="text-xs font-mono text-slate-500">2015 – 2026 · 10+ years</span>
+            <span className="text-xs font-mono text-subtle">2015 – 2026 · 10+ years</span>
           </div>
 
           <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -123,14 +123,14 @@ export const ExperienceTimeline: React.FC = () => {
                     aria-label={`${stage.role} at ${stage.company} — show details`}
                     className={`w-full h-full text-left p-4 rounded-xl border transition-[border-color,translate] duration-200 hover:-translate-y-0.5 group ${focusRing} ${
                       latest
-                        ? 'bg-slate-900 border-emerald-500/50 hover:border-emerald-400'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-600'
+                        ? 'bg-surface border-accent/50 hover:border-accent'
+                        : 'bg-bg/60 border-line hover:border-line-strong'
                     }`}
                   >
-                    <div className="text-[11px] font-mono text-slate-500 mb-1.5">{stage.period}</div>
-                    <div className="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors">{stage.role}</div>
-                    <div className="text-xs text-emerald-400 mt-0.5">{stage.company}</div>
-                    <p className="text-[11px] text-slate-400 mt-2 leading-snug">{stage.summary}</p>
+                    <div className="text-xs font-mono text-subtle mb-1.5">{stage.period}</div>
+                    <div className="font-bold text-sm text-fg group-hover:text-accent-fg transition-colors">{stage.role}</div>
+                    <div className="text-xs text-accent-fg mt-0.5">{stage.company}</div>
+                    <p className="text-xs text-muted mt-2 leading-snug">{stage.summary}</p>
                   </button>
                 </li>
               );
@@ -151,13 +151,13 @@ export const ExperienceTimeline: React.FC = () => {
                 onClick={() => setFilter(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${focusRing} ${
                   active
-                    ? 'bg-emerald-500 border-emerald-500 text-slate-950 font-semibold'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-accent border-accent text-on-accent font-semibold'
+                    : 'bg-surface border-line text-muted hover:bg-surface-2 hover:text-fg'
                 }`}
               >
                 {tab.icon}
                 {tab.label}
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${active ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
+                <span className={`px-1.5 py-0.5 rounded-md text-xs font-mono ${active ? 'bg-bg/20 text-on-accent' : 'bg-surface-2 text-muted'}`}>
                   {tab.count}
                 </span>
               </button>
@@ -166,7 +166,7 @@ export const ExperienceTimeline: React.FC = () => {
         </div>
 
         {/* Timeline */}
-        <div className="relative border-l-2 border-slate-800 ml-4 sm:ml-6 space-y-8">
+        <div className="relative border-l-2 border-line ml-4 sm:ml-6 space-y-8">
           {filteredExperiences.map((item, idx) => {
             const isWork = item.category === 'work';
             const isExpanded = !!expandedItems[item.id];
@@ -189,54 +189,54 @@ export const ExperienceTimeline: React.FC = () => {
                   aria-hidden="true"
                   className={`absolute -left-[17px] top-6 w-8 h-8 rounded-full border-2 flex items-center justify-center ${
                     isLatest
-                      ? 'bg-emerald-500 border-emerald-300 text-slate-950'
+                      ? 'bg-accent border-accent text-on-accent'
                       : isWork
-                      ? 'bg-slate-900 border-emerald-400 text-emerald-400'
-                      : 'bg-slate-900 border-purple-400 text-purple-400'
+                      ? 'bg-surface border-accent text-accent-fg'
+                      : 'bg-surface border-info text-info'
                   }`}
                 >
                   {isWork ? <Briefcase className="w-4 h-4" /> : <GraduationCap className="w-4 h-4" />}
                 </div>
 
                 <article
-                  className={`p-5 sm:p-7 rounded-2xl bg-slate-900/70 border transition-colors space-y-5 ${
-                    isLatest ? 'border-emerald-500/40 hover:border-emerald-400/60' : 'border-slate-800 hover:border-slate-700'
+                  className={`p-5 sm:p-7 rounded-2xl bg-surface/70 border transition-colors space-y-5 ${
+                    isLatest ? 'border-accent/40 hover:border-accent/60' : 'border-line hover:border-line-strong'
                   }`}
                 >
-                  <header className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 pb-4 border-b border-slate-800">
+                  <header className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 pb-4 border-b border-line">
                     <div className="min-w-0">
                       {item.employmentType && (
                         <span
-                          className={`inline-block mb-2 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${
-                            isWork ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' : 'bg-purple-500/10 text-purple-300 border-purple-500/30'
+                          className={`inline-block mb-2 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                            isWork ? 'bg-accent/10 text-accent-fg border-accent/30' : 'bg-info/10 text-info border-info/30'
                           }`}
                         >
                           {item.employmentType.split(' · ')[0]}
                         </span>
                       )}
-                      <h3 className="text-lg sm:text-2xl font-bold font-display text-white leading-snug">{item.role}</h3>
-                      <div className="text-sm sm:text-base font-semibold text-emerald-400 mt-0.5">{item.company}</div>
+                      <h3 className="text-lg sm:text-2xl font-bold font-display text-fg leading-snug">{item.role}</h3>
+                      <div className="text-sm sm:text-base font-semibold text-accent-fg mt-0.5">{item.company}</div>
                     </div>
 
-                    <div className="flex flex-wrap lg:flex-col lg:items-end gap-x-4 gap-y-1.5 text-xs text-slate-400 shrink-0">
-                      <span className="flex items-center gap-1.5 font-mono text-slate-300">
-                        <Calendar className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                    <div className="flex flex-wrap lg:flex-col lg:items-end gap-x-4 gap-y-1.5 text-xs text-muted shrink-0">
+                      <span className="flex items-center gap-1.5 font-mono text-muted">
+                        <Calendar className="w-3.5 h-3.5 text-accent-fg" aria-hidden="true" />
                         {item.period}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                        <MapPin className="w-3.5 h-3.5 text-subtle" aria-hidden="true" />
                         {item.location}
                       </span>
                     </div>
                   </header>
 
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">{item.description}</p>
+                  <p className="text-sm sm:text-base text-muted leading-relaxed">{item.description}</p>
 
                   <div className="space-y-3">
                     <ul id={`experience-${item.id}-achievements`} className="space-y-2">
                       {shown.map((ach, aIdx) => (
-                        <li key={aIdx} className="text-sm text-slate-300 flex items-start gap-2.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+                        <li key={aIdx} className="text-sm text-muted flex items-start gap-2.5">
+                          <CheckCircle2 className="w-4 h-4 text-accent-fg shrink-0 mt-0.5" aria-hidden="true" />
                           <span className="leading-relaxed">{ach}</span>
                         </li>
                       ))}
@@ -248,7 +248,7 @@ export const ExperienceTimeline: React.FC = () => {
                         onClick={() => toggleExpand(item.id)}
                         aria-expanded={isExpanded}
                         aria-controls={`experience-${item.id}-achievements`}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-medium text-slate-300 hover:text-white hover:border-slate-500 transition-colors ${focusRing}`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line-strong text-xs font-medium text-muted hover:text-fg hover:border-line-strong transition-colors ${focusRing}`}
                       >
                         {isExpanded ? (
                           <>
@@ -263,9 +263,9 @@ export const ExperienceTimeline: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
+                  <div className="pt-4 border-t border-line flex flex-wrap items-center gap-1.5">
                     {item.technologies.map((tech) => (
-                      <span key={tech} className="px-2 py-0.5 rounded-md text-[11px] font-mono bg-slate-800/70 text-slate-300 border border-slate-700/50">
+                      <span key={tech} className="px-2 py-0.5 rounded-md text-xs font-mono bg-surface-2/70 text-muted border border-line-strong/50">
                         {tech}
                       </span>
                     ))}

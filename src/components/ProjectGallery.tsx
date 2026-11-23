@@ -40,11 +40,11 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, startIn
   const image = images[index];
   const many = images.length > 1;
   const buttonClass =
-    'p-2 rounded-full bg-slate-900/80 border border-slate-700 text-slate-200 hover:text-white hover:border-emerald-500/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60';
+    'p-2 rounded-full bg-surface/80 border border-line-strong text-fg hover:text-fg hover:border-accent/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60';
 
   return (
     <motion.div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/90 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-bg/90 backdrop-blur-sm p-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -60,8 +60,8 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, startIn
       >
         <div className="flex items-center justify-between gap-4 mb-3">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-white truncate">{project.title}</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm font-semibold text-fg truncate">{project.title}</p>
+            <p className="text-xs text-muted">
               {index + 1} / {images.length}
               {image.caption ? ` · ${image.caption}` : ''}
             </p>
@@ -76,7 +76,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, startIn
             key={image.src}
             src={assetUrl(image.src)}
             alt={image.alt}
-            className="w-full max-h-[78vh] object-contain rounded-xl border border-slate-800 bg-slate-900"
+            className="w-full max-h-[78vh] object-contain rounded-xl border border-line bg-surface"
           />
           {many && (
             <>
@@ -109,8 +109,8 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ project, startIn
                 onClick={() => setIndex(i)}
                 aria-label={img.caption || img.alt}
                 aria-current={i === index}
-                className={`shrink-0 w-20 h-12 rounded-md overflow-hidden border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60 ${
-                  i === index ? 'border-emerald-400' : 'border-slate-700 opacity-60 hover:opacity-100'
+                className={`shrink-0 w-20 h-12 rounded-md overflow-hidden border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60 ${
+                  i === index ? 'border-accent' : 'border-line-strong opacity-60 hover:opacity-100'
                 }`}
               >
                 <img src={assetUrl(img.src)} alt="" className="w-full h-full object-cover object-top" loading="lazy" />

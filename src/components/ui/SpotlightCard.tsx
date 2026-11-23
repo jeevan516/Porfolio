@@ -20,7 +20,7 @@ interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = '',
-  spotlightColor = 'rgba(16, 185, 129, 0.15)', // Emerald luminous glow
+  spotlightColor = 'color-mix(in srgb, var(--jd-accent) 15%, transparent)',
   enableTilt = false,
   ...props
 }) => {
@@ -72,7 +72,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   const borderGradient = useMotionTemplate`
     radial-gradient(
       320px circle at ${mouseX}px ${mouseY}px,
-      rgba(52, 211, 153, 0.45),
+      color-mix(in srgb, var(--card-c, var(--jd-accent)) 55%, transparent),
       transparent 70%
     )
   `;
@@ -83,7 +83,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={enableTilt ? { rotateX, rotateY, transformPerspective: 1000 } : undefined}
-      className={`group relative overflow-hidden rounded-2xl bg-slate-900/80 border border-slate-800/80 transition-[border-color,box-shadow,translate] duration-300 hover:border-slate-700 hover:shadow-lg hover:shadow-black/30 ${className}`}
+      className={`group relative overflow-hidden rounded-2xl bg-surface/80 border border-line/80 transition-[border-color,box-shadow,translate] duration-300 hover:border-line-strong hover:shadow-lg hover:shadow-black/30 ${className}`}
       {...(props as any)}
     >
       {/* Dynamic Cursor Spotlight Radial Overlay */}
