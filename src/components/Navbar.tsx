@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useReducedMotion } from 'framer-motion';
 import {
   BarChart3,
   Mail,
@@ -92,6 +92,47 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'tech-news', label: isDe ? 'Tech-News' : 'Tech News' },
     { id: 'contact', label: t.contact },
   ];
+
+  // Scroll-spy: the section currently under the header, for the active link and aria-current.
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const { scrollYProgress } = useScroll();
+  const reduceMotion = useReducedMotion();
+  useEffect(() => {
+    if (activeView !== 'showcase') {
+      setActiveId(null);
+      return;
+    }
+    const ids = sectionLinks.map((l) => l.id);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const line = (headerRef.current?.offsetHeight ?? 80) + 120;
+      let current: string | null = null;
+      let best = -Infinity;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= line && top > best) {
+          best = top;
+          current = id;
+        }
+      }
+      setActiveId(current);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView, language]);
 
   // Close the mobile menu on Escape
   useEffect(() => {
@@ -368,18 +409,39 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label={isDe ? 'Abschnitte' : 'Sections'}
           className="hidden lg:flex items-center gap-1 -mx-2 pb-2 overflow-x-auto text-sm font-medium text-muted [scrollbar-width:none]"
         >
-          {sectionLinks.filter((link) => PRIMARY_SECTIONS.includes(link.id)).map((link) => (
-            <a
-              key={link.id}
-              href={`#${link.id}`}
-              onClick={(e) => handleLinkClick(e, link.id)}
-              className={`shrink-0 px-2.5 py-1.5 rounded-md hover:text-fg hover:bg-surface-2/60 transition-colors ${FOCUS_RING}`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {sectionLinks.filter((link) => PRIMARY_SECTIONS.includes(link.id)).map((link) => {
+            const active = activeId === link.id;
+            return (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                onClick={(e) => handleLinkClick(e, link.id)}
+                aria-current={active ? 'location' : undefined}
+                className={`relative shrink-0 px-2.5 py-1.5 rounded-md transition-colors ${FOCUS_RING} ${
+                  active ? 'text-fg' : 'hover:text-fg hover:bg-surface-2/60'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="navActiveSection"
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-md bg-surface-2 border border-line-strong"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
+                  />
+                )}
+                <span className="relative">{link.label}</span>
+              </a>
+            );
+          })}
         </nav>
       </div>
+
+      {/* Reading progress: an aurora hairline along the bottom of the header */}
+      <motion.div
+        aria-hidden="true"
+        className="nav-progress absolute left-0 right-0 -bottom-px h-[2px] origin-left bg-aurora-x"
+        style={{ scaleX: scrollYProgress }}
+      />
 
       {/* Mobile / tablet menu panel */}
       <AnimatePresence>
@@ -421,7 +483,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     key={link.id}
                     href={`#${link.id}`}
                     onClick={(e) => handleLinkClick(e, link.id)}
-                    className={`px-3 py-2 rounded-lg text-sm text-muted hover:text-fg hover:bg-surface-2/70 transition-colors ${FOCUS_RING}`}
+                    aria-current={activeId === link.id ? 'location' : undefined}
+                    className={`px-3 py-2 rounded-lg text-sm hover:text-fg hover:bg-surface-2/70 transition-colors ${FOCUS_RING} ${
+                      activeId === link.id ? 'text-fg font-semibold bg-surface-2' : 'text-muted'
+                    }`}
                   >
                     {link.label}
                   </a>
