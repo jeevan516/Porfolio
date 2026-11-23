@@ -47,7 +47,7 @@ finishes and deploys itself on every push.
 | Live site | https://jeevan516.github.io/jeevan-Dutta/ (GitHub Pages; repo renamed from Porfolio) |
 | Project cards | **28**: 19 hand-written + 9 generated bootcamp projects; all 18 bootcamp projects in "My bootcamp journey" |
 | Bootcamp journey | 19 projects in 5 stages, 19 slide decks served from `public/decks/`, all listed in one download panel (click "Slide decks"); built from `project-notes` run-info, updates automatically |
-| Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors) |
+| Links to private repos | **0** (were on some cards before: GitHub returned 404 to visitors); public bootcamp repos get a GitHub link, e.g. github-actions-and-cicd since 22 Nov |
 | Security | production CSP meta tag; `server.js` no longer deployed; all new-tab links `rel=noopener` |
 | Certifications listed | 21 |
 | React components | 25 in `src/components/` (+ `ui/CountUp`, `ui/Reveal`, `ui/SpotlightCard`) |
@@ -80,4 +80,5 @@ finishes and deploys itself on every push.
 - 17 Nov 2026: removed the voice interviewer (VideoPortfolioSection and avatar components); added "My bootcamp journey" (5 stages, 18 projects, skills chart, filters, animations) generated automatically from project-notes; 9 new bootcamp cards; private-repo links removed; CSP for production builds; server.js kept off GitHub Pages.
 - 17 Nov 2026: web-service-deployment deck updated with the real GCP results; leftover video-pitch text and styles removed; "Slide decks" tile opens a list of all 18 decks; slide buttons labelled ".pptx"; hero button "Bootcamp projects & slides".
 - 18-22 Nov 2026: model-deployment-project deck updated three times (redesign, 'more time' answers, data-rule count fix; PRs #5-#7); new bootcamp project card and deck for github-actions-and-cicd (19 projects in the journey).
+- 22 Nov 2026: github-actions-and-cicd card now links its GitHub repo (repo made public) and serves the updated deck (5517f83).
 - 22-23 Nov 2026: redesigned with the JD design system (navy/amber/teal, light + dark), decluttered hero, research visuals section, scannable bootcamp journey, accessibility fixes (skip link, focus, 40 px targets, min 12 px text, no 390 px overflow), recoloured animations that respect reduced motion.
