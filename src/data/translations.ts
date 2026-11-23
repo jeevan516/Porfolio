@@ -115,7 +115,7 @@ export const TRANSLATIONS = {
     projects: {
       tag: 'Production, research & bootcamp',
       title: 'Projects with real results',
-      desc: 'Production monitoring at WaDaCon, a VHDL master thesis at TU Clausthal, my own AI and DevOps tools, and every neuefische project. Each card names the stack, the result and where to see the code or slides.',
+      desc: 'Production monitoring at WaDaCon, a VHDL master thesis at TU Clausthal, my own AI and DevOps tools, and every neuefische project. Each card shows the problem, the solution and, where measured, the result, plus where to see the code or slides.',
       filterAll: 'All Projects',
       filterAi: 'AI & Deep Learning',
       filterObs: 'Observability & SRE',
@@ -247,7 +247,7 @@ export const TRANSLATIONS = {
     projects: {
       tag: 'Produktion, Forschung & Bootcamp',
       title: 'Projekte mit echten Ergebnissen',
-      desc: 'Produktives Monitoring bei WaDaCon, eine VHDL-Masterarbeit an der TU Clausthal, eigene KI- und DevOps-Werkzeuge und alle neuefische-Projekte. Jede Karte nennt Stack, Ergebnis und wo Code oder Folien zu finden sind.',
+      desc: 'Produktives Monitoring bei WaDaCon, eine VHDL-Masterarbeit an der TU Clausthal, eigene KI- und DevOps-Werkzeuge und alle neuefische-Projekte. Jede Karte zeigt Problem, Lösung und, wo gemessen, das Ergebnis, dazu Code oder Folien.',
       filterAll: 'Alle Projekte',
       filterAi: 'KI & Deep Learning',
       filterObs: 'Observability & SRE',

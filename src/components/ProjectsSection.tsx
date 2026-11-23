@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { TargetRole } from '../types';
 import { PROJECTS_DATA, PERSONAL_INFO } from '../data/portfolioData';
 import { TRANSLATIONS } from '../data/translations';
 import { SpotlightCard } from './ui/SpotlightCard';
 import { playTactileClick } from '../services/soundFx';
-import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images } from 'lucide-react';
+import { Github, ExternalLink, Layers, TrendingUp, ArrowRight, FileText, Images, ChevronDown } from 'lucide-react';
 import type { Project } from '../types';
 import { ProjectGallery, assetUrl } from './ProjectGallery';
 import { JOURNEY, CURATED_CARD_FOR_FOLDER } from '../data/journey';
 import { projectSwatch, stageSwatch, tint, type Swatch } from '../data/palette';
+import { caseForProject } from '../data/projectCases';
+import { CaseSteps } from './ui/CaseSteps';
 
 /** Bootcamp cards take their stage colour; every other card its family colour. */
 const STAGE_BY_CARD_ID = new Map<string, string>(
@@ -47,6 +49,7 @@ const statusLabel = (status: string, isDe: boolean) => {
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, language = 'en' }) => {
   const t = TRANSLATIONS[language]?.projects || TRANSLATIONS.en.projects;
   const isDe = language === 'de';
+  const reduce = !!useReducedMotion();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [gallery, setGallery] = useState<{ project: Project; index: number } | null>(null);
@@ -70,7 +73,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
   });
 
   return (
-    <section id="projects" className="py-16 sm:py-20 border-t border-line/80 relative">
+    <section id="projects" className="py-20 sm:py-28 border-t border-line/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
@@ -79,8 +82,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
               <Layers className="w-4 h-4" aria-hidden="true" />
               {t.tag}
             </div>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-fg tracking-tight">{t.title}</h2>
-            <p className="text-muted text-sm sm:text-base mt-2 leading-relaxed">{t.desc}</p>
+            <h2 className="section-title text-4xl sm:text-6xl font-display font-bold text-fg">{t.title}</h2>
+            <p className="section-lead text-muted text-base sm:text-lg mt-4 leading-relaxed">{t.desc}</p>
           </div>
 
           {/* Category Filter Chips */}
@@ -122,17 +125,19 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
         {/* Projects Grid */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) => {
+            {filteredProjects.map((project, idx) => {
               const live = resolveLiveUrl(project.liveUrl);
               const sw = cardSwatch(project);
+              const cs = caseForProject(project);
               return (
                 <motion.div
                   key={project.id}
                   layout
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={reduce ? false : { opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.5, delay: reduce ? 0 : (idx % 3) * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
                 >
                   <SpotlightCard
                     id={`project-card-${project.id}`}
@@ -191,15 +196,29 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                         <p className="text-xs text-muted mt-1">{project.tagline}</p>
                       </div>
 
-                      <p className="text-sm text-muted leading-relaxed">{project.description}</p>
-
-                      <div
-                        className="flex gap-2 p-3 rounded-xl border border-line border-l-[3px] text-xs text-fg leading-relaxed"
-                        style={{ borderLeftColor: sw.fill, background: tint(sw.fill, 7) }}
-                      >
-                        <TrendingUp className="w-4 h-4 shrink-0 mt-0.5" style={{ color: sw.text }} aria-hidden="true" />
-                        <p>{project.impact}</p>
-                      </div>
+                      {cs ? (
+                        <>
+                          <CaseSteps data={cs} fill={sw.fill} text={sw.text} isDe={isDe} compact />
+                          <details className="case-more group/more">
+                            <summary className="case-more__summary inline-flex items-center gap-1.5 min-h-10 text-sm font-semibold text-fg cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60">
+                              <ChevronDown className="w-4 h-4 transition-transform group-open/more:rotate-180" aria-hidden="true" />
+                              {isDe ? 'Mehr Details' : 'More detail'}
+                            </summary>
+                            <p className="mt-1 text-sm text-muted leading-relaxed">{project.description}</p>
+                          </details>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm text-muted leading-relaxed">{project.description}</p>
+                          <div
+                            className="flex gap-2 p-3 rounded-xl border border-line border-l-[3px] text-xs text-fg leading-relaxed"
+                            style={{ borderLeftColor: sw.fill, background: tint(sw.fill, 7) }}
+                          >
+                            <TrendingUp className="w-4 h-4 shrink-0 mt-0.5" style={{ color: sw.text }} aria-hidden="true" />
+                            <p>{project.impact}</p>
+                          </div>
+                        </>
+                      )}
 
                       {project.metrics && (
                         <dl className="grid grid-cols-2 gap-2 text-xs">
@@ -256,7 +275,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ activeRole, la
                             <a
                               href={live.href}
                               {...(live.internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-accent-fg hover:text-accent-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
+                              className="arrow-nudge inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-accent-fg hover:text-accent-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-fg/60"
                             >
                               {isDe ? 'Details' : 'Details'}
                               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />

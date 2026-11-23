@@ -6,6 +6,8 @@ import { assetUrl } from './ProjectGallery';
 import { CountUp } from './ui/CountUp';
 import { stageSwatch, tint, type Swatch } from '../data/palette';
 import { projectBlurb } from '../data/projectCopy';
+import { caseForJourney } from '../data/projectCases';
+import { CaseSteps } from './ui/CaseSteps';
 
 interface NeuefischeJourneyProps {
   language?: 'en' | 'de';
@@ -76,7 +78,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
   const filtered = stage !== 'all' || !!skill;
 
   return (
-    <section id="neuefische-journey" aria-labelledby="journey-title" className="py-16 sm:py-24 border-t border-line relative">
+    <section id="neuefische-journey" aria-labelledby="journey-title" className="py-20 sm:py-28 border-t border-line relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -91,13 +93,13 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
               <GraduationCap className="w-4 h-4" aria-hidden="true" />
               neuefische · Bootcamp
             </p>
-            <h2 id="journey-title" className="text-3xl sm:text-5xl font-bold text-fg">
+            <h2 id="journey-title" className="section-title text-4xl sm:text-6xl font-bold text-fg">
               {isDe ? 'Meine Bootcamp-Reise' : 'My bootcamp journey'}
             </h2>
-            <p className="text-muted text-base sm:text-lg mt-3 leading-relaxed">
+            <p className="section-lead text-muted text-base sm:text-lg mt-4 leading-relaxed">
               {isDe
-                ? `${projects.length} Projekte in ${stages.length} Etappen, von Python-Grundlagen bis zu ML-Modellen, die per API in Docker und mit CI laufen. Jede Karte zeigt das echte Ergebnis des Laufs und verlinkt den Foliensatz.`
-                : `${projects.length} projects in ${stages.length} stages, from Python foundations to ML models served by APIs in Docker and checked in CI. Every card shows the real result of the run and links its slide deck.`}
+                ? `${projects.length} Projekte in ${stages.length} Etappen, von Python-Grundlagen bis zu ML-Modellen, die per API in Docker und mit CI laufen. Jede Karte zeigt Problem, Lösung und das echte Ergebnis des Laufs und verlinkt den Foliensatz.`
+                : `${projects.length} projects in ${stages.length} stages, from Python foundations to ML models served by APIs in Docker and checked in CI. Every card shows the problem, the solution and the real result of the run, and links its slide deck.`}
             </p>
             {dates.length > 0 && (
               <p className="mt-3 inline-flex items-center gap-2 text-sm text-subtle">
@@ -413,14 +415,25 @@ const JourneyCard = React.forwardRef<
         )}
       </p>
       <h4 className="mt-1.5 text-lg font-semibold text-fg leading-snug">{p.title}</h4>
-      <p className="mt-1.5 text-[15px] text-muted leading-relaxed">{projectBlurb(p.id, p.description)}</p>
-      <p
-        className="mt-3 rounded-lg border-l-[3px] pl-3 py-1.5 text-sm font-semibold text-fg leading-snug"
-        style={{ borderColor: swatch.fill, background: tint(swatch.fill, 9) }}
-      >
-        <span className="sr-only">{isDe ? 'Ergebnis: ' : 'Result: '}</span>
-        {p.headline}
-      </p>
+      {(() => {
+        const c = caseForJourney(p);
+        return c ? (
+          <div className="mt-3">
+            <CaseSteps data={c} fill={swatch.fill} text={swatch.text} isDe={isDe} compact />
+          </div>
+        ) : (
+          <>
+            <p className="mt-1.5 text-[15px] text-muted leading-relaxed">{projectBlurb(p.id, p.description)}</p>
+            <p
+              className="mt-3 rounded-lg border-l-[3px] pl-3 py-1.5 text-sm font-semibold text-fg leading-snug"
+              style={{ borderColor: swatch.fill, background: tint(swatch.fill, 9) }}
+            >
+              <span className="sr-only">{isDe ? 'Ergebnis: ' : 'Result: '}</span>
+              {p.headline}
+            </p>
+          </>
+        );
+      })()}
     </div>
 
     {p.metrics.length > 0 && (

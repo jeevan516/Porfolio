@@ -319,3 +319,34 @@ main > div > section.border-t::before {
   border-color: color-mix(in srgb, var(--card-c, var(--c-mlops)) 55%, var(--jd-border));
   box-shadow: 0 14px 36px -14px color-mix(in srgb, var(--card-c, var(--c-mlops)) 55%, transparent), var(--jd-shadow-1);
 }
+
+/* ==========================================================================================
+   Case-study rail: problem -> solution -> result (src/components/ui/CaseSteps.tsx)
+   ========================================================================================== */
+.case-step::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1.05rem;
+  bottom: 0.1rem;
+  width: 2px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--case-c, var(--c-mlops)) 40%, var(--jd-border));
+}
+.case-step:last-child::before { display: none; }
+.case-more__summary { list-style: none; }
+.case-more__summary::-webkit-details-marker { display: none; }
+
+/* Section headings: tighter tracking on large display type, one rhythm for lead paragraphs */
+.section-title { letter-spacing: -0.02em; text-wrap: balance; }
+.section-lead { text-wrap: pretty; max-width: 42rem; }
+
+/* Micro-interactions (only when motion is welcome) */
+@media (prefers-reduced-motion: no-preference) {
+  .jd-btn, .nav-press { transition: transform 150ms var(--jd-ease), background-color 200ms, border-color 200ms, color 200ms, box-shadow 200ms; }
+  .jd-btn:active, .nav-press:active { transform: scale(0.97); }
+  .arrow-nudge svg:last-child { transition: transform 200ms var(--jd-ease); }
+  .arrow-nudge:hover svg:last-child, .arrow-nudge:focus-visible svg:last-child { transform: translateX(3px); }
+  .accent-card .case-step__dot { transition: transform 250ms var(--jd-ease); }
+  .accent-card:hover .case-step__dot { transform: scale(1.15); }
+}

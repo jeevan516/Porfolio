@@ -1,6 +1,6 @@
 # Personal Portfolio Website: project notes
 
-_Last updated: 22 Nov 2026_
+_Last updated: 23 Nov 2026_
 
 ## Project
 **Personal Portfolio Website.** Recruiters need one place to see my projects, experience and
@@ -38,7 +38,18 @@ finishes and deploys itself on every push.
    headings, visible focus, 40 px touch targets, no text under 12 px, no horizontal scroll at 390 px.
    Motion kept and recoloured (aurora backdrop, mesh canvas, section reveals, card hover lift, filter
    layout animations); everything calms down under `prefers-reduced-motion`.
-8. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
+8. **Problem -> solution -> result template** (23 Nov): every project card (bootcamp journey and Projects)
+   shows a three-step case rail (`src/components/ui/CaseSteps.tsx`) from `src/data/projectCases.ts`:
+   one-sentence problem and solution per project id (bootcamp copy from each project's notes, other
+   projects only from facts already on their cards); the result is the generated headline or the card's
+   impact, left out where nothing was measured. The long description moved behind "More detail".
+   Template and motion pass (layout patterns studied on a reference portfolio, no content copied): the
+   section links highlight the section in view (scroll-spy, `aria-current`), an aurora reading-progress
+   hairline under the header, larger section headings with one spacing rhythm, staggered card and step
+   reveals, button press and arrow micro-interactions; all calm under `prefers-reduced-motion`.
+   Fixed: on phones the Projects section never appeared (`Reveal` waited for 8% of a section taller
+   than 12 screens); it now uses a fixed pixel margin.
+9. **Build and deploy:** a workflow runs `npm ci`, `npm audit --audit-level=high`, a type check
    and the build, then deploys `dist/` to GitHub Pages from `main`.
 
 ## Results
@@ -54,6 +65,7 @@ finishes and deploys itself on every push.
 | Screenshots | 1 project so far (Batch & Stream, 4 WebP images) |
 | CI "Build & Deploy" | last 4 runs passed (31 Oct–3 Nov); first 4 failed. The 31 Oct failure was "Get Pages site failed: Not Found" (Pages not yet enabled) |
 | Automated tests | none; CI checks security audit, type check and build only |
+| Case-study template (23 Nov) | every project card and all 19 journey cards show problem -> solution (-> result); `npm run lint` and `npm run build` pass; Playwright 1440 and 390 px, light and dark: no horizontal scroll; reduced motion: all steps visible |
 | Redesign checks (23 Nov) | `npm run lint` and `npm run build` pass; Playwright at 1440x900, 390x844 and 360 px, light and dark: `scrollWidth == innerWidth`; showcase view:, 1 h1, no heading-level jumps, 0 images without alt, 0 visible text under 12 px, 0 buttons/links under 32 px (phone) |
 
 ## Future engineering
@@ -65,8 +77,9 @@ finishes and deploys itself on every push.
 - Visitor numbers come from a committed file (`data/visitor-stats.json`), not live analytics; switch to a real analytics source.
 - Rename the package from `react-example`.
 - Lighthouse check for performance and accessibility in CI.
-- The Projects section is still a long grid of 28 cards with small details; give it the same treatment
-  as the journey (grouping, fewer chips) and finish moving older sections to `.jd-*` components.
+- The Projects section is still one long grid; group it (work, research, personal, bootcamp) and finish moving
+  older sections to `.jd-*` components.
+- German versions of the problem/solution lines (they are English only, like the card descriptions).
 - The Classic and Pipeline views were recoloured with the tokens but not redesigned.
 
 ## Update log
@@ -82,3 +95,4 @@ finishes and deploys itself on every push.
 - 18-22 Nov 2026: model-deployment-project deck updated three times (redesign, 'more time' answers, data-rule count fix; PRs #5-#7); new bootcamp project card and deck for github-actions-and-cicd (19 projects in the journey).
 - 22 Nov 2026: github-actions-and-cicd card now links its GitHub repo (repo made public) and serves the updated deck (5517f83).
 - 22-23 Nov 2026: redesigned with the JD design system (navy/amber/teal, light + dark), decluttered hero, research visuals section, scannable bootcamp journey, accessibility fixes (skip link, focus, 40 px targets, min 12 px text, no 390 px overflow), recoloured animations that respect reduced motion.
+- 23 Nov 2026: problem -> solution -> result on every project card; scroll-spy section nav, reading progress, heading rhythm and staggered reveals; fixed the Projects section staying invisible on phones.
