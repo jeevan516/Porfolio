@@ -350,3 +350,27 @@ main > div > section.border-t::before {
   .accent-card .case-step__dot { transition: transform 250ms var(--jd-ease); }
   .accent-card:hover .case-step__dot { transform: scale(1.15); }
 }
+
+/* ---- project tiles: light sweep on hover, "problem & solution" hint ---------------------------- */
+.tile-shine { position: relative; overflow: hidden; isolation: isolate; }
+.tile-shine::after {
+  content: ""; position: absolute; inset: -40% auto -40% -60%; width: 45%; z-index: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--card-c, #f2a541) 14%, transparent), transparent);
+  transform: translateX(0) rotate(8deg); opacity: 0;
+}
+.tile-shine:hover::after { animation: tile-sweep 900ms var(--jd-ease, ease) 1; }
+@keyframes tile-sweep { 0% { opacity: 0; transform: translateX(0) rotate(8deg); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(420%) rotate(8deg); } }
+.tile-shine > * { position: relative; z-index: 1; }
+.tile-shine:active { transform: translateY(-1px) scale(0.995); }
+
+.case-toggle:hover { background: color-mix(in srgb, var(--card-c, #f2a541) 12%, transparent) !important; }
+.case-toggle__nudge { animation: case-nudge 2.4s ease-in-out infinite; }
+.accent-card:hover .case-toggle__nudge { animation-duration: 1.2s; }
+@keyframes case-nudge { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(3px); } 90% { transform: translateY(0); } }
+.case-toggle__dots > span { transition: transform 300ms var(--jd-ease, ease); }
+.case-reveal[data-open] .case-toggle__dots > span:nth-child(2) { transform: scaleX(1.6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-shine:hover::after, .case-toggle__nudge { animation: none; }
+  .tile-shine:active { transform: none; }
+}

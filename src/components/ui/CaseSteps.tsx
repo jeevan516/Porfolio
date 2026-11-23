@@ -15,7 +15,9 @@ export const CaseSteps: React.FC<{
   text: string;
   isDe?: boolean;
   compact?: boolean;
-}> = ({ data, fill, text, isDe = false, compact = false }) => {
+  /** animate when mounted (inside a panel that just opened) instead of when scrolled into view */
+  animateOnMount?: boolean;
+}> = ({ data, fill, text, isDe = false, compact = false, animateOnMount = false }) => {
   const reduce = !!useReducedMotion();
   const steps = [
     { key: 'problem', label: isDe ? 'Problem' : 'Problem', body: data.problem },
@@ -33,10 +35,11 @@ export const CaseSteps: React.FC<{
         return (
           <motion.li
             key={s.key}
-            initial={reduce ? false : { opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.45, delay: reduce ? 0 : i * 0.12, ease }}
+            initial={reduce ? false : { opacity: 0, y: 10, x: animateOnMount ? -6 : 0 }}
+            {...(animateOnMount
+              ? { animate: { opacity: 1, y: 0, x: 0 } }
+              : { whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.6 } })}
+            transition={{ duration: 0.45, delay: reduce ? 0 : (animateOnMount ? 0.08 : 0) + i * 0.12, ease }}
             className={`case-step relative pl-6 ${i < steps.length - 1 ? (compact ? 'pb-2.5' : 'pb-3') : ''}`}
           >
             <span
