@@ -4,6 +4,8 @@ import { GraduationCap, Github, FileText, Lock, CalendarDays, Sparkles, Download
 import { JOURNEY, type JourneyProject } from '../data/journey';
 import { assetUrl } from './ProjectGallery';
 import { CountUp } from './ui/CountUp';
+import { stageSwatch, tint, type Swatch } from '../data/palette';
+import { projectBlurb } from '../data/projectCopy';
 
 interface NeuefischeJourneyProps {
   language?: 'en' | 'de';
@@ -17,8 +19,7 @@ const STAGE_DE: Record<string, string> = {
   'MLOps & deployment': 'MLOps & Deployment',
 };
 
-// One colour per stage, from the JD chart series (used as fills and rules, never as text)
-const STAGE_COLOR = ['var(--jd-series-1)', 'var(--jd-series-7)', 'var(--jd-teal)', 'var(--jd-series-4)', 'var(--jd-accent)'];
+// One vivid colour per stage (shared JD accent palette, src/data/palette.ts)
 
 const formatDate = (iso: string | null, isDe: boolean) =>
   iso ? new Date(`${iso}T12:00:00`).toLocaleDateString(isDe ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'short' }) : '';
@@ -44,6 +45,23 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
     projects.forEach((p) => p.stack.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
     return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 12);
   }, [projects]);
+  // Colour group of a tool: the stage where it was used most (ties go to the earlier stage)
+  const toolSwatch = useMemo(() => {
+    const m = new Map<string, Swatch>();
+    skills.forEach(([name]) => {
+      let best = stages[0];
+      let bestN = -1;
+      stages.forEach((st) => {
+        const n = projects.filter((p) => p.stage === st && p.stack.includes(name)).length;
+        if (n > bestN) {
+          best = st;
+          bestN = n;
+        }
+      });
+      m.set(name, stageSwatch(best));
+    });
+    return m;
+  }, [skills, stages, projects]);
   const maxSkill = skills[0]?.[1] ?? 1;
 
   const dates = projects.map((p) => p.startDate).filter(Boolean).sort() as string[];
@@ -78,8 +96,8 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
             </h2>
             <p className="text-muted text-base sm:text-lg mt-3 leading-relaxed">
               {isDe
-                ? 'Von Python-Grundlagen bis zu deployten ML-Systemen: jedes Projekt mit echten Ergebnissen und Folien.'
-                : 'From Python foundations to deployed ML systems: every project with its real results and slides.'}
+                ? `${projects.length} Projekte in ${stages.length} Etappen, von Python-Grundlagen bis zu ML-Modellen, die per API in Docker und mit CI laufen. Jede Karte zeigt das echte Ergebnis des Laufs und verlinkt den Foliensatz.`
+                : `${projects.length} projects in ${stages.length} stages, from Python foundations to ML models served by APIs in Docker and checked in CI. Every card shows the real result of the run and links its slide deck.`}
             </p>
             {dates.length > 0 && (
               <p className="mt-3 inline-flex items-center gap-2 text-sm text-subtle">
@@ -137,7 +155,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                   {isDe ? 'Alle neuefische-Foliensätze (PowerPoint)' : 'All neuefische slide decks (PowerPoint)'}
                 </h3>
                 <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1">
-                  {byStage.flatMap((g, i) =>
+                  {byStage.flatMap((g) =>
                     g.projects
                       .filter((p) => p.deckUrl)
                       .map((p) => (
@@ -147,7 +165,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                             download
                             className="group flex items-center gap-2.5 min-h-10 rounded-lg px-2.5 text-[15px] text-fg no-underline hover:bg-surface-2 transition-colors"
                           >
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: STAGE_COLOR[i % 5] }} aria-hidden="true" />
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: stageSwatch(g.stage).fill }} aria-hidden="true" />
                             <span className="truncate">{p.title}</span>
                             <Download className="w-4 h-4 ml-auto shrink-0 text-subtle group-hover:text-accent-fg" aria-hidden="true" />
                           </a>
@@ -164,7 +182,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
         <nav aria-label={isDe ? 'Etappen filtern' : 'Filter by stage'} className="relative mb-10">
           <motion.div
             className="absolute left-6 right-6 top-[26px] h-0.5 origin-left hidden md:block rounded-full"
-            style={{ background: `linear-gradient(90deg, ${STAGE_COLOR.join(', ')})`, opacity: 0.5 }}
+            style={{ background: `linear-gradient(90deg, ${stages.map((st) => stageSwatch(st).fill).join(', ')})`, opacity: 0.8, height: 3 }}
             aria-hidden="true"
             initial={reduce ? false : { scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
@@ -174,6 +192,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
           <ol className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 relative">
             {byStage.map((g, i) => {
               const active = stage === g.stage;
+              const sw = stageSwatch(g.stage);
               return (
                 <motion.li
                   key={g.stage}
@@ -188,17 +207,22 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                     whileHover={reduce ? undefined : { y: -3 }}
                     onClick={() => setStage(active ? 'all' : g.stage)}
                     aria-pressed={active}
-                    className={`w-full h-full text-left rounded-xl border px-3.5 py-3 transition-colors ${
-                      active ? 'border-accent bg-accent-soft shadow-md' : 'border-line bg-surface hover:border-line-strong shadow-sm'
+                    className={`w-full h-full text-left rounded-xl border px-3.5 py-3 transition-[background-color,border-color,box-shadow] ${
+                      active ? 'shadow-md' : 'border-line bg-surface hover:border-line-strong shadow-sm'
                     }`}
+                    style={
+                      active
+                        ? { borderColor: sw.fill, background: `linear-gradient(${tint(sw.fill, 16)}, ${tint(sw.fill, 16)}), var(--jd-surface)`, boxShadow: `0 10px 28px -14px ${sw.fill}` }
+                        : { borderTopColor: sw.fill, borderTopWidth: 3 }
+                    }
                   >
                     <span className="flex items-center gap-2.5">
                       <span
-                        className="w-7 h-7 shrink-0 rounded-full grid place-items-center text-sm font-bold text-white ring-4 ring-bg"
-                        style={{ background: STAGE_COLOR[i % 5] }}
+                        className="w-8 h-8 shrink-0 rounded-full grid place-items-center text-sm font-bold ring-4 ring-bg"
+                        style={{ background: sw.fill, color: 'var(--c-ink)', boxShadow: `0 0 0 6px ${tint(sw.fill, 22)}` }}
                         aria-hidden="true"
                       >
-                        <span className="drop-shadow-[0_1px_1px_rgb(0_0_0/0.45)]">{i + 1}</span>
+                        {i + 1}
                       </span>
                       <span className="text-[15px] font-semibold text-fg leading-tight">{stageLabel(g.stage)}</span>
                     </span>
@@ -220,11 +244,14 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
           <h3 id="journey-tools-title" className="flex items-center gap-2 text-base font-semibold text-fg mb-3">
             <Sparkles className="w-4 h-4 text-accent-fg" aria-hidden="true" />
             {isDe ? 'Meistgenutzte Werkzeuge' : 'Tools used most'}
-            <span className="text-[13px] font-normal text-subtle">· {isDe ? 'antippen zum Filtern' : 'select to filter'}</span>
+            <span className="text-[13px] font-normal text-subtle">
+              · {isDe ? 'Farbe = Etappe mit der meisten Nutzung, antippen zum Filtern' : 'colour = stage where it was used most; select to filter'}
+            </span>
           </h3>
           <ul className="flex flex-wrap gap-2">
             {skills.map(([name, count], idx) => {
               const active = skill === name;
+              const sw = toolSwatch.get(name) ?? stageSwatch(stages[0]);
               return (
                 <motion.li
                   key={name}
@@ -237,21 +264,24 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                     type="button"
                     onClick={() => setSkill(active ? null : name)}
                     aria-pressed={active}
-                    className={`relative inline-flex items-center gap-2 min-h-10 pl-3.5 pr-2 rounded-full border text-sm font-medium overflow-hidden transition-colors ${
-                      active ? 'border-accent bg-accent text-on-accent' : 'border-line bg-surface text-fg hover:border-line-strong hover:bg-surface-2'
-                    }`}
+                    className="relative inline-flex items-center gap-2 min-h-10 pl-3.5 pr-2 rounded-full border text-sm font-medium overflow-hidden transition-colors text-fg bg-surface hover:bg-surface-2"
+                    style={
+                      active
+                        ? { background: sw.fill, borderColor: sw.fill, color: 'var(--c-ink)' }
+                        : { borderColor: `color-mix(in srgb, ${sw.fill} 55%, var(--jd-border))` }
+                    }
                   >
                     {!active && (
                       <span
                         aria-hidden="true"
-                        className="absolute inset-y-0 left-0 bg-accent-soft -z-0"
-                        style={{ width: `${(count / maxSkill) * 100}%` }}
+                        className="absolute inset-y-0 left-0 -z-0"
+                        style={{ width: `${(count / maxSkill) * 100}%`, background: tint(sw.fill, 20) }}
                       />
                     )}
                     <span className="relative">{name}</span>
                     <span
                       className={`relative min-w-6 h-6 px-1.5 rounded-full grid place-items-center text-xs font-semibold tabular-nums ${
-                        active ? 'bg-on-accent/15' : 'bg-surface-2 text-muted'
+                        active ? 'bg-[rgb(15_27_45/0.15)]' : 'bg-surface-2 text-muted'
                       }`}
                     >
                       {count}
@@ -299,6 +329,7 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
               <AnimatePresence initial={false} mode="popLayout">
                 {visibleStages.map((g) => {
                   const i = stages.indexOf(g.stage);
+                  const sw = stageSwatch(g.stage);
                   return (
                     <motion.section
                       key={g.stage}
@@ -309,11 +340,11 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                       transition={{ duration: 0.3, ease }}
                       aria-labelledby={`stage-${i}-title`}
                     >
-                      <header className="flex items-end justify-between gap-3 mb-4 pb-3 border-b border-line">
+                      <header className="flex items-end justify-between gap-3 mb-4 pb-3 border-b" style={{ borderColor: tint(sw.fill, 45) }}>
                         <div className="flex items-center gap-3 min-w-0">
-                          <span className="w-1.5 self-stretch rounded-full" style={{ background: STAGE_COLOR[i % 5] }} aria-hidden="true" />
+                          <span className="w-1.5 self-stretch rounded-full" style={{ background: sw.fill }} aria-hidden="true" />
                           <div className="min-w-0">
-                            <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-subtle">
+                            <p className="text-[13px] font-semibold uppercase tracking-[0.08em]" style={{ color: sw.text }}>
                               {isDe ? 'Etappe' : 'Stage'} {i + 1}
                             </p>
                             <h3 id={`stage-${i}-title`} className="text-xl sm:text-2xl font-bold text-fg leading-tight">
@@ -321,14 +352,14 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
                             </h3>
                           </div>
                         </div>
-                        <span className="jd-badge shrink-0">
+                        <span className="jd-badge shrink-0" style={{ background: tint(sw.fill, 16), borderColor: tint(sw.fill, 45), color: sw.text }}>
                           {g.projects.length} {isDe ? 'Projekte' : g.projects.length === 1 ? 'project' : 'projects'}
                         </span>
                       </header>
                       <motion.div layout={!reduce} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <AnimatePresence initial={false} mode="popLayout">
                           {g.projects.map((p, k) => (
-                            <JourneyCard key={p.id} project={p} isDe={isDe} index={k} reduce={reduce} activeSkill={skill} color={STAGE_COLOR[i % 5]} />
+                            <JourneyCard key={p.id} project={p} isDe={isDe} index={k} reduce={reduce} activeSkill={skill} swatch={sw} stageLabel={stageLabel(g.stage)} />
                           ))}
                         </AnimatePresence>
                       </motion.div>
@@ -347,8 +378,8 @@ export const NeuefischeJourney: React.FC<NeuefischeJourneyProps> = ({ language =
 
 const JourneyCard = React.forwardRef<
   HTMLElement,
-  { project: JourneyProject; isDe: boolean; index: number; reduce: boolean; activeSkill: string | null; color: string }
->(({ project: p, isDe, index, reduce, activeSkill, color }, ref) => (
+  { project: JourneyProject; isDe: boolean; index: number; reduce: boolean; activeSkill: string | null; swatch: Swatch; stageLabel: string }
+>(({ project: p, isDe, index, reduce, activeSkill, swatch, stageLabel }, ref) => (
   <motion.article
     ref={ref}
     layout={!reduce}
@@ -358,16 +389,22 @@ const JourneyCard = React.forwardRef<
     viewport={{ once: true, amount: 0.15 }}
     transition={{ duration: 0.45, delay: reduce ? 0 : Math.min(index, 4) * 0.07, ease }}
     whileHover={reduce ? undefined : { y: -4 }}
-    className="group relative flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm hover:shadow-[var(--jd-shadow-2)] hover:border-line-strong transition-[border-color,box-shadow] overflow-hidden"
+    className="accent-card group flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm"
+    style={{ '--card-c': swatch.fill } as React.CSSProperties}
   >
     <span
       aria-hidden="true"
-      className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-      style={{ background: color }}
+      className="pointer-events-none absolute -top-16 -right-16 w-40 h-40 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      style={{ background: tint(swatch.fill, 30) }}
     />
-    <div>
+    <div className="relative">
       <p className="flex items-center justify-between gap-2 text-[13px] text-subtle">
-        <span>{formatDate(p.startDate, isDe)}</span>
+        <span className="inline-flex items-center gap-1.5 min-w-0">
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: swatch.fill }} aria-hidden="true" />
+          <span className="font-semibold truncate" style={{ color: swatch.text }}>{stageLabel}</span>
+          <span aria-hidden="true">·</span>
+          <span className="shrink-0">{formatDate(p.startDate, isDe)}</span>
+        </span>
         {!p.githubUrl && (
           <span className="inline-flex items-center gap-1" title={isDe ? 'Privates Kurs-Repository' : 'Private course repository'}>
             <Lock className="w-3.5 h-3.5" aria-hidden="true" />
@@ -375,30 +412,41 @@ const JourneyCard = React.forwardRef<
           </span>
         )}
       </p>
-      <h4 className="mt-1 text-lg font-semibold text-fg leading-snug">{p.title}</h4>
-      <p className="mt-1.5 text-[15px] text-muted leading-relaxed">{p.headline}</p>
+      <h4 className="mt-1.5 text-lg font-semibold text-fg leading-snug">{p.title}</h4>
+      <p className="mt-1.5 text-[15px] text-muted leading-relaxed">{projectBlurb(p.id, p.description)}</p>
+      <p
+        className="mt-3 rounded-lg border-l-[3px] pl-3 py-1.5 text-sm font-semibold text-fg leading-snug"
+        style={{ borderColor: swatch.fill, background: tint(swatch.fill, 9) }}
+      >
+        <span className="sr-only">{isDe ? 'Ergebnis: ' : 'Result: '}</span>
+        {p.headline}
+      </p>
     </div>
 
     {p.metrics.length > 0 && (
       <dl className={`grid gap-2 ${p.metrics.length >= 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
         {p.metrics.map((m) => (
-          <div key={m.label} className="flex flex-col-reverse rounded-xl bg-surface-2 px-3 py-2.5 min-w-0">
+          <div key={m.label} className="relative flex flex-col-reverse rounded-xl bg-surface-2 px-3 py-2.5 min-w-0">
             <dt className="mt-0.5 text-xs font-medium text-muted leading-snug">{m.label}</dt>
-            <dd className="font-display text-xl font-bold text-fg tabular-nums leading-tight break-words">{m.value}</dd>
+            <dd className="font-display text-xl font-bold tabular-nums leading-tight break-words" style={{ color: swatch.text }}>{m.value}</dd>
           </div>
         ))}
       </dl>
     )}
 
-    <ul className="flex flex-wrap gap-1.5" aria-label={isDe ? 'Technologien' : 'Tech stack'}>
+    <ul className="relative flex flex-wrap gap-1.5" aria-label={isDe ? 'Technologien' : 'Tech stack'}>
       {p.stack.slice(0, 6).map((t) => (
-        <li key={t} className={`jd-chip ${activeSkill === t ? '!border-accent !text-accent-fg bg-accent-soft' : ''}`}>
+        <li
+          key={t}
+          className="jd-chip"
+          style={activeSkill === t ? { borderColor: swatch.fill, background: tint(swatch.fill, 18), color: 'var(--jd-text)' } : undefined}
+        >
           {t}
         </li>
       ))}
     </ul>
 
-    <div className="flex flex-wrap gap-2 mt-auto pt-1">
+    <div className="relative flex flex-wrap gap-2 mt-auto pt-1">
       {p.deckUrl && (
         <a href={assetUrl(p.deckUrl)} download className="jd-btn jd-btn--secondary no-underline flex-1 sm:flex-none">
           <FileText className="w-4 h-4" aria-hidden="true" />

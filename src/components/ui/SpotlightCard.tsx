@@ -72,7 +72,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   const borderGradient = useMotionTemplate`
     radial-gradient(
       320px circle at ${mouseX}px ${mouseY}px,
-      color-mix(in srgb, var(--jd-accent) 45%, transparent),
+      color-mix(in srgb, var(--card-c, var(--jd-accent)) 55%, transparent),
       transparent 70%
     )
   `;

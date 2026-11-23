@@ -151,7 +151,7 @@
 ::-webkit-scrollbar-thumb { background: var(--jd-border-strong); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--jd-text-subtle); }
 
-/* Ambient backdrop: two slow-drifting brand glows (amber, teal) over a faint dot grid */
+/* Ambient backdrop: slow-drifting aurora glows (amber + coral, violet + sky) over a faint dot grid */
 .aurora-backdrop {
   position: fixed;
   inset: 0;
@@ -163,26 +163,30 @@
 .aurora-backdrop::after {
   content: '';
   position: absolute;
-  width: 60vmax;
-  height: 60vmax;
+  width: 62vmax;
+  height: 62vmax;
   border-radius: 9999px;
   filter: blur(90px);
-  opacity: 0.14;
-  animation: auroraDrift 28s ease-in-out infinite alternate;
+  opacity: 0.16;
+  animation: auroraDrift 30s ease-in-out infinite alternate;
 }
 .aurora-backdrop::before {
-  top: -22vmax;
-  left: -15vmax;
-  background: radial-gradient(circle, var(--jd-accent) 0%, transparent 65%);
+  top: -24vmax;
+  left: -16vmax;
+  background:
+    radial-gradient(circle at 35% 40%, var(--c-mlops) 0%, transparent 55%),
+    radial-gradient(circle at 70% 65%, var(--c-ml) 0%, transparent 55%);
 }
 .aurora-backdrop::after {
-  bottom: -25vmax;
-  right: -15vmax;
-  background: radial-gradient(circle, var(--jd-teal) 0%, transparent 65%);
-  animation-delay: -14s;
+  bottom: -26vmax;
+  right: -16vmax;
+  background:
+    radial-gradient(circle at 35% 40%, var(--c-api) 0%, transparent 55%),
+    radial-gradient(circle at 65% 60%, var(--c-python) 0%, transparent 55%);
+  animation-delay: -15s;
 }
-:root[data-theme='light'] .aurora-backdrop::before { opacity: 0.16; }
-:root[data-theme='light'] .aurora-backdrop::after { opacity: 0.1; }
+:root[data-theme='light'] .aurora-backdrop::before { opacity: 0.14; }
+:root[data-theme='light'] .aurora-backdrop::after { opacity: 0.11; }
 .aurora-grid {
   position: absolute;
   inset: 0;
@@ -219,6 +223,99 @@
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .hero-aurora * { animation: none !important; }
   .aurora-backdrop::before, .aurora-backdrop::after { animation: none; }
   .cursor-spotlight { display: none; }
+}
+
+/* ==========================================================================================
+   Shared accent palette (same values on the hub, portal and dashboards).
+   --c-<key>: vivid fill for shapes, borders and glows; text on it is navy ink (--c-ink).
+   --c-<key>-text: text-safe shade (AA on page and card surfaces) for the current theme.
+   ========================================================================================== */
+:root {
+  --c-python: #38bdf8; --c-api: #a78bfa; --c-data: #2dd4bf; --c-ml: #fb7185; --c-mlops: #f2a541; --c-tools: #f472b6;
+  --c-ink: #0f1b2d;
+  --c-python-text: #0369a1; --c-api-text: #6d28d9; --c-data-text: #0f766e;
+  --c-ml-text: #be123c; --c-mlops-text: #9a5400; --c-tools-text: #be185d;
+  --aurora: linear-gradient(135deg, #f2a541 0%, #fb7185 35%, #a78bfa 70%, #38bdf8 100%);
+  --aurora-x: linear-gradient(90deg, #f2a541 0%, #fb7185 35%, #a78bfa 70%, #38bdf8 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --c-python-text: #38bdf8; --c-api-text: #a78bfa; --c-data-text: #2dd4bf;
+    --c-ml-text: #fb7185; --c-mlops-text: #f2a541; --c-tools-text: #f472b6;
+  }
+}
+:root[data-theme="dark"], .jd-dark-panel {
+  --c-python-text: #38bdf8; --c-api-text: #a78bfa; --c-data-text: #2dd4bf;
+  --c-ml-text: #fb7185; --c-mlops-text: #f2a541; --c-tools-text: #f472b6;
+}
+.jd-paper {
+  --c-python-text: #0369a1; --c-api-text: #6d28d9; --c-data-text: #0f766e;
+  --c-ml-text: #be123c; --c-mlops-text: #9a5400; --c-tools-text: #be185d;
+}
+
+/* Signature aurora gradient as a fill, a hairline and (decorative, large) text */
+.bg-aurora { background: var(--aurora); }
+.bg-aurora-x { background: var(--aurora-x); }
+
+/* Section dividers: an aurora hairline across the top of each top-level section */
+main > section.border-t,
+main > div > section.border-t {
+  position: relative;
+  border-top-color: transparent;
+}
+main > section.border-t::before,
+main > div > section.border-t::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(72rem, calc(100% - 2rem));
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--aurora-x);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Hero background art: soft aurora ribbons drifting slowly (static under reduced motion) */
+.hero-aurora path { transform-box: fill-box; transform-origin: center; }
+.hero-aurora .ribbon-a { animation: ribbonDrift 22s ease-in-out infinite alternate; }
+.hero-aurora .ribbon-b { animation: ribbonDrift 28s ease-in-out -9s infinite alternate-reverse; }
+.hero-aurora .ribbon-c { animation: ribbonDrift 34s ease-in-out -17s infinite alternate; }
+@keyframes ribbonDrift {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  100% { transform: translate3d(-3%, 4%, 0) rotate(-2deg); }
+}
+
+/* Gradient ring that slowly turns around the portrait */
+.aurora-ring {
+  background: conic-gradient(from var(--ring-angle, 0deg), #f2a541, #fb7185, #a78bfa, #38bdf8, #2dd4bf, #f2a541);
+  animation: ringTurn 14s linear infinite;
+}
+@property --ring-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes ringTurn { to { --ring-angle: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .aurora-ring { animation: none; } }
+
+/* Accent cards: a 3px colour rule on top and a matching glow on hover/focus (colour via --card-c) */
+.accent-card {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--jd-dur-slow) var(--jd-ease), border-color var(--jd-dur-slow) var(--jd-ease), transform var(--jd-dur-slow) var(--jd-ease);
+}
+.accent-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--card-c, var(--c-mlops));
+  z-index: 1;
+}
+.accent-card:hover,
+.accent-card:focus-within {
+  border-color: color-mix(in srgb, var(--card-c, var(--c-mlops)) 55%, var(--jd-border));
+  box-shadow: 0 14px 36px -14px color-mix(in srgb, var(--card-c, var(--c-mlops)) 55%, transparent), var(--jd-shadow-1);
 }

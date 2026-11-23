@@ -3,6 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SKILL_CATEGORIES, CERTIFICATIONS } from '../data/portfolioData';
 import { TargetRole, Certification } from '../types';
 import { playTactileClick } from '../services/soundFx';
+import { tint, type PaletteKey } from '../data/palette';
+
+/** Colour group per skill card (shared accent palette). */
+const SKILL_COLOR: Record<string, PaletteKey> = {
+  Brain: 'ml',
+  Activity: 'python',
+  Server: 'mlops',
+  Database: 'data',
+  Cpu: 'api',
+  Network: 'tools',
+};
 import {
   Brain,
   Activity,
@@ -115,7 +126,11 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ language = 'en' })
 
         {/* Skill Category Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {SKILL_CATEGORIES.map((cat, idx) => (
+          {SKILL_CATEGORIES.map((cat, idx) => {
+            const key = SKILL_COLOR[cat.icon] ?? 'mlops';
+            const fill = `var(--c-${key})`;
+            const text = `var(--c-${key}-text)`;
+            return (
             <motion.div
               key={cat.title}
               id={`skill-category-${cat.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
@@ -123,10 +138,13 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ language = 'en' })
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.45, delay: idx * 0.06 }}
-              className="p-6 rounded-2xl bg-surface/70 border border-line hover:border-line-strong hover:-translate-y-1 transition-[border-color,translate] duration-300"
+              className="accent-card p-6 rounded-2xl bg-surface/70 border border-line hover:-translate-y-1"
+              style={{ '--card-c': fill } as React.CSSProperties}
             >
               <div className="flex items-center gap-3 pb-4 mb-4 border-b border-line">
-                <div className="p-2.5 rounded-xl bg-surface-2/70 border border-line-strong/60">{getCategoryIcon(cat.icon)}</div>
+                <div className="p-2.5 rounded-xl border [&_svg]:!text-current" style={{ background: tint(fill, 16), borderColor: tint(fill, 45), color: text }}>
+                  {getCategoryIcon(cat.icon)}
+                </div>
                 <h3 className="font-display font-bold text-base text-fg">{cat.title}</h3>
               </div>
 
@@ -139,7 +157,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ language = 'en' })
                           skill.highlight ? 'text-fg font-semibold' : 'text-muted font-medium'
                         }`}
                       >
-                        {skill.highlight && <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" aria-hidden="true" />}
+                        {skill.highlight && <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: fill }} aria-hidden="true" />}
                         <span className="truncate">{skill.name}</span>
                       </span>
                       <span className="font-mono text-xs text-muted shrink-0">{skill.experience}</span>
@@ -153,9 +171,8 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ language = 'en' })
                       aria-valuenow={skill.level}
                     >
                       <motion.div
-                        className={`h-full rounded-full ${
-                          skill.highlight ? 'bg-gradient-to-r from-accent to-teal' : 'bg-line-strong'
-                        }`}
+                        className="h-full rounded-full"
+                        style={{ background: skill.highlight ? fill : tint(fill, 45) }}
                         initial={{ width: 0 }}
                         whileInView={{ width: `${skill.level}%` }}
                         viewport={{ once: true }}
@@ -166,7 +183,8 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ language = 'en' })
                 ))}
               </ul>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Certifications */}
