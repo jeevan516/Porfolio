@@ -600,6 +600,36 @@
       "liveUrl": null
     },
     {
+      "id": "nf-service-monitoring-and-alerting",
+      "folder": "service-monitoring-and-alerting",
+      "title": "Service monitoring & alerting",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-18",
+      "headline": "Prometheus + Grafana for a spam-classifier API; alert fired 6 min 40 s after a simulated outage",
+      "description": "A FastAPI spam classifier monitored with Prometheus and Grafana: uptime, traffic, latency, errors and an InstanceDown alert, tested by breaking the service on purpose.",
+      "stack": [
+        "FastAPI",
+        "Prometheus",
+        "PromQL",
+        "Grafana",
+        "Docker Compose"
+      ],
+      "metrics": [
+        {
+          "label": "Failure → alert",
+          "value": "6 min 40 s"
+        },
+        {
+          "label": "Dashboard panels",
+          "value": "5 (2 added)"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/service-monitoring-and-alerting.pptx",
+      "liveUrl": null
+    },
+    {
       "id": "nf-github-actions-and-cicd",
       "folder": "github-actions-and-cicd",
       "title": "GitHub Actions & CI/CD for ML",
