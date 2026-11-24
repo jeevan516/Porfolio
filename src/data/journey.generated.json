@@ -661,6 +661,43 @@
       "githubUrl": "https://github.com/jeevan516/github-actions-and-cicd",
       "deckUrl": "decks/github-actions-and-cicd.pptx",
       "liveUrl": null
+    },
+    {
+      "id": "nf-monitoring-in-ml",
+      "folder": "monitoring-in-ml",
+      "title": "Monitoring in ML",
+      "stage": "MLOps & deployment",
+      "category": "ai-ml",
+      "startDate": "2026-11-18",
+      "headline": "Drift alerts fire for Aug 2025: 4 of 4 columns drifted, prediction drift 0.312",
+      "description": "Drift monitoring for a NYC green taxi trip-duration model: Evidently reports from a Prefect flow into Postgres and Grafana, with Prometheus, Alertmanager and Grafana alerting.",
+      "stack": [
+        "Python",
+        "scikit-learn",
+        "MLflow",
+        "Evidently",
+        "Prefect",
+        "Postgres",
+        "Grafana",
+        "Prometheus"
+      ],
+      "metrics": [
+        {
+          "label": "Baseline RMSE (min)",
+          "value": "5.07"
+        },
+        {
+          "label": "Prediction drift Aug 2025",
+          "value": "0.312"
+        },
+        {
+          "label": "Retrained RMSE (min)",
+          "value": "6.06 → 5.85"
+        }
+      ],
+      "githubUrl": null,
+      "deckUrl": "decks/monitoring-in-ml.pptx",
+      "liveUrl": null
     }
   ]
 }
